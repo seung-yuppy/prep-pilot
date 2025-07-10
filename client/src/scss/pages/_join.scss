@@ -1,0 +1,49 @@
+.join-title {
+  font-size: 5rem;
+  text-align: center;
+  padding: 3rem;
+}
+
+.join-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  padding: 5rem
+}
+
+input {
+  border-radius: 5rem;
+  padding: 1rem 3rem;
+  width: 30rem;
+  border-color: darkblue;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pw-btn {
+  font-size:2rem;
+}
+
+.join-btn {
+  background-color: lightgreen;
+  border-color: lightgreen;
+  border-radius: 1rem;
+  transition: all 0.3s;
+  padding: 1.5rem 3rem;
+  font-size: 1.7rem;
+  
+  &:hover {
+    background-color: green;
+    color: white;
+  }
+}
+
+.alert-msg {
+  color: red;
+  font-size: 1.3rem;
+}
