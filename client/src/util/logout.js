@@ -6,6 +6,7 @@ const onLogOut = async () => {
     })
     localStorage.removeItem("access");
     alert("로그아웃 하였습니다.");
+    window.location.reload();
   } catch (error) {
     console.error("로그아웃 에러 발생", error);
   }

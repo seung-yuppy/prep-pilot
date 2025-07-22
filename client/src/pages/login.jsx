@@ -1,9 +1,11 @@
 import { useState } from "react";
+import useModalStore from "../store/useModalStore";
 
 export default function LogIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPW] = useState(false);
+  const { closeModal } = useModalStore();
 
   const onLogin = async (e) => {
     e.preventDefault();
@@ -23,6 +25,7 @@ export default function LogIn() {
       if (accessToken) {
         localStorage.setItem("access", accessToken);
         alert("로그인 하였습니다.");
+        closeModal("login");
       }
     } catch (error) {
       console.error(error);
@@ -45,7 +48,7 @@ export default function LogIn() {
             <input type={showPw ? "text" : "password"} className="log-password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
             <button type="button" onClick={onShow} className={showPw ? "pw-show-btn":"pw-hide-btn"}></button>
           </div>
-          <button type="submit">로그인</button>
+          <button type="submit" className="join-btn">로그인</button>
         </form>
       </div>
     </>
