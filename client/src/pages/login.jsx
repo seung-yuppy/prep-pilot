@@ -3,6 +3,7 @@ import { useState } from "react";
 export default function LogIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPw, setShowPW] = useState(false);
 
   const onLogin = async (e) => {
     e.preventDefault();
@@ -18,9 +19,6 @@ export default function LogIn() {
       if (!res.ok) {
         throw new Error("로그인 실패");
       }
-      console.log(res);
-      console.log(res.headers);
-      console.log(res.headers.get("access"));
       const accessToken = res.headers.get("access");
       if (accessToken) {
         localStorage.setItem("access", accessToken);
@@ -31,29 +29,23 @@ export default function LogIn() {
     }
   };
 
-  const onLogOut = async () => {
-    try {
-      await fetch(`http://localhost:8080/logout`, {
-        method: "POST",
-        credentials: "include",
-      })
-      localStorage.removeItem("access");
-      alert("로그아웃 하였습니다.");
-    } catch (error) {
-      console.error("로그아웃 에러 발생", error);
-    }
-
-  }
+  const onShow = () => {
+    setShowPW((prev) => !prev);
+  };
 
   return (
     <>
       <div>
-        <h2 className="login-title">✨로그인✨</h2>
+        <h2 className="login-title">✨로그인</h2>
         <form className="login-form" onSubmit={onLogin}>
-          <input type="text" name="username" placeholder="UserName" onChange={(e) => setUsername(e.target.value)} />
-          <input type="password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+          <div className="input-username">
+            <input type="text" className="log-username" name="username" placeholder="UserName" onChange={(e) => setUsername(e.target.value)} />
+          </div>
+          <div className="input-password">
+            <input type={showPw ? "text" : "password"} className="log-password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+            <button type="button" onClick={onShow} className={showPw ? "pw-show-btn":"pw-hide-btn"}></button>
+          </div>
           <button type="submit">로그인</button>
-          <button type="button" onClick={onLogOut}>로그아웃</button>
         </form>
       </div>
     </>

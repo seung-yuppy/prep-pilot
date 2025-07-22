@@ -9,6 +9,7 @@ export default function Join() {
   const [errPassword, setErrPassword] = useState("");
   const [errEmail, setErrEmail] = useState("");
   const [errName, setErrName] = useState("");
+  const [showPw, setShowPW] = useState(false);
 
   const onJoin = async (e) => {
     e.preventDefault();
@@ -37,28 +38,32 @@ export default function Join() {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
+
+  const onShow = () => {
+    setShowPW((prev) => !prev);
+  };
 
   return(
     <>
       <div>
-        <h2 className="join-title">✨회원가입✨</h2>
-        <form className="join-form" onSubmit={onJoin}>
-          <div className="input-container">
-            <input type="text" name="username" placeholder="UserName" onChange={(e) => setUsername(e.target.value)} />  
+        <h2 className="login-title">✨회원가입</h2>
+        <form className="login-form" onSubmit={onJoin}>
+          <div className="input-username">
+            <input type="text" className="log-username" name="username" placeholder="UserName" onChange={(e) => setUsername(e.target.value)} />  
             <span className="alert-msg">{errUsername}</span>
           </div>     
-          <div className="input-container">
-            <input type="password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-            {/* <button type="button" onClick="" className="pw-btn">👁️</button> */}
+          <div className="input-password">
+            <input type={showPw ? "text" : "password"} className="log-password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+            <button type="button" onClick={onShow} className="pw-btn">👁️</button>
             <span className="alert-msg">{errPassword}</span>
           </div>
-          <div className="input-container">
-            <input type="email" name="email" placeholder="E-Mail" onChange={(e) => setEmail(e.target.value)} />
+          <div className="input-username">
+            <input type="email" className="log-email" name="email" placeholder="E-Mail" onChange={(e) => setEmail(e.target.value)} />
             <span className="alert-msg">{errEmail}</span>
           </div>
-          <div className="input-container">
-            <input type="text" name="name" placeholder="Name" onChange={(e) => setName(e.target.value)} />
+          <div className="input-username">
+            <input type="text" className="log-name" name="name" placeholder="Name" onChange={(e) => setName(e.target.value)} />
             <span className="alert-msg">{errName}</span>
           </div>
           <button type="submit" className="join-btn">회원가입</button>

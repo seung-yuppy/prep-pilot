@@ -12,34 +12,17 @@
   padding: 5rem
 }
 
-input {
-  border-radius: 5rem;
-  padding: 1rem 3rem;
-  width: 30rem;
-  border-color: darkblue;
-}
-
-.input-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.pw-btn {
-  font-size:2rem;
-}
-
 .join-btn {
-  background-color: lightgreen;
-  border-color: lightgreen;
+  background-color: #12b886;
+  border-color: #12b886;
   border-radius: 1rem;
-  transition: all 0.3s;
+  transition: background-color 0.3s;
   padding: 1.5rem 3rem;
   font-size: 1.7rem;
-  
+  color: white;
+
   &:hover {
     background-color: green;
-    color: white;
   }
 }
 

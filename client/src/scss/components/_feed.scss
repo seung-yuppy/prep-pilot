@@ -1,0 +1,67 @@
+@import "../abstracts//variables";
+
+.feed-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: $bg-white;
+  transition: all 0.5s;
+
+  .feed-thumnail {
+    width: 100%;
+  }
+
+  .feed-content {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    gap: 1.3rem;
+
+    .feed-title {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .feed-description {
+      font-size: 1.5rem;
+      color: $gray2;
+    }
+
+    .feed-info {
+      display: flex;
+      gap: 1rem;
+      color: $gray3;
+      font-size: 1.3rem;
+    }
+
+    .feed-footer {
+      border-top: 1px solid $gray4;
+      display: flex;
+      justify-content: space-between;
+      padding: 1.3rem;
+      font-size: 1.5rem;
+
+      .footer-nickname {
+        display: flex;
+        gap: 0.7rem;
+        
+        .nickname-by {
+          color: $gray2;
+        }
+
+        .nickname-name {
+          font-weight: 700;
+          transition: color 0.5s;
+
+          &:hover {
+            color: $main;
+          }
+        }
+      }
+    }
+  }
+
+  &:hover {
+    scale: 1.05;
+  }
+}

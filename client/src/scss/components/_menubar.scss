@@ -1,0 +1,15 @@
+.menu-gnb {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  justify-content: center;
+
+  .btn-log {
+    font-size: 1.7rem;
+    transition: all 0.5s;
+
+    &:hover {
+      color: mediumaquamarine;
+    }
+  }
+}

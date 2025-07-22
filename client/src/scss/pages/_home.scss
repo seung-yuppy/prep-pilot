@@ -1,5 +1,19 @@
+.home-container {
+  display: flex;
+  justify-content: space-around;
+  padding-block: 2rem;
+}
+
 .home-title {
-  font-size: 5rem;
+  font-size: 3rem;
   text-align: center;
   padding: 3rem;
+}
+
+.feed-container {
+  display: grid;
+  grid-template-columns: repeat(3, 35rem);
+  justify-self: center;
+  gap: 3rem;
+  row-gap: 3rem;
 }

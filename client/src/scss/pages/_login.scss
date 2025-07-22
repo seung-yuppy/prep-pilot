@@ -1,3 +1,5 @@
+@import "../abstracts/variables";
+
 .login-title {
   font-size: 5rem;
   text-align: center;
@@ -12,9 +14,40 @@
   padding: 5rem
 }
 
-input {
-  border-radius: 5rem;
-  padding: 1rem 3rem;
-  width: 30rem;
-  border-color: darkblue;
+.pw-show-btn {
+  background-image: url("../../images/icon_hidden.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 1rem;
+}
+
+.pw-hide-btn {
+  background-image: url("../../images/icon_eye.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 1rem;
+}
+
+.input-username {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  width: 20rem;
+  height: 1.7rem;
+  padding: 1.2rem 3rem;
+  border: 1px solid black;
+  border-radius: 1.5rem;
+}
+
+.input-password {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  width: 20rem;
+  height: 1.7rem;
+  padding: 1.2rem 3rem;
+  border: 1px solid black;
+  border-radius: 1.5rem;
 }
