@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -27,6 +29,14 @@ public class User {
     private String name;
 
     private String nickname;
+
+    private String bio;
+
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     private String role;
 }

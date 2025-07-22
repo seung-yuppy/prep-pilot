@@ -9,6 +9,8 @@ import com.example.prep_pilot.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class JoinService {
 
@@ -29,6 +31,7 @@ public class JoinService {
         user.setName(userDto.getName());
         user.setNickname(userDto.getNickname());
         user.setRole("ROLE_USER");
+        user.setCreatedAt(LocalDateTime.now());
 
         User newUser = userRepository.save(user);
 

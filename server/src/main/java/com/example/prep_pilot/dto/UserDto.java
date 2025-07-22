@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -38,6 +40,12 @@ public class UserDto {
     @Pattern(regexp = "^[가-힣a-zA-Z]{2,}$")
     private String nickname;
 
+    private String bio;
+
+    private String profileImageUrl;
+
+    private LocalDateTime createdAt;
+
     private String role;
 
     public static UserDto toDto(User newUser) {
@@ -49,6 +57,9 @@ public class UserDto {
                 newUser.getEmail(),
                 newUser.getName(),
                 newUser.getNickname(),
+                newUser.getBio(),
+                newUser.getProfileImageUrl(),
+                newUser.getCreatedAt(),
                 newUser.getRole()
         );
     }
