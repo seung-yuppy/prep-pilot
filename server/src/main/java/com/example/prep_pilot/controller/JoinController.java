@@ -37,6 +37,7 @@ public class JoinController {
 
         joinService.checkDuplicateUsername(userDto.getUsername());
         joinService.checkDuplicateEmail(userDto.getEmail());
+        joinService.checkDuplicateNickname(userDto.getNickname());
 
         UserDto newUser = joinService.join(userDto);
 

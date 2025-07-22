@@ -34,6 +34,10 @@ public class UserDto {
     @Pattern(regexp = "^[가-힣]{1,}$", message = "정확한 이름을 입력하세요.")
     private String name;
 
+    @NotEmpty(message = "닉네임은 한글이나 영문으로만 지정할 수 있고, 2글자 이상이어야 합니다. ")
+    @Pattern(regexp = "^[가-힣a-zA-Z]{2,}$")
+    private String nickname;
+
     private String role;
 
     public static UserDto toDto(User newUser) {
@@ -44,6 +48,7 @@ public class UserDto {
                 newUser.getPassword(),
                 newUser.getEmail(),
                 newUser.getName(),
+                newUser.getNickname(),
                 newUser.getRole()
         );
     }
