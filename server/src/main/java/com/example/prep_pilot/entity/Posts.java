@@ -1,11 +1,13 @@
 package com.example.prep_pilot.entity;
 
+import com.example.prep_pilot.dto.PostsDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -40,4 +42,17 @@ public class Posts {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public static Posts toEntity(PostsDto dto, User user) {
+
+        return new Posts(
+                null,
+                dto.getTitle(),
+                dto.getContent(),
+                dto.getSlug(),
+                dto.getIsPrivate(),
+                LocalDateTime.now(),
+                null,
+                user
+        );
+    }
 }

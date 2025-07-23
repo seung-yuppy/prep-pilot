@@ -32,7 +32,7 @@ public class UserDto {
     @NotEmpty(message = "이메일 형식이 올바르지 않습니다.")
     private String email;
 
-    @NotEmpty(message = "id는 최소 5자 이상 최대 20자 이하여야 합니다.")
+    @NotEmpty(message = "이름는 한글로 최소 2자 이상이어야 합니다.")
     @Pattern(regexp = "^[가-힣]{1,}$", message = "정확한 이름을 입력하세요.")
     private String name;
 
