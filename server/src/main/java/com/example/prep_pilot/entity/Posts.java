@@ -55,4 +55,13 @@ public class Posts {
                 user
         );
     }
+
+    public void patch(PostsDto dto) {
+
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.slug = dto.getSlug();
+        this.isPrivate = dto.getIsPrivate();
+        this.updatedAt = LocalDateTime.now();
+    }
 }

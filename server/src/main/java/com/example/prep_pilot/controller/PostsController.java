@@ -47,13 +47,14 @@ public class PostsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(postsDto);
     }
 
-//    @PatchMapping("/posts")
-//    public ResponseEntity<PostsDto> patchPost(@AuthenticationPrincipal CustomUserDetails userDetails,
-//                                              @RequestBody PostsDto dto){
-//
-//        String username = userDetails.getUsername();
-//        PostsDto postsDto = postsService.patchPost(dto, username);
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(postsDto);
-//    }
+    @PatchMapping("/posts/{id}")
+    public ResponseEntity<PostsDto> patchPost(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                              @PathVariable Long id,
+                                              @RequestBody PostsDto dto){
+
+        String username = userDetails.getUsername();
+        PostsDto postsDto = postsService.patchPost(dto, id, username);
+
+        return ResponseEntity.status(HttpStatus.OK).body(postsDto);
+    }
 }

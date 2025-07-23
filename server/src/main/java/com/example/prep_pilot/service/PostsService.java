@@ -3,6 +3,7 @@ package com.example.prep_pilot.service;
 import com.example.prep_pilot.dto.PostsDto;
 import com.example.prep_pilot.entity.Posts;
 import com.example.prep_pilot.entity.User;
+import com.example.prep_pilot.exception.PostsNotAuthorException;
 import com.example.prep_pilot.exception.PostsNotFoundException;
 import com.example.prep_pilot.repository.PostsRepository;
 import com.example.prep_pilot.repository.UserRepository;
@@ -48,9 +49,17 @@ public class PostsService {
         return PostsDto.toDto(created);
     }
 
-//    public PostsDto patchPost(PostsDto dto, String username) {
-//
-//        User user = userRepository.findByUsername(username);
-//        Posts posts = Posts.patch(dto)
-//    }
+    public PostsDto patchPost(PostsDto dto, Long id, String username) {
+
+        User user = userRepository.findByUsername(username);
+        Posts target = postsRepository.findById(id).orElseThrow(() ->
+                new PostsNotFoundException(id)
+        );
+        if(dto.getUserId() != user.getId())
+            throw new PostsNotAuthorException(id);
+        target.patch(dto);
+        Posts updated = postsRepository.save(target);
+
+        return PostsDto.toDto(updated);
+    }
 }

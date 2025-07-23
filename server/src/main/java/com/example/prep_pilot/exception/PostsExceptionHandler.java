@@ -14,4 +14,9 @@ public class PostsExceptionHandler {
     public ResponseEntity<?> handlePostNotFound(PostsNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
     }
+
+    @ExceptionHandler(PostsNotAuthorException.class)
+    public ResponseEntity<?> handlePostNotAuthor(PostsNotAuthorException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", ex.getMessage()));
+    }
 }
