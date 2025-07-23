@@ -20,7 +20,7 @@
 
 ## 🖥️ 기술 스택
 
-- **Frontend**: React, SCSS, Zustand, Tanstack-Query
+- **Frontend**: React, SCSS, Zustand, Tanstack/React-Query
 - **Backend**: Spring Boot, MySql  
 - **AI**: OpenAI GPT API  
 - **기타**: git, notion
