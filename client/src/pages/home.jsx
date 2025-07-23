@@ -12,8 +12,8 @@ export default function Home() {
       </div>
 
       <div className="feed-container">
-        {arr.map(() => (
-          <Feed />
+        {arr.map((_, index) => (
+          <Feed key={index} />
         ))} 
       </div>
     </>

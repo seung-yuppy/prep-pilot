@@ -1,35 +1,15 @@
 import { useState } from "react";
-import useModalStore from "../store/useModalStore";
+import useLogIn from "../service/user/useLogIn";
 
 export default function LogIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPW] = useState(false);
-  const { closeModal } = useModalStore();
+  const logInMutation = useLogIn();
 
   const onLogin = async (e) => {
     e.preventDefault();
-    try {
-      const res = await fetch(`http://localhost:8080/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-        credentials: "include",
-      });
-      if (!res.ok) {
-        throw new Error("로그인 실패");
-      }
-      const accessToken = res.headers.get("access");
-      if (accessToken) {
-        localStorage.setItem("access", accessToken);
-        alert("로그인 하였습니다.");
-        closeModal("login");
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    logInMutation.mutate({ username, password });
   };
 
   const onShow = () => {
