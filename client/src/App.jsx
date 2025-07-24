@@ -6,6 +6,7 @@ import Write from "./pages/write.jsx";
 const Home = lazy(() => import("./pages/home.jsx"));
 const Join = lazy(() => import("./pages/join.jsx"));
 const LogIn = lazy(() => import("./pages/login.jsx"));
+const Post = lazy(() => import("./pages/post.jsx"));
 
 function App() {
   const router = createBrowserRouter([
@@ -28,6 +29,10 @@ function App() {
         {
           path: "/write",
           element: <Write />
+        },
+        {
+          path: "/post/:id",
+          element: <Post />
         }
       ]
     }

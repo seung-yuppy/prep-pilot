@@ -16,4 +16,10 @@
   justify-self: center;
   gap: 3rem;
   row-gap: 3rem;
+
+  .feed-nocontent {
+    margin: 0 auto;
+    text-align: center;
+    font-size: 3rem;
+  }
 }
