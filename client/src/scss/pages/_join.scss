@@ -1,13 +1,15 @@
+@use "../abstracts/" as *;
+
 .join-btn {
-  background-color: #12b886;
-  border-color: #12b886;
+  background-color: $main;
+  border-color: $main;
   border-radius: 1rem;
   transition: background-color 0.3s;
   padding: 1.5rem 3rem;
   font-size: 1.7rem;
-  color: white;
+  color: $bg-white3;
 
   &:hover {
-    background-color: green;
+    background-color: $green;
   }
 }

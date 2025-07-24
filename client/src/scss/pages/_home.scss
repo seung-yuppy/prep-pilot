@@ -1,13 +1,23 @@
+@use "../base/" as *;
+
+.home-wrapper {
+  width: 100%;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
 .home-container {
   display: flex;
   justify-content: space-around;
   padding-block: 2rem;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 .home-title {
   font-size: 3rem;
   text-align: center;
   padding: 3rem;
+  color: var(--color-text);
 }
 
 .feed-container {
@@ -16,6 +26,8 @@
   justify-self: center;
   gap: 3rem;
   row-gap: 3rem;
+  background-color: var(--color-background);
+  color: var(--color-text);
 
   .feed-nocontent {
     margin: 0 auto;

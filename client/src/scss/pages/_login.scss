@@ -1,3 +1,5 @@
+@use "../abstracts/" as *;
+
 .login-title {
   font-size: 3rem;
   text-align: center;
@@ -35,12 +37,12 @@
   width: 20rem;
   height: 1.7rem;
   padding: 1.2rem 3rem;
-  border: 1px solid black;
+  border: 1px solid $black1;
   border-radius: 1rem;
 }
 
 .input-username:has(input:focus) {
-  border: 2px solid #12b886;
+  border: 2px solid $main;
 }
 
 .input-password {
@@ -50,15 +52,15 @@
   width: 20rem;
   height: 1.7rem;
   padding: 1.2rem 3rem;
-  border: 1px solid black;
+  border: 1px solid $black1;
   border-radius: 1rem;
 }
 
 .input-password:has(input:focus) {
-  border: 2px solid #12b886;
+  border: 2px solid $main;
 }
 
 .alert-msg {
-  color: red;
+  color: $red;
   font-size: 1.3rem;
 }

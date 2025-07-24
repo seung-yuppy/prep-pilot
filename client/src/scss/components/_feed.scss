@@ -1,10 +1,12 @@
-@import "../abstracts//variables";
+@use "../abstracts/" as *;
+@use "../base/" as *;
 
 .feed-card {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: $bg-white;
+  background-color: var(--color-background);
+  box-shadow: 5px 5px 3px 1px;
   transition: all 0.5s;
 
   .feed-thumnail {
@@ -20,17 +22,18 @@
     .feed-title {
       font-size: 2rem;
       font-weight: bold;
+      color: var(--color-text);
     }
 
     .feed-description {
       font-size: 1.5rem;
-      color: $gray2;
+      color: var(--color-text);
     }
 
     .feed-info {
       display: flex;
       gap: 1rem;
-      color: $gray3;
+      color: var(--color-text);
       font-size: 1.3rem;
     }
 
@@ -44,9 +47,10 @@
       .footer-nickname {
         display: flex;
         gap: 0.7rem;
-        
+        color: var(--color-text);
+
         .nickname-by {
-          color: $gray2;
+          color: var(--color-text);
         }
 
         .nickname-name {
@@ -57,6 +61,10 @@
             color: $main;
           }
         }
+      }
+
+      .footer-like {
+        color: var(--color-text);
       }
     }
   }

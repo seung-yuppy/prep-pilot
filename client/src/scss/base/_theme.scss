@@ -1,0 +1,11 @@
+@use "../abstracts/" as *;
+
+html[data-theme="light"] {
+  --color-text: #{$black1};
+  --color-background: #{$bg-white3};
+}
+
+html[data-theme="dark"] {
+  --color-text: #{$bg-white};
+  --color-background: #{$semi-black};
+}
