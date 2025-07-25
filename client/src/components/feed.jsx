@@ -1,6 +1,11 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function Feed({ id, content, title, createdAt }) {
+  useEffect(() => {
+    document.querySelector(".feed-description").innerHTML = {content}.content;
+  }, []);
+
   return (
     <>
       <Link to={`/post/${id}`}>
@@ -12,7 +17,11 @@ export default function Feed({ id, content, title, createdAt }) {
           />
           <div className="feed-content">
             <h1 className="feed-title">{title}</h1>
-            <p className="feed-description">{content}</p>
+            <div className="feed-description"></div>
+            {/* <div
+              className="feed-description"
+              dangerouslySetInnerHTML={{ __html: content }}
+            /> */}
             <div className="feed-info">
               <span className="info-date">{createdAt}</span>
               <span className="info-dot">•</span>

@@ -4,7 +4,7 @@
 .feed-card {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  // width: 100%;
   background-color: var(--color-background);
   box-shadow: 5px 5px 3px 1px;
   transition: all 0.5s;
@@ -17,6 +17,7 @@
     display: flex;
     flex-direction: column;
     padding: 2rem;
+    height: 16rem;
     gap: 1.3rem;
 
     .feed-title {
@@ -28,6 +29,7 @@
     .feed-description {
       font-size: 1.5rem;
       color: var(--color-text);
+      overflow: auto;
     }
 
     .feed-info {

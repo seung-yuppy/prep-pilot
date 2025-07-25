@@ -3,7 +3,6 @@ import Menubar from "../components/menubar";
 import useGetPosts from "../service/post/useGetPosts";
 
 export default function Home() {
-  // const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const { data: posts } = useGetPosts();
 
   return (
@@ -15,9 +14,6 @@ export default function Home() {
         </div>
 
         <div className="feed-container">
-          {/* {arr.map((_, index) => (
-          <Feed key={index} />
-        ))}  */}
           {posts ? (
             posts?.content.map((value, index) => (
               <Feed
