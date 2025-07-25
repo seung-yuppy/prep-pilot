@@ -59,6 +59,24 @@ body{
   margin-left: auto;
 }
 
+.write-preview h1{
+  font-size: 3em;
+  margin-bottom: 1em;
+  margin-top: 0.5em;
+}
+
+.pop-up-temp{
+  position: fixed;
+  right: 1em;
+  padding: 1.5em 2em 1.5em 2em;
+  background-color: #12b886;
+  color: white;
+  font-size: 1.2em;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 1;
+}
+
+
 .go-back-button {
 
   &:hover {
@@ -88,5 +106,47 @@ body{
     &:hover {
         background-color: green;
     }
-  }
+}
 
+.preview-content table {
+  display: table;
+    table-layout: auto !important;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 10px;
+    background-color: transparent;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+.preview-content table td {
+  border: 1px solid #e1e1e1;
+    padding: .4em;
+    background-clip: padding-box;
+}
+
+.preview-content blockquote {
+  display: block;
+    font-family: inherit;
+    font-size: inherit;
+    color: #999;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding: 0 5px 0 20px;
+    border: solid #b1b1b1;
+    border-width: 0 0 0 5px;
+}
+.preview-content blockquote p {
+  display: block;
+    margin: 0 0 10px;
+}
+
+.preview-content ol, .preview-content ul {
+  padding-inline-start: 40px;
+}
+
+.preview-content ol{
+  list-style-type: decimal;
+}

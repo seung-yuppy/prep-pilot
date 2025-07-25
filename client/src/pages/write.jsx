@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import SUNEDITOR_LANG from 'suneditor/src/lang/ko'; // Korean language pack
@@ -6,12 +7,15 @@ import useWrite from "../service/posts/useWrite";
 //import useModalStore from "../store/useModalStore";
 
 export default function Write() {
+  const [isTempSavedVisible, setIsTempSavedVisible] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [slug, setSlug] = useState("");
   const [is_private, setIsPrivate] = useState(false);
+  const navigate = useNavigate();
   //const [user_id, setUserId] = useState(0);
   //const { closeModal } = useModalStore();
+  const sanitizedForTemp = useRef("");
   useEffect(() => {
     setSlug(`/${title}`);
     setIsPrivate(false);
@@ -90,7 +94,7 @@ export default function Write() {
   }, []);
 
   const handleChange = (rawHTML) => {
-    console.log("Editor content changed:", rawHTML);
+    //console.log("Editor content changed:", rawHTML);
     const parser = new DOMParser();
     
     const doc = parser.parseFromString(`<div>${rawHTML}</div>`, 'text/html');
@@ -98,9 +102,10 @@ export default function Write() {
     
     if (node) {
         const sanitized = sanitise(node);
-        console.log(sanitized);
+        //console.log(sanitized);
         setContent(sanitized);
-
+        document.querySelector('#preview_content').innerHTML = sanitized;
+        sanitizedForTemp.current = sanitized;
         // For debugging view
         if (testResultRef.current) {
             testResultRef.current.textContent = rawHTML;
@@ -119,12 +124,36 @@ export default function Write() {
     }
   };
 
+  const handleTitle = (value) => {
+    document.querySelector('#preview_title').textContent = value;
+  };
+
+  const handleContentKeyUp = (rawHTML) => {
+    const parser = new DOMParser();
+    
+    const doc = parser.parseFromString(`<div>${rawHTML}</div>`, 'text/html');
+    const node = doc.body.firstChild;
+    const sanitized = sanitise(node);
+    document.querySelector('#preview_content').innerHTML = sanitized;
+  };
+
+  const tempSave = () => {
+    localStorage.setItem('tmpWrite', sanitizedForTemp.current);
+    setIsTempSavedVisible(true);
+
+    // Hide after 3 seconds
+    setTimeout(() => {
+      setIsTempSavedVisible(false);
+    }, 3000);
+  }
+
+
   return (
     <div className="write-container">
       <div className="write-editor">
         <form className="write-form" onSubmit={writing}>
           <div>
-            <input id='write_title' type='text' name='title' placeholder='제목을 입력하세요' onChange={(e) => setTitle(e.target.value)}></input>
+            <input id='write_title' type='text' name='title' placeholder='제목을 입력하세요' onChange={(e) => setTitle(e.target.value)} onKeyUp={(e) => handleTitle(e.target.value)}></input>
             <input id='write_tag' type='text' name='tag' placeholder='태그를 입력하세요'></input>
             <input type="hidden" name="slug" value={slug} />
             <input type="hidden" name="is_private" value={is_private} />
@@ -136,6 +165,7 @@ export default function Write() {
                 width="100%"
                 height="auto"
                 minHeight="300px"
+                onKeyUp = {(e) => handleContentKeyUp(e.target.innerHTML)}
                 onChange={handleChange}
                 setOptions={{
                     buttonList: [
@@ -155,28 +185,16 @@ export default function Write() {
             />
           </div>
 
-          {/* The save button is removed as onChange handles updates */}
-          {/* <div className="temp">
-            <button onClick={save}>저장저장</button>
-          </div> */}
-
-          <div className="temp" style={{ marginTop: '1em' }}>
-            <div className="box">
-              <h3>찐 HTML</h3>
-              <pre ref={testResultRef}></pre>
-            </div>
-            <div className="box">
-              <h3>위험요소 제거된 HTML</h3>
-              <pre ref={sanitisedResultRef}></pre>
-            </div>
+          <div className='pop-up-temp' style={{ display: isTempSavedVisible ? 'block' : 'none' }}>
+            <p>포스트가 임시저장되었습니다.</p>
           </div>
           <div className='button-container'>
             <div className='left'>
-              <button className='go-back-button'>&lt;- 나가기</button>
+              <button type='button' className='go-back-button' onClick={() => navigate('/')}>&lt;- 나가기</button>
             </div>
             
             <div className='right'>
-              <button className='save-tmp-button'>임시저장</button>
+              <button type='button' className='save-tmp-button' onClick={tempSave}>임시저장</button>
               <button type="submit" className="write-btn">출간하기</button>
             </div>
           </div>
@@ -184,7 +202,8 @@ export default function Write() {
       </div>
 
       <div className='write-preview'>
-        <p>미리보기 프리뷰</p>
+        <h1 id="preview_title"></h1>
+        <div className='preview-content' id="preview_content"></div>
       </div>
 
     </div>
