@@ -1,0 +1,66 @@
+@use "../abstracts/" as *;
+
+.login-title {
+  font-size: 3rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 3rem;
+}
+
+.pw-show-btn {
+  background-image: url("../../images/icon_hidden.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 1rem;
+}
+
+.pw-hide-btn {
+  background-image: url("../../images/icon_eye.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 1rem;
+}
+
+.input-username {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  width: 20rem;
+  height: 1.7rem;
+  padding: 1.2rem 3rem;
+  border: 1px solid $black1;
+  border-radius: 1rem;
+}
+
+.input-username:has(input:focus) {
+  border: 2px solid $main;
+}
+
+.input-password {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  width: 20rem;
+  height: 1.7rem;
+  padding: 1.2rem 3rem;
+  border: 1px solid $black1;
+  border-radius: 1rem;
+}
+
+.input-password:has(input:focus) {
+  border: 2px solid $main;
+}
+
+.alert-msg {
+  color: $red;
+  font-size: 1.3rem;
+}

@@ -1,0 +1,26 @@
+@use "./variables" as *;
+
+@mixin horizontal-scroll {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@mixin border($position, $color) {
+  @if ($position == "all") {
+    border: 1px solid $color;
+  } @else if($position == "top") {
+    border-top: 1px solid $color;
+  } @else if($position == "right") {
+    border-right: 1px solid $color;
+  } @else if($position == "bottom") {
+    border-bottom: 1px solid $color;
+  } @else if($position == "left") {
+    border-left: 1px solid $color;
+  }
+}
+
+// 이미지명, 좌표, 배경색, 크기
+@mixin background($file, $coordinate: null, $color: null, $size: contain) {
+  background: url(#{$url}#{$file}) no-repeat $coordinate $color;
+  background-size: $size;
+}

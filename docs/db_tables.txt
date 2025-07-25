@@ -1,0 +1,65 @@
+//User
+컬럼명			타입			설명
+bio			TEXT			프로필 소개글 (자기소개)
+profile_image_url	VARCHAR(255)		프로필 사진 URL
+created_at		DATETIME		가입일, 기본값 CURRENT_TIMESTAMP
+
+//post
+항목				내용
+제목				게시글 제목 (title)
+본문				마크다운 기반 콘텐츠 (content)
+URL				slug 형태의 고유 URL (slug)
+작성자				어떤 유저가 썼는지 (user_id → FK)
+비공개 여부			공개/비공개 설정 (is_private)
+생성/수정 시각			created_at, updated_at
+
+
+컬럼명			타입			설명
+id			BIGINT			게시글 ID (PK)
+user_id			BIGINT			작성자 (FK → users.id)
+title			VARCHAR(255)		게시글 제목
+content			TEXT			본문 (마크다운 지원 가능)
+slug			VARCHAR(255)		URL용 슬러그 (예: my-first-post)
+is_private		BOOLEAN			비공개 여부 (기본 false)
+created_at		DATETIME		작성일
+updated_at		DATETIME		수정일 (수정될 때마다 자동 갱신)
+
+//coments
+컬럼명			설명
+id			댓글 고유 ID (PK)
+post_id			어느 게시글에 달렸는지 (FK)
+user_id			누가 썼는지 (FK)
+parent_comment_id	대댓글일 경우 부모 댓글 ID (자기 자신 참조)
+content			댓글 내용
+created_at		작성 시간
+is_deleted		실제 삭제하지 않고 “삭제됨”으로만 표시함
+updated_at		댓글 수정 시 자동으로 업데이트됨
+
+//tag
+컬럼명			설명
+id			태그 ID
+name			태그 이름 (중복 불가)
+
+//post_tag (n:m 연결)
+컬럼명			설명
+post_id			어떤 게시글에
+tag_id			어떤 태그가 달렸는지
+
+//like
+컬럼명				설명
+id				좋아요 ID (PK)
+post_id				어떤 게시글에 좋아요를 눌렀는지
+user_id				누가 좋아요를 눌렀는지
+created_at			좋아요 누른 시각
+UNIQUE(post_id, user_id)	중복 좋아요 방지! 한 번만 누를 수 있음
+
+//follows
+컬럼명			설명
+follower_id		팔로우하는 사람 (나)
+following_id		팔로우 당하는 사람 (상대)
+created_at		언제 팔로우했는지
+status			팔로우 요청 상태 (PENDING, ACCEPTED, REJECTED)
+is_blocked		차단 여부 (true면 상대 활동 제한)
+
+//notifications
+

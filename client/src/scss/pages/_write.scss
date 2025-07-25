@@ -1,0 +1,92 @@
+.temp{
+    display: none;
+}
+body{
+  height: 100%;
+}
+
+.sun-editor, .sun-editor .se-toolbar{
+    border: none;
+    outline: none;
+    background-color: white;
+}
+#write_title, #write_tag {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5em;
+    font-size: 3rem;
+}
+
+
+#write_tag{
+    font-size: 1.2rem;
+    padding-left: 1.5em;
+}
+
+.write-container {
+    display: flex;
+    width: 100%;
+}
+
+.write-editor,
+.write-preview {
+    width: 50%;
+    padding: 10px;
+    box-sizing: border-box;
+    height: 100vh;
+}
+.write-editor{
+  display: flex;
+  flex-direction: column;
+}
+
+.write-form {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.editor-container {
+  flex-grow: 1;
+}
+
+.button-container {
+  display: flex;
+  width: 100%;
+}
+
+.button-container .right{
+  margin-left: auto;
+}
+
+.go-back-button {
+
+  &:hover {
+    background-color: #eaeaea;
+  }
+}
+
+.write-btn, .save-tmp-button, .go-back-button {
+  border-radius: 1rem;
+  transition: background-color 0.3s;
+  padding: 1rem 2.2rem;
+  font-size: 1.5rem;
+}
+
+.save-tmp-button {
+  background-color: white;
+  color: #12b886;
+  margin-right: 0.5rem;
+  &:hover {
+    background-color: #eaeaea;
+  }
+}
+.write-btn {
+    background-color: #12b886;
+    border-color: #12b886;
+    color: white;
+    &:hover {
+        background-color: green;
+    }
+  }
+

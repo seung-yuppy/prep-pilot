@@ -1,0 +1,23 @@
+@use "../abstracts/" as *;
+@use "../base/" as *;
+
+.menu-gnb {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  justify-content: center;
+
+  .btn-log {
+    font-size: 1.7rem;
+    transition: all 0.5s;
+    color: var(--color-text);
+
+    &:hover {
+      color: $main2;
+    }
+  }
+
+  .btn-theme {
+    font-size: 2rem;
+  }
+}

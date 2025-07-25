@@ -1,0 +1,24 @@
+@use "../abstracts/" as *;
+button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+li {
+  white-space: nowrap;
+}
+
+input {
+  font-size: 1.4rem;
+  border: transparent;
+  outline: none;
+  padding: 1rem 0;
+  background-color: white;
+}
