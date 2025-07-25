@@ -1,6 +1,6 @@
 import SERVER_URL from "../../constant/url";
 
-const onWrite = async ({ title, content, slug, is_private, user_id }) => {
+const onWrite = async ({ title, content, slug, is_private }) => {
   try {
     const accessToken = localStorage.access;
     const response = await fetch(`${SERVER_URL}posts`,{
@@ -9,7 +9,7 @@ const onWrite = async ({ title, content, slug, is_private, user_id }) => {
           'Content-Type': 'application/json',
           'access': `${accessToken}`
         },
-        body: JSON.stringify({ title, content, slug, is_private, user_id }),
+        body: JSON.stringify({ title, content, slug, is_private }),
     });
     const data = await response.json();
     return{ response, data };

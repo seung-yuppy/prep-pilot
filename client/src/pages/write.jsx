@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import SUNEDITOR from 'suneditor';
+import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import SUNEDITOR_LANG from 'suneditor/src/lang/ko'; // Korean language pack
 import useWrite from "../service/posts/useWrite";
@@ -10,21 +10,16 @@ export default function Write() {
   const [content, setContent] = useState("");
   const [slug, setSlug] = useState("");
   const [is_private, setIsPrivate] = useState(false);
-  const [user_id, setUserId] = useState(0);
+  //const [user_id, setUserId] = useState(0);
   //const { closeModal } = useModalStore();
   useEffect(() => {
     setSlug(`/${title}`);
     setIsPrivate(false);
-    setUserId(1);
-  }, []);
+    //setUserId(1);
+  }, [title]); // Added title dependency
 
-
-
-  const editorRef = useRef(null);
   const testResultRef = useRef(null);
   const sanitisedResultRef = useRef(null);
-  const [editorInstance, setEditorInstance] = useState(null);
-  const hasEditorInitialized = useRef(false);
 
   const joinMutation = useWrite({
     onSuccess: (response) => {
@@ -40,13 +35,13 @@ export default function Write() {
 
   const writing = async (e) => {
     e.preventDefault();
-    joinMutation.mutate({ title, content, slug, is_private, user_id  });
+    joinMutation.mutate({ title, content, slug, is_private  });
   };
 
   const sanitise = useCallback((node) => {
     const allowedTags = ['div', 'blockquote', 'p', 'h2', 'span', 'b', 'i', 'u', 'strong',
-      'em', 'ul', 'ol', 'li', 'a', 'img', 'br', 'hr', 'section', 'tr', 'td', 'th', 'tbody', 'table'];
-    const allowedAttributes = ['href', 'src', 'id', 'className', 'style'];
+      'em', 'ul', 'ol', 'li', 'a', 'img', 'br', 'hr', 'section', 'tr', 'td', 'th', 'tbody', 'table', 'figure'];
+    const allowedAttributes = ['href', 'src', 'id', 'className', 'style', 'class'];
 
     function isSafeUrl(value) {
       if (!value) return false;
@@ -57,6 +52,7 @@ export default function Write() {
         trimmed.startsWith('mailto:') ||
         trimmed.startsWith('tel:') ||
         trimmed.startsWith('www.') ||
+        trimmed.startsWith('data:image/') ||
         trimmed.startsWith('/')
       );
     }
@@ -93,58 +89,35 @@ export default function Write() {
     return '';
   }, []);
 
-  const save = useCallback(() => {
-    if (editorInstance) {
-      const rawHTML = editorInstance.getContents();
-      if (testResultRef.current) {
-        testResultRef.current.textContent = rawHTML;
-      }
+  const handleChange = (rawHTML) => {
+    console.log("Editor content changed:", rawHTML);
+    const parser = new DOMParser();
+    
+    const doc = parser.parseFromString(`<div>${rawHTML}</div>`, 'text/html');
+    const node = doc.body.firstChild;
+    
+    if (node) {
+        const sanitized = sanitise(node);
+        console.log(sanitized);
+        setContent(sanitized);
 
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(`<div>${rawHTML}</div>`, 'text/html');
-      const node = doc.body.firstChild;
-      const cleaned = sanitise(node);
-      if (sanitisedResultRef.current) {
-        sanitisedResultRef.current.textContent = cleaned;
-      }
+        // For debugging view
+        if (testResultRef.current) {
+            testResultRef.current.textContent = rawHTML;
+        }
+        if (sanitisedResultRef.current) {
+            sanitisedResultRef.current.textContent = sanitized;
+        }
+    } else {
+        setContent("");
+         if (testResultRef.current) {
+            testResultRef.current.textContent = rawHTML;
+        }
+        if (sanitisedResultRef.current) {
+            sanitisedResultRef.current.textContent = "";
+        }
     }
-  }, [editorInstance, sanitise]);
-
-  useEffect(() => {
-    if (editorRef.current && !hasEditorInitialized.current) {
-      const editor = SUNEDITOR.create(editorRef.current, {
-        onChange: (content) => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(`<div>${content}</div>`, 'text/html');
-          const node = doc.body.firstChild;
-          setContent(sanitise(node));
-        },
-        lang: SUNEDITOR_LANG,
-        width: '100%',
-        height: '100%',
-        buttonList: [
-          [
-            'undo', 'redo', 'fontSize',
-            'paragraphStyle', 'blockquote',
-            'bold', 'underline', 'italic', 'strike', 'subscript', 'superscript',
-            'fontColor', 'hiliteColor',
-            'outdent', 'indent',
-            'align', 'horizontalRule', 'list', 'lineHeight',
-            'table', 'link', 'image', 'video', 'codeView', 'save',
-          ]
-        ],
-        imageFileInput: true,
-      });
-      setEditorInstance(editor);
-      hasEditorInitialized.current = true;
-    }
-
-    return () => {
-      if (editorInstance) {
-        editorInstance.destroy();
-      }
-    };
-  }, [editorInstance]);
+  };
 
   return (
     <div className="write-container">
@@ -155,16 +128,37 @@ export default function Write() {
             <input id='write_tag' type='text' name='tag' placeholder='태그를 입력하세요'></input>
             <input type="hidden" name="slug" value={slug} />
             <input type="hidden" name="is_private" value={is_private} />
-            <input type="hidden" name="user_id" value={user_id} />
           </div>
           
           <div className='editor-container' style={{ marginBottom: '1em' }}>
-            <textarea ref={editorRef} style={{ width: 'auto' }}>Hi</textarea>
+            <SunEditor
+                lang={SUNEDITOR_LANG}
+                width="100%"
+                height="auto"
+                minHeight="300px"
+                onChange={handleChange}
+                setOptions={{
+                    buttonList: [
+                        [
+                            'undo', 'redo', 'fontSize',
+                            'paragraphStyle', 'blockquote',
+                            'bold', 'underline', 'italic', 'strike', 'subscript', 'superscript',
+                            'fontColor', 'hiliteColor',
+                            'outdent', 'indent',
+                            'align', 'horizontalRule', 'list', 'lineHeight',
+                            'table', 'link', 'image', 'video', 'codeView',
+                        ]
+                    ],
+                    imageFileInput: true,
+                }}
+                defaultValue="<p>Hi</p>"
+            />
           </div>
 
-          <div className="temp">
+          {/* The save button is removed as onChange handles updates */}
+          {/* <div className="temp">
             <button onClick={save}>저장저장</button>
-          </div>
+          </div> */}
 
           <div className="temp" style={{ marginTop: '1em' }}>
             <div className="box">
