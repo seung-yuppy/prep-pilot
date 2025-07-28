@@ -55,7 +55,11 @@ public class PostsService {
         Posts target = postsRepository.findById(id).orElseThrow(() ->
                 new PostsNotFoundException(id)
         );
+<<<<<<< HEAD
+        if(dto.getNickname().equals(user.getNickname()))
+=======
         if(dto.getUserId() != user.getId())
+>>>>>>> 78a8c82cf68a557acf96b9d28a2a05fac938836f
             throw new PostsNotAuthorException(id);
         target.patch(dto);
         Posts updated = postsRepository.save(target);
