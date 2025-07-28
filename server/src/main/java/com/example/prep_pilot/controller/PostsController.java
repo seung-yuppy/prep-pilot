@@ -57,8 +57,4 @@ public class PostsController {
 
         return ResponseEntity.status(HttpStatus.OK).body(postsDto);
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 78a8c82cf68a557acf96b9d28a2a05fac938836f
 }
