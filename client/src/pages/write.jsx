@@ -158,21 +158,25 @@ export default function Write() {
 
   const handleImageUploadBefore = (files, info, uploadHandler) => {
     const formData = new FormData();
-    formData.append('image', files[0]);
+    formData.append('file', files[0]);
 
     imageUploadMutation.mutate(formData, {
       onSuccess: (data) => {
-        const imageUrl = data.data.url;
-        const response = {
-          result: [
-            {
-              url: imageUrl,
-              name: files[0].name,
-              size: files[0].size,
-            },
-          ],
-        };
-        uploadHandler(response);
+        if (data.response.ok) {
+          const responseData = data.data;
+          const response = {
+            result: [
+              {
+                url: responseData.url,
+                name: files[0].name,
+                size: files[0].size,
+              },
+            ],
+          };
+          uploadHandler(response);
+        } else {
+          uploadHandler({ errorMessage: 'Image upload failed' });
+        }
       },
       onError: (error) => {
         console.error('Image upload error:', error);

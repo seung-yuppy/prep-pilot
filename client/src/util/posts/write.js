@@ -1,6 +1,4 @@
-import React from 'react';
 import SERVER_URL from "../../constant/url";
-
 
 function doParse(node) {
   if (node.nodeType === Node.TEXT_NODE) {
@@ -46,41 +44,16 @@ function escapeHtml(text) {
       .replace(/'/g, "&#039;");
 }
 
-export function jsonToJsx(node, key = 0) {
-  if (!node) {
-    return null;
-  }
-  if (typeof node === 'string') {
-    return node;
-  }
-
-  const { tag, attributes = {}, children = [] } = node;
-
-  if (!tag) {
-    return null;
-  }
-
-  const props = Object.entries(attributes).reduce(
-    (acc, [k, v]) => {
-      acc[k === 'class' ? 'className' : k] = v;
-      return acc;
-    },
-    { key }
-  );
-
-  return React.createElement(
-    tag,
-    props,
-    ...children.map((child, idx) => jsonToJsx(child, idx)).filter(Boolean)
-  );
-}
-
 
 const onWrite = async ({ title, content, slug, is_private }) => {
   try {
     const accessToken = localStorage.access;
     const response = await fetch(`${SERVER_URL}posts`,{
         method:"POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'access': `${accessToken}`
+        },
         body: JSON.stringify({ title, content, slug, is_private }),
     });
     const data = await response.json();
@@ -92,3 +65,4 @@ const onWrite = async ({ title, content, slug, is_private }) => {
 
 export default onWrite;
 export { doParse, jsonToHtml };
+
