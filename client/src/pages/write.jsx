@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import SUNEDITOR_LANG from 'suneditor/src/lang/ko'; // Korean language pack
+import useImageUpload from '../service/posts/useImageUpload';
 import useWrite from "../service/posts/useWrite";
+import { doParse } from "../util/posts/write";
 //import useModalStore from "../store/useModalStore";
 
 export default function Write() {
@@ -25,7 +27,7 @@ export default function Write() {
   const testResultRef = useRef(null);
   const sanitisedResultRef = useRef(null);
 
-  const joinMutation = useWrite({
+  const writeMutation = useWrite({
     onSuccess: (response) => {
       if(response.response.status === 201) {
         alert("글쓰기 완료");
@@ -37,10 +39,26 @@ export default function Write() {
     }
   });
 
+  const imageUploadMutation = useImageUpload({
+    onSuccess: (response, data) => {
+      if(response.response.status === 201) {
+        alert(data);
+        //closeModal("write");
+      }
+    },
+    onError: (error) => {
+      console.log("글쓰기 서버 오류", error);
+    }
+  });
+
+
   const writing = async (e) => {
     e.preventDefault();
-    joinMutation.mutate({ title, content, slug, is_private  });
+    console.log(content);
+    writeMutation.mutate({ title, content, slug, is_private  });
   };
+
+  
 
   const sanitise = useCallback((node) => {
     const allowedTags = ['div', 'blockquote', 'p', 'h2', 'span', 'b', 'i', 'u', 'strong',
@@ -102,11 +120,12 @@ export default function Write() {
     
     if (node) {
         const sanitized = sanitise(node);
-        //console.log(sanitized);
-        setContent(sanitized);
+        const forDBSanitized = doParse(new DOMParser().parseFromString(sanitized, 'text/html').body.firstChild);
+        setContent(JSON.stringify(forDBSanitized));
+        console.log(forDBSanitized);
         document.querySelector('#preview_content').innerHTML = sanitized;
         sanitizedForTemp.current = sanitized;
-        // For debugging view
+        
         if (testResultRef.current) {
             testResultRef.current.textContent = rawHTML;
         }
@@ -137,11 +156,37 @@ export default function Write() {
     document.querySelector('#preview_content').innerHTML = sanitized;
   };
 
+  const handleImageUploadBefore = (files, info, uploadHandler) => {
+    const formData = new FormData();
+    formData.append('image', files[0]);
+
+    imageUploadMutation.mutate(formData, {
+      onSuccess: (data) => {
+        const imageUrl = data.data.url;
+        const response = {
+          result: [
+            {
+              url: imageUrl,
+              name: files[0].name,
+              size: files[0].size,
+            },
+          ],
+        };
+        uploadHandler(response);
+      },
+      onError: (error) => {
+        console.error('Image upload error:', error);
+        uploadHandler({ errorMessage: 'Image upload failed' });
+      },
+    });
+
+    return undefined;
+  };
+
   const tempSave = () => {
     localStorage.setItem('tmpWrite', sanitizedForTemp.current);
     setIsTempSavedVisible(true);
 
-    // Hide after 3 seconds
     setTimeout(() => {
       setIsTempSavedVisible(false);
     }, 3000);
@@ -161,6 +206,7 @@ export default function Write() {
           
           <div className='editor-container' style={{ marginBottom: '1em' }}>
             <SunEditor
+                onImageUploadBefore={handleImageUploadBefore}
                 lang={SUNEDITOR_LANG}
                 width="100%"
                 height="auto"
@@ -181,7 +227,8 @@ export default function Write() {
                     ],
                     imageFileInput: true,
                 }}
-                defaultValue="<p>Hi</p>"
+                placeholder='내용을 입력하세요'
+                
             />
           </div>
 

@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import SafeContent from "./safeContent";
+
 
 export default function Feed({ id, content, title, createdAt }) {
   // useEffect(() => {
@@ -17,7 +19,9 @@ export default function Feed({ id, content, title, createdAt }) {
           />
           <div className="feed-content">
             <h1 className="feed-title">{title}</h1>
-            <div className="feed-description" dangerouslySetInnerHTML={{ __html: content }}></div>
+            <div className="feed-description" >
+              <SafeContent content={content} />
+            </div>
             {/* <div
               className="feed-description"
               dangerouslySetInnerHTML={{ __html: content }}
