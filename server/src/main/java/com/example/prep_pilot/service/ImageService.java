@@ -49,7 +49,7 @@ public class ImageService {
                         .withCannedAcl(CannedAccessControlList.PublicRead)
         );
 
-        // S3 URL 반환
+        // S3에 저장된 URL 반환
         return s3Config.amazonS3Client().getUrl(bucket, uuidFileName).toString();
     }
 }

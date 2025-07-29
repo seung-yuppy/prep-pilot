@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package com.example.prep_pilot.entity;
 
 import jakarta.persistence.*;
@@ -31,37 +30,3 @@ public class Views {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }
-=======
-package com.example.prep_pilot.entity;
-
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
-
-@Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class Views {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Posts posts;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-}
->>>>>>> 78a8c82cf68a557acf96b9d28a2a05fac938836f
