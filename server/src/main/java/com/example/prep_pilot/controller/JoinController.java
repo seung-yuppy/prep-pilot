@@ -24,6 +24,7 @@ public class JoinController {
         this.joinService = joinService;
     }
 
+    // 회원가입
     @PostMapping("/join")
     public ResponseEntity<?> join(@Valid @RequestBody UserDto userDto, BindingResult bindingResult){
 
