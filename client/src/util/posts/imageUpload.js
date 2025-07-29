@@ -6,7 +6,7 @@ const onImageUpload = async (formData) => {
     const accessToken = localStorage.access;
     const response = await fetch(`${SERVER_URL}image/upload`, {
       method: "POST",
-      body: formData,
+      body: JSON.stringify({formData}),
     });
     const data = await response.json();
     return { response, data };
