@@ -55,11 +55,25 @@ public class PostsService {
         Posts target = postsRepository.findById(id).orElseThrow(() ->
                 new PostsNotFoundException(id)
         );
-        if(dto.getNickname().equals(user.getNickname()))
+        if(!dto.getNickname().equals(user.getNickname()))
             throw new PostsNotAuthorException(id);
         target.patch(dto);
         Posts updated = postsRepository.save(target);
 
         return PostsDto.toDto(updated);
+    }
+
+    public PostsDto deletePost(Long id, String username) {
+
+        User user = userRepository.findByUsername(username);
+        Posts target = postsRepository.findById(id).orElseThrow(() ->
+                new PostsNotFoundException(id)
+        );
+        if(!target.getUser().getNickname().equals(user.getNickname()))
+            throw new PostsNotAuthorException(id);
+
+        postsRepository.delete(target);
+
+        return PostsDto.toDto(target);
     }
 }
