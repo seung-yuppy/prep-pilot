@@ -15,6 +15,7 @@ const useLogIn = () => {
     },
     onError: (error) => {
       console.log("로그인 에러 발생", error);
+      alert(error.message || "로그인 중 문제가 발생했습니다.");
     }
   });
 };
