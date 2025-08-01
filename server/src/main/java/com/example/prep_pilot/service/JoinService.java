@@ -38,6 +38,13 @@ public class JoinService {
         return UserDto.toDto(newUser);
     }
 
+    public UserDto deleteUser(String username) {
+        User user = userRepository.findByUsername(username);
+        userRepository.delete(user);
+
+        return UserDto.toDto(user);
+    }
+
     public void checkDuplicateUsername(String username) {
         if (userRepository.existsByUsername(username)) {
             throw new DuplicateUsernameException("이미 사용중인 아이디입니다.");

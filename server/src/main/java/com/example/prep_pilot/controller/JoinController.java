@@ -1,12 +1,15 @@
 package com.example.prep_pilot.controller;
 
+import com.example.prep_pilot.dto.CustomUserDetails;
 import com.example.prep_pilot.dto.UserDto;
 import com.example.prep_pilot.service.JoinService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,5 +46,14 @@ public class JoinController {
         UserDto newUser = joinService.join(userDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    }
+
+    @DeleteMapping("/quit")
+    public ResponseEntity<UserDto> quit(@AuthenticationPrincipal CustomUserDetails userDetails){
+
+        String username = userDetails.getUsername();
+        UserDto deletedUser = joinService.deleteUser(username);
+
+        return ResponseEntity.status(HttpStatus.OK).body(deletedUser);
     }
 }
