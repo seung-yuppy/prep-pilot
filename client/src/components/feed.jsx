@@ -1,13 +1,7 @@
 import { Link } from "react-router-dom";
 import SafeContent from "./safeContent";
 
-
 export default function Feed({ id, content, title, createdAt }) {
-  // useEffect(() => {
-  //   document.querySelector(".feed-description").innerHTML = {content};
-    
-  // }, []);
-
   return (
     <>
       <Link to={`/post/${id}`}>
@@ -19,13 +13,9 @@ export default function Feed({ id, content, title, createdAt }) {
           />
           <div className="feed-content">
             <h1 className="feed-title">{title}</h1>
-            <div className="feed-description" >
+            <div className="feed-description">
               <SafeContent content={content} />
             </div>
-            {/* <div
-              className="feed-description"
-              dangerouslySetInnerHTML={{ __html: content }}
-            /> */}
             <div className="feed-info">
               <span className="info-date">{createdAt}</span>
               <span className="info-dot">•</span>
