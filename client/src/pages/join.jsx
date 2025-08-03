@@ -23,6 +23,7 @@ export default function Join() {
       setErrUsername("");
       setErrPassword("");
       setErrNickname("");
+      
       // 중복검사
       if (response.data.error === "이미 사용중인 아이디입니다.")
         setErrUsername(response.data.error);
@@ -60,67 +61,33 @@ export default function Join() {
 
   return (
     <>
-      <h2 className="login-title">✨회원가입</h2>
-      <form className="login-form" onSubmit={joining}>
-        <div className="input-username">
-          <input
-            type="text"
-            className="log-username"
-            name="username"
-            placeholder="UserName"
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <span className="alert-msg">{errUsername}</span>
-        <div className="input-password">
-          <input
-            type={showPw ? "text" : "password"}
-            className="log-password"
-            name="password"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={onShow}
-            className={showPw ? "pw-show-btn" : "pw-hide-btn"}
-          ></button>
-        </div>
-        <span className="alert-msg">{errPassword}</span>
-        <div className="input-username">
-          <input
-            type="email"
-            className="log-email"
-            name="email"
-            placeholder="E-Mail"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <span className="alert-msg">{errEmail}</span>
-        <div className="input-username">
-          <input
-            type="text"
-            className="log-name"
-            name="name"
-            placeholder="Name"
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-        <span className="alert-msg">{errName}</span>
-        <div className="input-username">
-          <input
-            type="text"
-            className="log-nickname"
-            name="nickname"
-            placeholder="NickName (a.k.a)"
-            onChange={(e) => setNickname(e.target.value)}
-          />
-        </div>
-        <span className="alert-msg">{errNickname}</span>
-        <button type="submit" className="join-btn">
-          회원가입
-        </button>
-      </form>
+      <div>
+        <h2 className="login-title">✨회원가입</h2>
+        <form className="login-form" onSubmit={joining}>
+          <div className="input-username">
+            <input type="text" className="log-username" name="username" placeholder="UserName" onChange={(e) => setUsername(e.target.value)} />  
+          </div>     
+          <span className="alert-msg">{errUsername}</span>
+          <div className="input-password">
+            <input type={showPw ? "text" : "password"} className="log-password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+            <button type="button" onClick={onShow} className={showPw ? "pw-show-btn":"pw-hide-btn"}></button>
+          </div>
+          <span className="alert-msg">{errPassword}</span>
+          <div className="input-username">
+            <input type="email" className="log-email" name="email" placeholder="E-Mail" onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <span className="alert-msg">{errEmail}</span>
+          <div className="input-username">
+            <input type="text" className="log-name" name="name" placeholder="Name" onChange={(e) => setName(e.target.value)} />
+          </div>
+          <span className="alert-msg">{errName}</span>
+          <div className="input-username">
+            <input type="text" className="log-nickname" name="nickname" placeholder="NickName (a.k.a)" onChange={(e) => setNickname(e.target.value)} />
+          </div>
+          <span className="alert-msg">{errNickname}</span>
+          <button type="submit" className="join-btn">회원가입</button>
+        </form>
+      </div>
     </>
   );
 }

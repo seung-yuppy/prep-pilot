@@ -4,9 +4,7 @@
 .feed-card {
   display: flex;
   flex-direction: column;
-  // width: 100%;
-  background-color: var(--color-background);
-  box-shadow: 5px 5px 3px 1px;
+  background-color: var(--color-card-background);
   transition: all 0.5s;
 
   .feed-thumnail {

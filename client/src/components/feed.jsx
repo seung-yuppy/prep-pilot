@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import SafeContent from "./safeContent";
 
-export default function Feed({ id, content, title, createdAt }) {
+export default function Feed({ id, content, title, createdAt, nickname }) {
   return (
     <>
       <Link to={`/post/${id}`}>
@@ -24,7 +24,7 @@ export default function Feed({ id, content, title, createdAt }) {
             <div className="feed-footer">
               <div className="footer-nickname">
                 <span className="nickname-by">By</span>
-                <span className="nickname-name">배고픈 둘리</span>
+                <span className="nickname-name">{nickname}</span>
               </div>
               <span className="footer-like">♥ 125</span>
             </div>

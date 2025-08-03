@@ -1,0 +1,145 @@
+@use "../base/" as *;
+@use "../abstracts/" as *;
+
+.post-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+  gap: 1.3rem;
+  width: 768px;
+
+  .post-title {
+    font-size: 5rem;
+    line-height: 1.5;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .post-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .post-header {
+      display: flex;
+      gap: 1rem;
+      font-size: 2.3rem;
+
+      .post-nickname {
+        font-weight: 700;
+      }
+    }
+
+    .post-follow {
+      background-color: var(--color-background);
+      border: 1px solid $main;
+      border-radius: 2rem;
+      padding: 0.7rem 3rem;
+      font-size: 1.7rem;
+      color: $main;
+    }
+  }
+
+  .post-decription {
+    font-size: 2rem;
+    margin: 1.5rem auto;
+    width: 100%;
+    text-align: left;
+  }
+
+  .content-comment-gap {
+    color: $gray1;
+    width: 100%;
+  }
+
+  .post-comment-container {
+    display: flex;
+    flex-direction: column;
+    margin: 1.5rem auto;
+    width: 100%;
+    text-align: left;
+
+    .post-comment-count {
+      font-size: 1.7rem;
+      font-weight: 700;
+    }
+
+    .post-comment-form {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.3rem;
+
+      .post-comment-input {
+        resize: none;
+        border: 1px solid $gray3;
+        padding: 1rem 1rem 1.5rem;
+        line-height: 1.5;
+        font-size: 1.7rem;
+        width: 100%;
+        min-height: 6.125rem;
+        background-color: var(--color-background);
+        color: var(--color-text);
+      }
+
+      .post-comment-btn-wrapper {
+        display: flex;
+        justify-content: flex-end;
+
+        .post-comment-btn {
+          display: inline-flex;
+          background-color: $main;
+          border: 1px solid $main;
+          border-radius: 0.7rem;
+          padding: 0.7rem 3rem;
+          font-size: 1.7rem;
+          color: $white;
+        }
+      }
+    }
+
+    // 댓글 리스트
+    .post-comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .post-comment-userInfo {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        .post-comment-userImage {
+          width: 5rem;
+          height: 5rem;
+          border-radius: 50%;
+        }
+
+        .post-comment-namedate {
+          display: flex;
+          flex-direction: column;
+          gap: 0.7rem;
+
+          .post-comment-name {
+            font-weight: bold;
+            font-size: 2rem;
+          }
+
+          .post-comment-date {
+            font-size: 1.7rem;
+            color: $gray3;
+          }
+        }
+      }
+
+      .post-comment-content-container {
+        .post-comment-content {
+          font-size: 2rem;
+          line-height: 1.3;
+        }
+      }
+    }
+  }
+}

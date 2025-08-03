@@ -4,6 +4,7 @@ import LogIn from "../pages/login";
 import useLogOut from "../service/user/useLogOut";
 import useModalStore from "../store/useModalStore";
 import Modal from "./modal";
+import { Link } from "react-router-dom";
 
 export default function Menubar() {
   const { isOpen, openModal, closeModal } = useModalStore();
@@ -25,9 +26,12 @@ export default function Menubar() {
     <>
       <nav className="menu-gnb">
         {localStorage.getItem("access") ? (
-          <button className="btn-log" onClick={onLogout}>
-            로그아웃
-          </button>
+          <>
+            <button className="btn-log" onClick={onLogout}>
+              로그아웃
+            </button>
+            <Link to={"/write"} className="btn-log">글쓰기</Link>
+          </>
         ) : (
           <button className="btn-log" onClick={() => openModal("login")}>
             로그인

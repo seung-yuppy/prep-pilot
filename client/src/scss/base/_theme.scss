@@ -2,12 +2,14 @@
 
 html[data-theme="light"] {
   --color-text: #{$black1};
-  --color-background: #{$bg-white3};
-  --color-modal-background: #{$white};
+  --color-background: #{$white};
+  --color-modal-background: #{$bg-white2};
+  --color-card-background: #{$bg-white};
 }
 
 html[data-theme="dark"] {
-  --color-text: #{$bg-white};
+  --color-text: #{$white};
   --color-background: #{$semi-black};
-  --color-modal-background: #{black1};
+  --color-modal-background: #{$black1};
+  --color-card-background: #{$gray1};
 }
