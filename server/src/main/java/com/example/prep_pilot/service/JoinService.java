@@ -8,6 +8,7 @@ import com.example.prep_pilot.exception.DuplicateUsernameException;
 import com.example.prep_pilot.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +23,8 @@ public class JoinService {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+
+    @Transactional
     public UserDto join(UserDto userDto) {
 
         User user = new User();
@@ -38,6 +41,7 @@ public class JoinService {
         return UserDto.toDto(newUser);
     }
 
+    @Transactional
     public UserDto deleteUser(String username) {
         User user = userRepository.findByUsername(username);
         userRepository.delete(user);

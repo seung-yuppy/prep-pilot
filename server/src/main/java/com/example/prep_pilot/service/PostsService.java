@@ -10,6 +10,7 @@ import com.example.prep_pilot.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostsService {
@@ -40,6 +41,7 @@ public class PostsService {
         return PostsDto.toDto(posts);
     }
 
+    @Transactional
     public PostsDto createPost(PostsDto dto, String username) {
 
         User user = userRepository.findByUsername(username);
@@ -49,6 +51,7 @@ public class PostsService {
         return PostsDto.toDto(created);
     }
 
+    @Transactional
     public PostsDto patchPost(PostsDto dto, Long id, String username) {
 
         User user = userRepository.findByUsername(username);
@@ -63,6 +66,7 @@ public class PostsService {
         return PostsDto.toDto(updated);
     }
 
+    @Transactional
     public PostsDto deletePost(Long id, String username) {
 
         User user = userRepository.findByUsername(username);
