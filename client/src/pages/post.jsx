@@ -1,10 +1,34 @@
 import { useParams } from "react-router-dom";
 import useGetPost from "../service/post/useGetPost";
 import SafeContent from "../components/safeContent";
+import useGetComments from "../service/comment/useGetComments";
+import { useState } from "react";
+import usePostComment from "../service/comment/usePostComment";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Post() {
+  const queryClient = useQueryClient();
   const { id } = useParams();
   const { data: post } = useGetPost(id);
+  const { data: comments } = useGetComments(id);
+  const [commentText, setCommentText] = useState("");
+  const commentMutation = usePostComment(id, {
+    onSuccess: () => {
+      alert("댓글을 작성하였습니다.");
+      setCommentText("");
+      queryClient.invalidateQueries({
+        queryKey: ["comments", id], // 이 키는 useGetComments에서 정의한 key와 같아야 함!
+      });
+    },
+    onError: (error) => {
+      console.error("댓글 작성 오류", error);
+    },
+  });
+
+  const onCreateComment = async (e) => {
+    e.preventDefault();
+    commentMutation.mutate({ content: commentText });
+  };
 
   return (
     <>
@@ -25,13 +49,17 @@ export default function Post() {
         </div>
         <hr className="content-comment-gap" />
         <div className="post-comment-container">
-          <span className="post-comment-count">4개의 댓글</span>
-          <form className="post-comment-form">
+          <span className="post-comment-count">
+            {comments?.length}개의 댓글
+          </span>
+          <form className="post-comment-form" onSubmit={onCreateComment}>
             <textarea
               type="text"
               name="comment"
               placeholder="댓글을 작성하세요"
               className="post-comment-input"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
             />
             <div className="post-comment-btn-wrapper">
               <button type="submit" className="post-comment-btn">
@@ -40,16 +68,28 @@ export default function Post() {
             </div>
           </form>
           <div className="post-comment-list">
-            <div className="post-comment-userInfo"> 
-              <img src="https://velog.velcdn.com/images/seolist/profile/50631e3e-ac81-416d-b293-5e758621f980/social_profile.jpeg" alt="프로필 이미지 없음" className="post-comment-userImage" />
-              <div className="post-comment-namedate">
-                <span className="post-comment-name">fashion361</span>
-                <span className="post-comment-date">2025년 8월 3일</span>
-              </div>
-            </div>
-            <div className="post-comment-content-container">
-              <span className="post-comment-content">스크롤 기반 CSS 애니메이션은 이제 animation-timeline 속성 덕분에 몇 줄의 코드만으로도 구현 가능하며, Safari 26 베타부터 지원됩니다. 타겟, 키프레임, 타임라인 세 요소를 활용해 사용자 스크롤에 반응하는 인터랙티브한 효과를 만들 수 있어 웹 디자인의 표현력이 크게 향상됩니다.</span>
-            </div>
+            {comments?.map((comment) => (
+              <>
+                <div className="post-comment-userInfo">
+                  <img
+                    src="https://velog.velcdn.com/images/seolist/profile/50631e3e-ac81-416d-b293-5e758621f980/social_profile.jpeg"
+                    alt="프로필 이미지 없음"
+                    className="post-comment-userImage"
+                  />
+                  <div className="post-comment-namedate">
+                    <span className="post-comment-name">{comment.id}</span>
+                    <span className="post-comment-date">
+                      {comment.createdAt}
+                    </span>
+                  </div>
+                </div>
+                <div className="post-comment-content-container">
+                  <span className="post-comment-content">
+                    {comment.content}
+                  </span>
+                </div>
+              </>
+            ))}
           </div>
         </div>
       </div>
