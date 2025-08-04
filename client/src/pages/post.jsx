@@ -16,8 +16,10 @@ export default function Post() {
     onSuccess: () => {
       alert("댓글을 작성하였습니다.");
       setCommentText("");
+      // 새로운 comment 추가 후, commentList를 불러오기 위한 
+      // 리액트 쿼리에서의 캐시 무효화 후 refetch 방식
       queryClient.invalidateQueries({
-        queryKey: ["comments", id], // 이 키는 useGetComments에서 정의한 key와 같아야 함!
+        queryKey: ["comments", id], 
       });
     },
     onError: (error) => {
@@ -27,7 +29,10 @@ export default function Post() {
 
   const onCreateComment = async (e) => {
     e.preventDefault();
-    commentMutation.mutate({ content: commentText });
+    if(!(commentText.trim())) 
+      alert("댓글을 입력하세요!");
+    else
+      commentMutation.mutate({ content: commentText });
   };
 
   return (
