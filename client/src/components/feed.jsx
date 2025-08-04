@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import SafeContent from "./safeContent";
+import PreviewContent from "./previewContent";
 
 export default function Feed({ id, content, title, createdAt, nickname }) {
   return (
@@ -12,9 +12,9 @@ export default function Feed({ id, content, title, createdAt, nickname }) {
             className="feed-thumnail"
           />
           <div className="feed-content">
-            <h1 className="feed-title">{title}</h1>
+            <h1 className="feed-title">{title.length > 10 ? title.slice(0, 14) + "..." : title}</h1>
             <div className="feed-description">
-              <SafeContent content={content} />
+              <PreviewContent content={content} />
             </div>
             <div className="feed-info">
               <span className="info-date">{createdAt}</span>
