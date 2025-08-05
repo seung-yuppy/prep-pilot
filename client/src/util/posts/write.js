@@ -62,7 +62,27 @@ export function jsonToJsx(node, key = 0) {
 
   const props = Object.entries(attributes).reduce(
     (acc, [k, v]) => {
-      acc[k === 'class' ? 'className' : k] = v;
+      if (k === 'class') {
+        acc.className = v;
+      } else if (k === 'style') {
+        if (typeof v === 'string') {
+          // style 문자열을 객체로 변환
+          acc.style = v.split(';').reduce((styleAcc, style) => {
+            const [key, value] = style.split(':').map(s => s.trim());
+            if (key && value) {
+              // CSS 속성명을 camelCase로 변환 (예: font-size -> fontSize)
+              const camelKey = key.replace(/-([a-z])/g, g => g[1].toUpperCase());
+              styleAcc[camelKey] = value;
+            }
+            return styleAcc;
+          }, {});
+        } else {
+          // 문자열이 아니면 그대로 사용 (이미 객체일 수 있음)
+          acc.style = v;
+        }
+      } else {
+        acc[k] = v;
+      }
       return acc;
     },
     { key }
