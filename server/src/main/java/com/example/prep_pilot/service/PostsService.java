@@ -5,6 +5,7 @@ import com.example.prep_pilot.entity.Posts;
 import com.example.prep_pilot.entity.User;
 import com.example.prep_pilot.exception.PostsNotAuthorException;
 import com.example.prep_pilot.exception.PostsNotFoundException;
+import com.example.prep_pilot.repository.CommentRepository;
 import com.example.prep_pilot.repository.PostsRepository;
 import com.example.prep_pilot.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -17,11 +18,13 @@ public class PostsService {
 
     private final PostsRepository postsRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
-    public PostsService(PostsRepository postsRepository, UserRepository userRepository){
+    public PostsService(PostsRepository postsRepository, UserRepository userRepository, CommentRepository commentRepository){
 
         this.postsRepository = postsRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     public Page<PostsDto> getRecentPosts(int page, int pageSize) {

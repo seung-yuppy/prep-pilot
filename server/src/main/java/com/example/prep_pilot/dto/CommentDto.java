@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +24,14 @@ public class CommentDto {
     private List<CommentDto> children = new ArrayList<>();
     private String content;
     private Boolean isDeleted;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
     private Long userId;
 
     public static CommentDto toDto(Comment c) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일");
+        String updatedAtStr = c.getUpdatedAt() != null ? c.getUpdatedAt().format(formatter) : null;
 
         return new CommentDto(
                 c.getId(),
@@ -36,8 +40,8 @@ public class CommentDto {
                 new ArrayList<>(),
                 c.getContent(),
                 c.getIsDeleted(),
-                c.getCreatedAt(),
-                c.getUpdatedAt(),
+                c.getCreatedAt().format(formatter),
+                updatedAtStr,
                 c.getUser().getId()
         );
     }
