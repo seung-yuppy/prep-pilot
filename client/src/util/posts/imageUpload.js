@@ -1,12 +1,17 @@
 import SERVER_URL from "../../constant/url";
 
+const onImageUpload = async (file) => {
+  const formData = new FormData();
+  formData.append('upload', file, file.name);
 
-const onImageUpload = async (formData) => {
   try {
     const accessToken = localStorage.access;
     const response = await fetch(`${SERVER_URL}image/upload`, {
       method: "POST",
-      body: JSON.stringify({formData}),
+      headers: {
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+      },
+      body: formData,
     });
     const data = await response.json();
     return { response, data };
@@ -17,3 +22,4 @@ const onImageUpload = async (formData) => {
 }
 
 export default onImageUpload;
+

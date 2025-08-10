@@ -8,6 +8,8 @@ import useWrite from "../service/posts/useWrite";
 import { doParse } from "../util/posts/write";
 //import useModalStore from "../store/useModalStore";
 
+import Popup from '../components/Popup';
+
 export default function Write() {
   const [isTempSavedVisible, setIsTempSavedVisible] = useState(false);
   const [title, setTitle] = useState("");
@@ -29,9 +31,9 @@ export default function Write() {
 
   const writeMutation = useWrite({
     onSuccess: (response) => {
-      if(response.response.status === 201) {
-        alert("글쓰기 완료");
-        //closeModal("write");
+      if(response.response.status === 201 || response.response.status === 200) {
+        //alert("글쓰기 완료");
+        navigate('/');
       }
     },
     onError: (error) => {
@@ -54,8 +56,41 @@ export default function Write() {
 
   const writing = async (e) => {
     e.preventDefault();
-    console.log(content);
-    writeMutation.mutate({ title, content, slug, is_private  });
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(sanitizedForTemp.current, 'text/html');
+    const images = Array.from(doc.querySelectorAll('img[src^="data:image"]'));
+
+    if (images.length > 0) {
+      const uploadPromises = images.map(async (img) => {
+        const base64Data = img.src;
+        const response = await fetch(base64Data);
+        const blob = await response.blob();
+        const file = new File([blob], "image.png", { type: blob.type });
+
+        return imageUploadMutation.mutateAsync(file);
+      });
+
+      try {
+        const results = await Promise.all(uploadPromises);
+        results.forEach((data, index) => {
+          if (data.response.ok) {
+            images[index].src = data.data.url;
+          } else {
+            console.error('Image upload failed');
+          }
+        });
+      } catch (error) {
+        console.error('Image upload error:', error);
+        return; // Stop execution if any upload fails
+      }
+    }
+
+    const updatedHtml = doc.body.innerHTML;
+    const forDBSanitized = doParse(new DOMParser().parseFromString(updatedHtml, 'text/html').body);
+    const finalContent = JSON.stringify(forDBSanitized);
+
+    writeMutation.mutate({ title, content: finalContent, slug, is_private });
   };
 
   
@@ -157,43 +192,42 @@ export default function Write() {
   };
 
   const handleImageUploadBefore = (files, info, uploadHandler) => {
-    const formData = new FormData();
-    formData.append('file', files[0]);
-
-    imageUploadMutation.mutate(formData, {
-      onSuccess: (data) => {
-        if (data.response.ok) {
-          const responseData = data.data;
-          const response = {
+    const file = files?.[0];
+    if (!file) {
+      uploadHandler({ errorMessage: "No file selected" });
+      return;
+    }
+  
+    // mutationFn should accept a File and do formData.append('upload', file, file.name)
+    imageUploadMutation.mutate(file, {
+      onSuccess: ({ data }) => {
+        if (data?.uploaded && data?.url) {
+          uploadHandler({
             result: [
               {
-                url: responseData.url,
-                name: files[0].name,
-                size: files[0].size,
+                url: data.url,       // S3 public URL from backend
+                name: file.name,
+                size: file.size,
               },
             ],
-          };
-          uploadHandler(response);
+          });
         } else {
-          uploadHandler({ errorMessage: 'Image upload failed' });
+          uploadHandler({ errorMessage: "Image upload failed" });
         }
       },
       onError: (error) => {
-        console.error('Image upload error:', error);
-        uploadHandler({ errorMessage: 'Image upload failed' });
+        console.error("Image upload error:", error);
+        uploadHandler({ errorMessage: "Image upload failed" });
       },
     });
-
+  
+    // Let SunEditor wait for uploadHandler to be called
     return undefined;
   };
 
   const tempSave = () => {
     localStorage.setItem('tmpWrite', sanitizedForTemp.current);
     setIsTempSavedVisible(true);
-
-    setTimeout(() => {
-      setIsTempSavedVisible(false);
-    }, 3000);
   }
 
 
@@ -203,7 +237,7 @@ export default function Write() {
         <form className="write-form" onSubmit={writing}>
           <div>
             <input id='write_title' type='text' name='title' placeholder='제목을 입력하세요' onChange={(e) => setTitle(e.target.value)} onKeyUp={(e) => handleTitle(e.target.value)}></input>
-            <input id='write_tag' type='text' name='tag' placeholder='태그를 입력하세요'></input>
+            <input class='write-tag' type='text' name='tag' placeholder='태그를 입력하세요'></input>
             <input type="hidden" name="slug" value={slug} />
             <input type="hidden" name="is_private" value={is_private} />
           </div>
@@ -236,9 +270,12 @@ export default function Write() {
             />
           </div>
 
-          <div className='pop-up-temp' style={{ display: isTempSavedVisible ? 'block' : 'none' }}>
-            <p>포스트가 임시저장되었습니다.</p>
-          </div>
+          <Popup
+            content="포스트가 임시저장되었습니다."
+            color="#4CAF50"
+            visible={isTempSavedVisible}
+            onClose={() => setIsTempSavedVisible(false)}
+          />
           <div className='button-container'>
             <div className='left'>
               <button type='button' className='go-back-button' onClick={() => navigate('/')}>&lt;- 나가기</button>
