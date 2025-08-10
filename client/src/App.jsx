@@ -1,13 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, lazy } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Write from "./pages/write.jsx";
-import BaseLayout from "./layout/baseLayout.jsx";
 
+const BaseLayout = lazy(() => import("./layout/baseLayout.jsx"));
 const Home = lazy(() => import("./pages/home.jsx"));
-const Join = lazy(() => import("./pages/join.jsx"));
-const LogIn = lazy(() => import("./pages/login.jsx"));
+const Write = lazy(() => import("./pages/write.jsx"));
 const Post = lazy(() => import("./pages/post.jsx"));
+const MyPage = lazy(() => import("./pages/mypage.jsx"));
+
 
 function App() {
   const router = createBrowserRouter([
@@ -19,14 +19,6 @@ function App() {
           path: "",
           element: <Home />
         },
-        // {
-        //   path: "/join",
-        //   element: <Join />
-        // },
-        // {
-        //   path: "/login",
-        //   element: <LogIn />
-        // },
         {
           path: "/write",
           element: <Write />
@@ -34,6 +26,10 @@ function App() {
         {
           path: "/post/:id",
           element: <Post />
+        },
+        {
+          path: "/mypage",
+          element: <MyPage />
         }
       ]
     }

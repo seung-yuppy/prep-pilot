@@ -1,25 +1,20 @@
-import { useState } from "react";
 import Join from "../pages/join";
 import LogIn from "../pages/login";
 import useLogOut from "../service/user/useLogOut";
 import useModalStore from "../store/useModalStore";
 import Modal from "./modal";
 import { Link } from "react-router-dom";
+import useThemeStore from "../store/useThemeStore";
 
 export default function Menubar() {
   const { isOpen, openModal, closeModal } = useModalStore();
   const logOutMutation = useLogOut();
-  const [theme, setTheme] = useState("light");
+  const { theme, toggleTheme } = useThemeStore();
+  // const [theme, setTheme] = useState("light");
 
   const onLogout = async (e) => {
     e.preventDefault();
     logOutMutation.mutate();
-  };
-
-  const onToggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    setTheme(next);
   };
 
   return (
@@ -31,6 +26,7 @@ export default function Menubar() {
               로그아웃
             </button>
             <Link to={"/write"} className="btn-log">글쓰기</Link>
+            <Link to={"/mypage"} className="btn-log">마이페이지</Link>
           </>
         ) : (
           <button className="btn-log" onClick={() => openModal("login")}>
@@ -42,7 +38,7 @@ export default function Menubar() {
             회원가입
           </button>
         )}
-        <button className="btn-theme" onClick={onToggleTheme}>
+        <button className="btn-theme" onClick={toggleTheme}>
           {theme === "dark" ? "🌙" : "☀️"}
         </button>
       </nav>
