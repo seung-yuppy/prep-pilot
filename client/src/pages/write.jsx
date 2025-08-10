@@ -11,15 +11,44 @@ import { doParse } from "../util/posts/write";
 import Popup from '../components/Popup';
 
 export default function Write() {
-  const [isTempSavedVisible, setIsTempSavedVisible] = useState(false);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [popupContent, setPopupContent] = useState("");
+  const [popupColor, setPopupColor] = useState("#4CAF50");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [slug, setSlug] = useState("");
+  const [initialContent, setInitialContent] = useState("");
+  const [tag, setTag] = useState("");
   const [is_private, setIsPrivate] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('tmpWrite');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        setTitle(parsedData.title);
+        setTag(parsedData.tag);
+        setInitialContent(parsedData.content);
+        document.querySelector('#preview_title').textContent = parsedData.title;
+      } catch (error) {
+        // Handle old data format (raw HTML string)
+        setInitialContent(savedData);
+      }
+    }
+  }, []);
   //const [user_id, setUserId] = useState(0);
   //const { closeModal } = useModalStore();
   const sanitizedForTemp = useRef("");
+
+  useEffect(() => {
+    if (initialContent && editorRef.current) {
+      editorRef.current.setContents(initialContent);
+      document.querySelector('#preview_content').innerHTML = initialContent;
+      handleChange(initialContent);
+    }
+  }, [initialContent]);
+
   useEffect(() => {
     setSlug(`/${title}`);
     setIsPrivate(false);
@@ -28,12 +57,17 @@ export default function Write() {
 
   const testResultRef = useRef(null);
   const sanitisedResultRef = useRef(null);
+  const editorRef = useRef(null);
 
   const writeMutation = useWrite({
     onSuccess: (response) => {
       if(response.response.status === 201 || response.response.status === 200) {
-        //alert("글쓰기 완료");
+        setPopupContent("글쓰기 성공!");
+        setPopupColor("blue");
+        setIsPopupVisible(true);
+        localStorage.removeItem('tmpWrite');
         navigate('/');
+        
       }
     },
     onError: (error) => {
@@ -226,8 +260,15 @@ export default function Write() {
   };
 
   const tempSave = () => {
-    localStorage.setItem('tmpWrite', sanitizedForTemp.current);
-    setIsTempSavedVisible(true);
+    const dataToSave = {
+      title,
+      tag,
+      content: sanitizedForTemp.current,
+    };
+    localStorage.setItem('tmpWrite', JSON.stringify(dataToSave));
+    setPopupContent("포스트가 임시저장되었습니다.");
+    setPopupColor("#4CAF50");
+    setIsPopupVisible(true);
   }
 
 
@@ -236,14 +277,15 @@ export default function Write() {
       <div className="write-editor">
         <form className="write-form" onSubmit={writing}>
           <div>
-            <input id='write_title' type='text' name='title' placeholder='제목을 입력하세요' onChange={(e) => setTitle(e.target.value)} onKeyUp={(e) => handleTitle(e.target.value)}></input>
-            <input class='write-tag' type='text' name='tag' placeholder='태그를 입력하세요'></input>
+            <input id='write_title' type='text' name='title' placeholder='제목을 입력하세요' onChange={(e) => setTitle(e.target.value)} onKeyUp={(e) => handleTitle(e.target.value)} value={title}></input>
+            <input className='write-tag' type='text' name='tag' placeholder='태그를 입력하세요' onChange={(e) => setTag(e.target.value)} value={tag}></input>
             <input type="hidden" name="slug" value={slug} />
             <input type="hidden" name="is_private" value={is_private} />
           </div>
           
           <div className='editor-container' style={{ marginBottom: '1em' }}>
             <SunEditor
+                getSunEditorInstance={(sunEditor) => { editorRef.current = sunEditor; }}
                 onImageUploadBefore={handleImageUploadBefore}
                 lang={SUNEDITOR_LANG}
                 width="100%"
@@ -271,10 +313,10 @@ export default function Write() {
           </div>
 
           <Popup
-            content="포스트가 임시저장되었습니다."
-            color="#4CAF50"
-            visible={isTempSavedVisible}
-            onClose={() => setIsTempSavedVisible(false)}
+            content={popupContent}
+            color={popupColor}
+            visible={isPopupVisible}
+            onClose={() => setIsPopupVisible(false)}
           />
           <div className='button-container'>
             <div className='left'>
