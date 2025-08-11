@@ -60,6 +60,11 @@ export function jsonToJsx(node, key = 0) {
     return null;
   }
 
+  // If the tag is 'body', render its children directly to avoid hydration errors
+  if (tag === 'body') {
+    return React.createElement(React.Fragment, null, ...children.map((child, idx) => jsonToJsx(child, idx)).filter(Boolean));
+  }
+
   const props = Object.entries(attributes).reduce(
     (acc, [k, v]) => {
       if (k === 'class') {
