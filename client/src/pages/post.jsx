@@ -11,6 +11,7 @@ export default function Post() {
   const { id } = useParams();
   const { data: post } = useGetPost(id);
   const { data: comments } = useGetComments(id);
+  console.log(comments);
   const [commentText, setCommentText] = useState("");
   const commentMutation = usePostComment(id, {
     onSuccess: () => {
@@ -82,7 +83,7 @@ export default function Post() {
                     className="post-comment-userImage"
                   />
                   <div className="post-comment-namedate">
-                    <span className="post-comment-name">{comment.id}</span>
+                    <span className="post-comment-name">{comment.nickname}</span>
                     <span className="post-comment-date">
                       {comment.createdAt}
                     </span>
