@@ -8,9 +8,6 @@ const onImageUpload = async (file) => {
     const accessToken = localStorage.access;
     const response = await fetch(`${SERVER_URL}image/upload`, {
       method: "POST",
-      headers: {
-        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
-      },
       body: formData,
     });
     const data = await response.json();
