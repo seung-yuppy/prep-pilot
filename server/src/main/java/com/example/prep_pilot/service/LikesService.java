@@ -48,4 +48,9 @@ public class LikesService {
 
         return getLikesNum(postsId);
     }
+
+    public Boolean isLikePushed(String username, Long postsId) {
+
+        return likesRepository.existsByUserUsernameAndPostsId(username, postsId);
+    }
 }

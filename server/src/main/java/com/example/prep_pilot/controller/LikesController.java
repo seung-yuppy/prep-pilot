@@ -20,6 +20,17 @@ public class LikesController {
         this.likesService = likesService;
     }
 
+    // 내가 좋아요 중인지
+    @GetMapping("/{postsId}/isLike")
+    public ResponseEntity<Boolean> isLike(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                          @PathVariable Long postsId){
+
+        String username = userDetails.getUsername();
+        Boolean isLike = likesService.isLikePushed(username, postsId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(isLike);
+    }
+
     // 해당 id 포스트 좋아요 개수
     @GetMapping("/{postsId}/likes")
     public ResponseEntity<Long> getLikesNum(@PathVariable Long postsId){

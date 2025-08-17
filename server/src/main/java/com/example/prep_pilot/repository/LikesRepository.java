@@ -16,6 +16,8 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
 
     Optional<Likes> findByPostsAndUser(Posts posts, User user);
 
+    Boolean existsByUserUsernameAndPostsId(String username, Long id);
+
     @Query("SELECT v.posts FROM Likes v WHERE v.user.username = :username ORDER BY v.createdAt DESC")
     Page<Posts> findPostsByUserUsernameOrderByCreatedAtDesc(String username, Pageable pageable);
 }
