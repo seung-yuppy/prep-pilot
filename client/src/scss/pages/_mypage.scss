@@ -54,6 +54,7 @@
   }
   .follow-btn {
     display: flex;
+    gap: 2.3rem;
     justify-content: flex-end;
 
     .post-follow {
@@ -63,6 +64,15 @@
       padding: 0.7rem 3rem;
       font-size: 1.7rem;
       color: $main;
+    }
+
+    .post-edit {
+      background-color: var(--color-background);
+      border: 1px solid $gray2;
+      border-radius: 2rem;
+      padding: 0.7rem 3rem;
+      font-size: 1.7rem;
+      color: $gray2;
     }
   }
 

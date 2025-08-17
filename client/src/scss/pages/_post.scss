@@ -30,14 +30,27 @@
         font-weight: 700;
       }
     }
+    .post-btn-container {
+      display: flex;
+      gap: 2.3rem;
 
-    .post-follow {
-      background-color: var(--color-background);
-      border: 1px solid $main;
-      border-radius: 2rem;
-      padding: 0.7rem 3rem;
-      font-size: 1.7rem;
-      color: $main;
+      .post-follow {
+        background-color: var(--color-background);
+        border: 1px solid $main;
+        border-radius: 2rem;
+        padding: 0.7rem 3rem;
+        font-size: 1.7rem;
+        color: $main;
+      }
+
+      .post-like {
+        background-color: var(--color-background);
+        border: 1px solid $red;
+        border-radius: 2rem;
+        padding: 0.7rem 3rem;
+        font-size: 1.7rem;
+        color: $red;
+      }
     }
   }
 

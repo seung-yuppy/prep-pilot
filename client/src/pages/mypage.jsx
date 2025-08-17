@@ -30,6 +30,9 @@ export default function MyPage() {
           </h2>
         </div>
         <div className="follow-btn">
+          <button type="button" className="post-edit">
+            정보 수정
+          </button>
           <button type="button" className="post-follow">
             팔로우
           </button>

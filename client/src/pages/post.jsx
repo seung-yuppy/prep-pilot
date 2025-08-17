@@ -5,14 +5,15 @@ import useGetComments from "../service/comment/useGetComments";
 import { useState } from "react";
 import usePostComment from "../service/comment/usePostComment";
 import { useQueryClient } from "@tanstack/react-query";
+import usePostLikePost from "../service/post/usePostLikePose";
 
 export default function Post() {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const { data: post } = useGetPost(id);
   const { data: comments } = useGetComments(id);
-  console.log(comments);
   const [commentText, setCommentText] = useState("");
+  const likePostMutation = usePostLikePost(id);
   const commentMutation = usePostComment(id, {
     onSuccess: () => {
       alert("댓글을 작성하였습니다.");
@@ -36,6 +37,10 @@ export default function Post() {
       commentMutation.mutate({ content: commentText });
   };
 
+  const onLikePost = () => {
+    likePostMutation.mutate();
+  } 
+
   return (
     <>
       <div className="post-content">
@@ -46,9 +51,14 @@ export default function Post() {
             <span className="post-dot">•</span>
             <span className="post-date">{post?.createdAt}</span>
           </div>
-          <button type="button" className="post-follow">
-            팔로우
-          </button>
+          <div className="post-btn-container">
+            <button type="button" className="post-like" onClick={onLikePost}>
+              ♥ 좋아요
+            </button>
+            <button type="button" className="post-follow">
+              팔로우
+            </button>
+          </div>
         </div>
         <div className="post-decription">
           <SafeContent content={post?.content} />
