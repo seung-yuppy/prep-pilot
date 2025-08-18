@@ -117,4 +117,17 @@ public class PostsService {
             return dto;
         });
     }
+
+    public Page<PostsDto> getMyPosts(int page, int pageSize, String username) {
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        Page<Posts> postsPage = postsRepository.findByUserUsernameOrderByCreatedAtDesc(username, pageRequest);
+
+        return postsPage.map(posts -> {
+            PostsDto dto = PostsDto.toDto(posts);
+            dto.setCommentCounts((long) commentRepository.findByPostsId(dto.getId()).size());
+            dto.setLikesCounts(likesRepository.countByPostsId(dto.getId()));
+            return dto;
+        });
+    }
 }

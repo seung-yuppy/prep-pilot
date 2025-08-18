@@ -90,4 +90,16 @@ public class PostsController {
 
         return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }
+
+    // 내가 쓴 글 목록
+    @GetMapping("/posts/my")
+    public ResponseEntity<Page<PostsDto>> getMyPosts(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                     @RequestParam(defaultValue = "0") int page){
+
+        int pageSize = 12;
+        String username = userDetails.getUsername();
+        Page<PostsDto> dtoPage = postsService.getMyPosts(page, pageSize, username);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
 }
