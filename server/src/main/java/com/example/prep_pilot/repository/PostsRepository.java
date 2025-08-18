@@ -8,15 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostsRepository extends JpaRepository<Posts, Long> {
 
-    Page<Posts> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    Page<Posts> findAllByIsPrivateFalseOrderByCreatedAtDesc(Pageable pageable);
 
     Page<Posts> findByUserUsernameOrderByCreatedAtDesc(String username, Pageable pageable);
 
-    Page<Posts> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+    Page<Posts> findByTitleContainingIgnoreCaseAndIsPrivateFalse(String title, Pageable pageable);
 
-    Page<Posts> findByUserNicknameIgnoreCase(String nickname, Pageable pageable);
+    Page<Posts> findByUserNicknameIgnoreCaseAndIsPrivateFalse(String nickname, Pageable pageable);
 
-    Page<Posts> findByContentContainingIgnoreCase(String content, Pageable pageable);
-
-    Page<Posts> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(String title, String content, Pageable pageable);
+    Page<Posts> findByContentContainingIgnoreCaseAndIsPrivateFalse(String content, Pageable pageable);
 }

@@ -136,5 +136,4 @@ public class PostsController {
         return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }
 
-    // 제목 + 내용으로 글 검색
 }

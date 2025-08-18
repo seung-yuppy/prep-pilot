@@ -33,7 +33,7 @@ public class PostsService {
     public Page<PostsDto> getRecentPosts(int page, int pageSize) {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize);
-        Page<Posts> postsPage = postsRepository.findAllByOrderByCreatedAtDesc(pageRequest);
+        Page<Posts> postsPage = postsRepository.findAllByIsPrivateFalseOrderByCreatedAtDesc(pageRequest);
 
         return postsPage.map(posts -> {
             PostsDto dto = PostsDto.toDto(posts);
@@ -134,7 +134,7 @@ public class PostsService {
     public Page<PostsDto> getPostsByTitle(int page, int pageSize, String title) {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize);
-        Page<Posts> postsPage = postsRepository.findByTitleContainingIgnoreCase(title, pageRequest);
+        Page<Posts> postsPage = postsRepository.findByTitleContainingIgnoreCaseAndIsPrivateFalse(title, pageRequest);
 
         return postsPage.map(posts -> {
             PostsDto dto = PostsDto.toDto(posts);
@@ -147,7 +147,7 @@ public class PostsService {
     public Page<PostsDto> getPostsByNickname(int page, int pageSize, String nickname) {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize);
-        Page<Posts> postsPage = postsRepository.findByUserNicknameIgnoreCase(nickname, pageRequest);
+        Page<Posts> postsPage = postsRepository.findByUserNicknameIgnoreCaseAndIsPrivateFalse(nickname, pageRequest);
 
         return postsPage.map(posts -> {
             PostsDto dto = PostsDto.toDto(posts);
@@ -160,7 +160,7 @@ public class PostsService {
     public Page<PostsDto> getPostsByContent(int page, int pageSize, String content) {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize);
-        Page<Posts> postsPage = postsRepository.findByContentContainingIgnoreCase(content, pageRequest);
+        Page<Posts> postsPage = postsRepository.findByContentContainingIgnoreCaseAndIsPrivateFalse(content, pageRequest);
 
         return postsPage.map(posts -> {
             PostsDto dto = PostsDto.toDto(posts);
