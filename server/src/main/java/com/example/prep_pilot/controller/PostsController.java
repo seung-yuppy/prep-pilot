@@ -102,4 +102,39 @@ public class PostsController {
 
         return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }
+
+    // 제목으로 글 검색
+    @GetMapping(value = "/posts/search", params = "title")
+    public ResponseEntity<Page<PostsDto>> postsSearchByTitle(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(required = false) String title){
+
+        int pageSize = 12;
+        Page<PostsDto> dtoPage = postsService.getPostsByTitle(page, pageSize, title);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
+
+    // 닉네임으로 글 검색
+    @GetMapping(value = "/posts/search", params = "nickname")
+    public ResponseEntity<Page<PostsDto>> postsSearchByNickname(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(required = false) String nickname){
+
+        int pageSize = 12;
+        Page<PostsDto> dtoPage = postsService.getPostsByNickname(page, pageSize, nickname);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
+
+    // 내용으로 글 검색
+    @GetMapping(value = "/posts/search", params = "content")
+    public ResponseEntity<Page<PostsDto>> postsSearchByContent(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(required = false) String content){
+
+        int pageSize = 12;
+        Page<PostsDto> dtoPage = postsService.getPostsByContent(page, pageSize, content);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
+
+    // 제목 + 내용으로 글 검색
 }

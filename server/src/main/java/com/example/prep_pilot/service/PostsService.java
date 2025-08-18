@@ -130,4 +130,43 @@ public class PostsService {
             return dto;
         });
     }
+
+    public Page<PostsDto> getPostsByTitle(int page, int pageSize, String title) {
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        Page<Posts> postsPage = postsRepository.findByTitleContainingIgnoreCase(title, pageRequest);
+
+        return postsPage.map(posts -> {
+            PostsDto dto = PostsDto.toDto(posts);
+            dto.setCommentCounts((long) commentRepository.findByPostsId(dto.getId()).size());
+            dto.setLikesCounts(likesRepository.countByPostsId(dto.getId()));
+            return dto;
+        });
+    }
+
+    public Page<PostsDto> getPostsByNickname(int page, int pageSize, String nickname) {
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        Page<Posts> postsPage = postsRepository.findByUserNicknameIgnoreCase(nickname, pageRequest);
+
+        return postsPage.map(posts -> {
+            PostsDto dto = PostsDto.toDto(posts);
+            dto.setCommentCounts((long) commentRepository.findByPostsId(dto.getId()).size());
+            dto.setLikesCounts(likesRepository.countByPostsId(dto.getId()));
+            return dto;
+        });
+    }
+
+    public Page<PostsDto> getPostsByContent(int page, int pageSize, String content) {
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        Page<Posts> postsPage = postsRepository.findByContentContainingIgnoreCase(content, pageRequest);
+
+        return postsPage.map(posts -> {
+            PostsDto dto = PostsDto.toDto(posts);
+            dto.setCommentCounts((long) commentRepository.findByPostsId(dto.getId()).size());
+            dto.setLikesCounts(likesRepository.countByPostsId(dto.getId()));
+            return dto;
+        });
+    }
 }
