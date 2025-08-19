@@ -1,8 +1,9 @@
 package com.example.prep_pilot.service;
 
 import com.example.prep_pilot.dto.PostsDto;
-import com.example.prep_pilot.entity.Comment;
+import com.example.prep_pilot.entity.Post_tags;
 import com.example.prep_pilot.entity.Posts;
+import com.example.prep_pilot.entity.Tags;
 import com.example.prep_pilot.entity.User;
 import com.example.prep_pilot.exception.PostsNotAuthorException;
 import com.example.prep_pilot.exception.PostsNotFoundException;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class PostsService {
 
@@ -20,14 +23,18 @@ public class PostsService {
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
     private final ViewsRepository viewsRepository;
+    private final TagsRepository tagsRepository;
+    private final Post_tagsRepository postTagsRepository;
 
-    public PostsService(PostsRepository postsRepository, UserRepository userRepository, CommentRepository commentRepository, LikesRepository likesRepository, ViewsRepository viewsRepository){
+    public PostsService(PostsRepository postsRepository, UserRepository userRepository, CommentRepository commentRepository, LikesRepository likesRepository, ViewsRepository viewsRepository, TagsRepository tagsRepository, Post_tagsRepository postTagsRepository){
 
         this.postsRepository = postsRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.likesRepository = likesRepository;
         this.viewsRepository = viewsRepository;
+        this.tagsRepository = tagsRepository;
+        this.postTagsRepository = postTagsRepository;
     }
 
     public Page<PostsDto> getRecentPosts(int page, int pageSize) {
@@ -58,6 +65,14 @@ public class PostsService {
         User user = userRepository.findByUsername(username);
         Posts posts = Posts.toEntity(dto, user);
         Posts created = postsRepository.save(posts);
+
+        for(Long tagId : dto.getTagIds()) {
+            Optional<Tags> tags = tagsRepository.findById(tagId);
+            if(tags.isPresent()) {
+                Post_tags postTags = new Post_tags(created, tags.get());
+                postTagsRepository.save(postTags);
+            }
+        }
 
         return PostsDto.toDto(created);
     }

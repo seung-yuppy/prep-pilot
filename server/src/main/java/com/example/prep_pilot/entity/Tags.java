@@ -1,5 +1,6 @@
 package com.example.prep_pilot.entity;
 
+import com.example.prep_pilot.dto.TagsDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,4 +22,12 @@ public class Tags {
     private Long id;
 
     private String name;
+
+    public static Tags toEntity(TagsDto tagsDto) {
+
+        return new Tags(
+                null,
+                tagsDto.getName()
+        );
+    }
 }

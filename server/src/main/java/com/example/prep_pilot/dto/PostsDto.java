@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,6 +34,8 @@ public class PostsDto {
 
     private Long likesCounts;
 
+    private List<Long> tagIds;
+
     public static PostsDto toDto(Posts posts) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일");
@@ -48,7 +51,8 @@ public class PostsDto {
                 updatedAtStr,
                 posts.getUser().getNickname(),
                 0L,
-                0L
+                0L,
+                null
         );
     }
 }
