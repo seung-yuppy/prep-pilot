@@ -3,10 +3,13 @@ package com.example.prep_pilot.repository;
 
 import com.example.prep_pilot.dto.PostsDto;
 import com.example.prep_pilot.entity.Posts;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface PostsRepository extends JpaRepository<Posts, Long> {
 
@@ -36,4 +39,15 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
             "ORDER BY (3 * COUNT(DISTINCT c.id) + 5 * COUNT(DISTINCT l.id) " +
             "- 0.02 * (CAST(FUNCTION('UNIX_TIMESTAMP', CURRENT_TIMESTAMP) AS double) - CAST(FUNCTION('UNIX_TIMESTAMP', p.createdAt) AS double)) / 3600.0) DESC, p.createdAt DESC")
     Page<PostsDto> findTrendingPosts(Pageable pageable);
+
+    @Query("SELECT p " +
+            "FROM Post_tags pt " +
+            "JOIN pt.posts p " +
+            "JOIN pt.tags t " +
+            "WHERE t.name = :tagName " +
+            "AND p.user.id = :userId " +
+            "AND p.isPrivate = false")
+    List<Posts> findByTagNameAndUserIdAndPublic(@Param("tagName") String tagName, @Param("userId") Long userId);
+
+    List<Posts> findByUserIdAndIsPrivateFalseAndTitleContainingIgnoreCase(Long userId, String title);
 }

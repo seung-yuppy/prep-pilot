@@ -1,5 +1,6 @@
 package com.example.prep_pilot.controller;
 
+import com.example.prep_pilot.dto.TagCountDto;
 import com.example.prep_pilot.dto.TagsDto;
 import com.example.prep_pilot.service.TagsService;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
@@ -31,6 +32,15 @@ public class TagsController {
     public ResponseEntity<List<TagsDto>> getTags(@PathVariable Long postsId){
 
         List<TagsDto> list = tagsService.getTags(postsId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    // 해당 userId가 쓴 태그 목록
+    @GetMapping("/tags/{userId}")
+    public ResponseEntity<List<TagCountDto>> getTagsCount(@PathVariable Long userId){
+
+        List<TagCountDto> list = tagsService.getTagsCount(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }

@@ -159,4 +159,24 @@ public class PostsController {
         return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }
 
+    // 유저정보페이지에서 태그네임 클릭하여 글목록 가져오기
+    @GetMapping("/posts/{tagName}/{userId}")
+    public ResponseEntity<List<PostsDto>> getPostsByTagNameInUserinfo(@PathVariable String tagName,
+                                                                      @PathVariable Long userId){
+
+        List<PostsDto> list = postsService.getPostsByTagNameInUserinfo(tagName, userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    // 유저정보페이지에서 제목으로 검색
+    @GetMapping("/posts/{userId}/search")
+    public ResponseEntity<List<PostsDto>> searchPostsByTitleInUserinfo(@PathVariable Long userId,
+                                                                       @RequestParam(required = false) String title){
+
+        List<PostsDto> list = postsService.searchPostsByTitleInUserinfo(userId, title);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
 }

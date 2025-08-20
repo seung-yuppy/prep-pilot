@@ -10,12 +10,12 @@ import com.example.prep_pilot.exception.PostsNotFoundException;
 import com.example.prep_pilot.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostsService {
@@ -205,5 +205,19 @@ public class PostsService {
         PageRequest pageRequest = PageRequest.of(page,pageSize);
 
         return postsRepository.findTrendingPosts(pageRequest);
+    }
+
+    public List<PostsDto> getPostsByTagNameInUserinfo(String tagName, Long userId) {
+
+        List<Posts> postsList = postsRepository.findByTagNameAndUserIdAndPublic(tagName, userId);
+
+        return postsList.stream().map(PostsDto::toDto).collect(Collectors.toList());
+    }
+
+    public List<PostsDto> searchPostsByTitleInUserinfo(Long userId, String title) {
+
+        List<Posts> postsList = postsRepository.findByUserIdAndIsPrivateFalseAndTitleContainingIgnoreCase(userId, title);
+
+        return postsList.stream().map(PostsDto::toDto).collect(Collectors.toList());
     }
 }

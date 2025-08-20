@@ -1,5 +1,6 @@
 package com.example.prep_pilot.service;
 
+import com.example.prep_pilot.dto.TagCountDto;
 import com.example.prep_pilot.dto.TagsDto;
 import com.example.prep_pilot.entity.Post_tags;
 import com.example.prep_pilot.entity.Tags;
@@ -15,8 +16,8 @@ import java.util.stream.Collectors;
 @Service
 public class TagsService {
 
-    private TagsRepository tagsRepository;
-    private Post_tagsRepository postTagsRepository;
+    private final TagsRepository tagsRepository;
+    private final Post_tagsRepository postTagsRepository;
 
     public TagsService(TagsRepository tagsRepository, Post_tagsRepository postTagsRepository){
 
@@ -43,5 +44,10 @@ public class TagsService {
         }
 
         return tags.stream().map(TagsDto::toDto).collect(Collectors.toList());
+    }
+
+    public List<TagCountDto> getTagsCount(Long userId) {
+
+        return tagsRepository.findTagUsageCountByUserId(userId);
     }
 }
