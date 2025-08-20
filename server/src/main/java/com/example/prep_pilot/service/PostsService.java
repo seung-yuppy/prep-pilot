@@ -10,9 +10,11 @@ import com.example.prep_pilot.exception.PostsNotFoundException;
 import com.example.prep_pilot.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -183,5 +185,25 @@ public class PostsService {
             dto.setLikesCounts(likesRepository.countByPostsId(dto.getId()));
             return dto;
         });
+    }
+
+    public Page<PostsDto> getPostsByTags(int page, int pageSize, Long tagsId) {
+
+        PageRequest pageRequest = PageRequest.of(page,pageSize);
+        Page<Posts> postsPage = postTagsRepository.findPostsByTagsId(tagsId, pageRequest);
+
+        return postsPage.map(posts -> {
+            PostsDto dto = PostsDto.toDto(posts);
+            dto.setCommentCounts((long) commentRepository.findByPostsId(dto.getId()).size());
+            dto.setLikesCounts(likesRepository.countByPostsId(dto.getId()));
+            return dto;
+        });
+    }
+
+    public Page<PostsDto> getTrendingPosts(int page, int pageSize) {
+
+        PageRequest pageRequest = PageRequest.of(page,pageSize);
+
+        return postsRepository.findTrendingPosts(pageRequest);
     }
 }

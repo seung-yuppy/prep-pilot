@@ -119,7 +119,7 @@ public class PostsController {
     // 닉네임으로 글 검색
     @GetMapping(value = "/posts/search", params = "nickname")
     public ResponseEntity<Page<PostsDto>> postsSearchByNickname(@RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(required = false) String nickname){
+                                                                @RequestParam(required = false) String nickname){
 
         int pageSize = 12;
         Page<PostsDto> dtoPage = postsService.getPostsByNickname(page, pageSize, nickname);
@@ -130,10 +130,31 @@ public class PostsController {
     // 내용으로 글 검색
     @GetMapping(value = "/posts/search", params = "content")
     public ResponseEntity<Page<PostsDto>> postsSearchByContent(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(required = false) String content){
+                                                               @RequestParam(required = false) String content){
 
         int pageSize = 12;
         Page<PostsDto> dtoPage = postsService.getPostsByContent(page, pageSize, content);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
+
+    // 태그 클릭으로 같은 태그 글 가져오기
+    @GetMapping("/posts/search/{tagsId}")
+    public ResponseEntity<Page<PostsDto>> postsSearchByTags(@RequestParam(defaultValue = "0") int page,
+                                                            @PathVariable Long tagsId){
+
+        int pageSize = 12;
+        Page<PostsDto> dtoPage = postsService.getPostsByTags(page, pageSize, tagsId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
+
+    // 최근 n일간 트렌딩 글 가져오기
+    @GetMapping("/posts/trending")
+    public ResponseEntity<Page<PostsDto>> getTrendingPosts(@RequestParam(defaultValue = "0") int page){
+
+        int pageSize = 12;
+        Page<PostsDto> dtoPage = postsService.getTrendingPosts(page, pageSize);
 
         return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -35,6 +37,25 @@ public class PostsDto {
     private Long likesCounts;
 
     private List<Long> tagIds;
+
+    public PostsDto(Long id, String title, String slug, Boolean isPrivate,
+                    LocalDateTime createdAt, LocalDateTime updatedAt, String nickname,
+                    Long commentCounts, Long likesCounts) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일");
+
+        this.id = id;
+        this.title = title;
+        this.slug = slug;
+        this.isPrivate = isPrivate;
+        this.createdAt = createdAt != null ? createdAt.format(formatter) : null;
+        this.updatedAt = updatedAt != null ? updatedAt.format(formatter) : null;
+        this.nickname = nickname;
+        this.commentCounts = commentCounts;
+        this.likesCounts = likesCounts;
+        this.content = null;
+        this.tagIds = null;
+    }
 
     public static PostsDto toDto(Posts posts) {
 
