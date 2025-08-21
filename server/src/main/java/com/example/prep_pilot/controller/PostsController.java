@@ -105,6 +105,17 @@ public class PostsController {
         return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }
 
+    // 해당 userId가 쓴 글 목록
+    @GetMapping("posts/{userId}/list")
+    public ResponseEntity<Page<PostsDto>> getPostsByUserId(@RequestParam(defaultValue = "0") int page,
+                                                           @PathVariable Long userId){
+
+        int pageSize = 12;
+        Page<PostsDto> dtoPage = postsService.getPostsByUserId(page, pageSize, userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
+
     // 제목으로 글 검색
     @GetMapping(value = "/posts/search", params = "title")
     public ResponseEntity<Page<PostsDto>> postsSearchByTitle(@RequestParam(defaultValue = "0") int page,

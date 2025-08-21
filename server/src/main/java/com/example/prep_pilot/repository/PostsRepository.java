@@ -15,6 +15,8 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
 
     Page<Posts> findAllByIsPrivateFalseOrderByCreatedAtDesc(Pageable pageable);
 
+    Page<Posts> findByUserIdAndIsPrivateFalse(Long userId, Pageable pageable);
+
     Page<Posts> findByUserUsernameOrderByCreatedAtDesc(String username, Pageable pageable);
 
     Page<Posts> findByTitleContainingIgnoreCaseAndIsPrivateFalse(String title, Pageable pageable);

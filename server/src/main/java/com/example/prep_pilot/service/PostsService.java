@@ -220,4 +220,17 @@ public class PostsService {
 
         return postsList.stream().map(PostsDto::toDto).collect(Collectors.toList());
     }
+
+    public Page<PostsDto> getPostsByUserId(int page, int pageSize, Long userId) {
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        Page<Posts> postsPage = postsRepository.findByUserIdAndIsPrivateFalse(userId, pageRequest);
+
+        return postsPage.map(posts -> {
+            PostsDto dto = PostsDto.toDto(posts);
+            dto.setCommentCounts((long) commentRepository.findByPostsId(dto.getId()).size());
+            dto.setLikesCounts(likesRepository.countByPostsId(dto.getId()));
+            return dto;
+        });
+    }
 }
