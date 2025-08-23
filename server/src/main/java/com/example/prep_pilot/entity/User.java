@@ -30,13 +30,17 @@ public class User {
 
     private String nickname;
 
-    private String bio; // 소개글
+    private String bio; // 간단 소개글
 
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String introduce; // 소개
 
     private String role;
 }

@@ -46,6 +46,8 @@ public class UserDto {
 
     private LocalDateTime createdAt;
 
+    private String introduce;
+
     private String role;
 
     public static UserDto toDto(User newUser) {
@@ -60,6 +62,7 @@ public class UserDto {
                 newUser.getBio(),
                 newUser.getProfileImageUrl(),
                 newUser.getCreatedAt(),
+                newUser.getIntroduce(),
                 newUser.getRole()
         );
     }
