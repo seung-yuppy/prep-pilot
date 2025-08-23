@@ -1,11 +1,14 @@
 import { useMutation } from "@tanstack/react-query"
 import onLogOut from "../../util/user/logout"
+import useUserStore from "../../store/useUserStore";
 
 const useLogOut = () => {
+  const { logOut } = useUserStore();
+
   return useMutation({
     mutationFn: onLogOut,
     onSuccess: () => {
-      localStorage.removeItem("access");
+      logOut();
       alert("로그아웃 하였습니다.");
     },
     onError: (error) => {

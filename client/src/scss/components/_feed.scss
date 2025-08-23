@@ -14,8 +14,7 @@
   .feed-content {
     display: flex;
     flex-direction: column;
-    padding: 2rem;
-    height: 16rem;
+    padding: 1.5rem 2rem;
     gap: 1.3rem;
 
     .feed-title {
@@ -69,6 +68,7 @@
   }
 
   &:hover {
-    scale: 1.05;
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px 0 rgba(0,0,0,.08);
   }
 }

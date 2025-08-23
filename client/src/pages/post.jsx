@@ -5,21 +5,37 @@ import useGetComments from "../service/comment/useGetComments";
 import { useState } from "react";
 import usePostComment from "../service/comment/usePostComment";
 import { useQueryClient } from "@tanstack/react-query";
-import usePostLikePost from "../service/post/usePostLikePose";
+import usePostLikePost from "../service/post/usePostLikePost";
+import useGetIsLikePost from "../service/post/useGetIsLikePost";
+import useUserStore from "../store/useUserStore";
 
 export default function Post() {
   const queryClient = useQueryClient();
   const { id } = useParams();
+  const { isLoggedIn } = useUserStore();
   const { data: post } = useGetPost(id);
   const { data: comments } = useGetComments(id);
   const [commentText, setCommentText] = useState("");
-  const likePostMutation = usePostLikePost(id);
+  const { data: isLikePost } = useGetIsLikePost(id);
+  const likePostMutation = usePostLikePost(id, {
+    onSuccess: () => {
+      if(isLoggedIn) {
+        if(!isLikePost)
+          alert("이 게시글을 좋아합니다.");
+        else
+          alert("이 게시물을 안좋아합니다.");
+        queryClient.invalidateQueries({ queryKey: ["isLikePost", id] });
+      } else {
+        alert("로그인을 진행해주세요!");
+      }
+    },
+    onError: (error) => alert("게시글 좋아요 에러 발생", error)
+  });
+
   const commentMutation = usePostComment(id, {
     onSuccess: () => {
       alert("댓글을 작성하였습니다.");
       setCommentText("");
-      // 새로운 comment 추가 후, commentList를 불러오기 위한 
-      // 리액트 쿼리에서의 캐시 무효화 후 refetch 방식
       queryClient.invalidateQueries({
         queryKey: ["comments", id], 
       });
@@ -39,7 +55,7 @@ export default function Post() {
 
   const onLikePost = () => {
     likePostMutation.mutate();
-  } 
+  };
 
   return (
     <>
@@ -50,15 +66,22 @@ export default function Post() {
             <span className="post-nickname">{post?.nickname}</span>
             <span className="post-dot">•</span>
             <span className="post-date">{post?.createdAt}</span>
+            <span className="post-dot">•</span>
+            <span className="post-like">♥ {post?.likesCounts}</span>
           </div>
           <div className="post-btn-container">
-            <button type="button" className="post-like" onClick={onLikePost}>
-              ♥ 좋아요
+            <button type="button" className={isLikePost ? "post-dislike" : "post-like"} onClick={onLikePost}>
+              {isLikePost ? "안 좋아요" : "♥ 좋아요" }
             </button>
             <button type="button" className="post-follow">
               팔로우
             </button>
           </div>
+        </div>
+        <div className="post-tags">
+          <span className="tag-item">Spring MVC</span>
+          <span className="tag-item">Spring MVC</span>
+          <span className="tag-item">Spring MVC</span>
         </div>
         <div className="post-decription">
           <SafeContent content={post?.content} />

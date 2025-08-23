@@ -1,9 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import onLogIn from "../../util/user/login";
 import useModalStore from "../../store/useModalStore";
+import useUserStore from "../../store/useUserStore";
 
 const useLogIn = () => {
   const { closeModal } = useModalStore();
+  const { logIn } = useUserStore();
 
   return useMutation({
     // mutationFn에는 함수 호출만 해야한다.
@@ -11,6 +13,7 @@ const useLogIn = () => {
     mutationFn: onLogIn,
     onSuccess: () => {
       alert("로그인 하였습니다.");
+      logIn();
       closeModal("login");
     },
     onError: (error) => {

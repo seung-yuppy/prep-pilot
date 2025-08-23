@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 export default function Home() {
   const { scrollYProgress } = useScroll();
+  const queryClient = useQueryClient();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
@@ -22,10 +23,6 @@ export default function Home() {
       fetchNextPage();
     }
   });
-
-  console.log(data);
-
-  const queryClient = useQueryClient();
 
   useEffect(() => {
       queryClient.invalidateQueries({
