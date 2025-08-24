@@ -1,15 +1,16 @@
 package com.example.prep_pilot.service;
 
 import com.example.prep_pilot.dto.CommentDto;
-import com.example.prep_pilot.entity.Comment;
-import com.example.prep_pilot.entity.Posts;
-import com.example.prep_pilot.entity.User;
+import com.example.prep_pilot.dto.NotificationDto;
+import com.example.prep_pilot.entity.*;
 import com.example.prep_pilot.exception.CommentNotAuthorException;
 import com.example.prep_pilot.exception.CommentNotFoundException;
 import com.example.prep_pilot.exception.PostsNotFoundException;
 import com.example.prep_pilot.repository.CommentRepository;
+import com.example.prep_pilot.repository.NotificationRepository;
 import com.example.prep_pilot.repository.PostsRepository;
 import com.example.prep_pilot.repository.UserRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +25,16 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostsRepository postsRepository;
     private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate messagingTemplate; // 웹소켓 메시지 전송
 
-    public CommentService(CommentRepository commentRepository, PostsRepository postsRepository, UserRepository userRepository){
+    public CommentService(CommentRepository commentRepository, PostsRepository postsRepository, UserRepository userRepository, NotificationRepository notificationRepository, SimpMessagingTemplate simpMessagingTemplate){
 
         this.commentRepository = commentRepository;
         this.postsRepository = postsRepository;
         this.userRepository = userRepository;
+        this.notificationRepository = notificationRepository;
+        this.messagingTemplate = simpMessagingTemplate;
     }
 
     public List<CommentDto> getComments(Long postsId) {
@@ -71,6 +76,13 @@ public class CommentService {
         Comment comment = Comment.toEntity(commentDto, posts, user, null);
         Comment newComment = commentRepository.save(comment);
 
+        if(!username.equals(posts.getUser().getUsername())) {
+            Notifications notification = Notifications.createCommentNotification(posts, user);
+            notificationRepository.save(notification);
+            NotificationDto notificationDto = NotificationDto.toDto(notification);
+            // "/topic/notifications/{userId}" 구독한 사용자에게 메시지 전송
+            messagingTemplate.convertAndSend("/topic/notifications/" + posts.getUser().getId(), notificationDto);
+        }
         return CommentDto.toDto(newComment);
     }
 
@@ -86,6 +98,14 @@ public class CommentService {
         );
         Comment reply = Comment.toEntity(commentDto, posts, user, parent);
         Comment newReply = commentRepository.save(reply);
+
+        if(!username.equals(posts.getUser().getUsername())) {
+            Notifications notification = Notifications.createCommentNotification(posts, user);
+            notificationRepository.save(notification);
+            NotificationDto notificationDto = NotificationDto.toDto(notification);
+            // "/topic/notifications/{userId}" 구독한 사용자에게 메시지 전송
+            messagingTemplate.convertAndSend("/topic/notifications/" + posts.getUser().getId(), notificationDto);
+        }
 
         return CommentDto.toDto(newReply);
     }

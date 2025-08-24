@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
@@ -40,4 +41,43 @@ public class Notifications {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public static Notifications createCommentNotification(Posts posts, User user) {
+
+        return new Notifications(
+                null,
+                posts.getUser(),
+                user,
+                posts,
+                NotificationType.COMMENT,
+                false,
+                LocalDateTime.now()
+        );
+    }
+
+    public static Notifications createFollowNotification(User following, User followed) {
+
+        return new Notifications(
+                null,
+                followed,
+                following,
+                null,
+                NotificationType.FOLLOW,
+                false,
+                LocalDateTime.now()
+        );
+    }
+
+    public static Notifications createLikeNotification(Posts posts, User user) {
+
+        return new Notifications(
+                null,
+                posts.getUser(),
+                user,
+                posts,
+                NotificationType.LIKE,
+                false,
+                LocalDateTime.now()
+        );
+    }
 }
