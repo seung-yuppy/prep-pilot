@@ -44,4 +44,14 @@
     display: flex;
     gap: 2rem;
   }
+
+  .active-tab {
+    color: $main;
+    border-bottom: 1px solid $main;
+    padding-bottom: 0.3rem;
+  }
+
+  .inactive-tab {
+    color: $gray3;
+  }
 }

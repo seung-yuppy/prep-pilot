@@ -40,8 +40,8 @@ export default function Home() {
     <>
       <div className="home-category">
         <div className="category-tab">
-          <Link to={`/`}>최신</Link>
-          <Link to={`/trending`}>트렌딩</Link>
+          <Link to={`/`} className={isTrendingPage ? "inactive-tab" : "active-tab"}>최신</Link>
+          <Link to={`/trending`} className={isTrendingPage ? "active-tab" : "inactive-tab"}>트렌딩</Link>
         </div>
         <div className="category-search">
           <form>
