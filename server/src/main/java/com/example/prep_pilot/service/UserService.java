@@ -1,5 +1,6 @@
 package com.example.prep_pilot.service;
 
+import com.example.prep_pilot.dto.IntroduceDto;
 import com.example.prep_pilot.dto.NicknameBioDto;
 import com.example.prep_pilot.dto.ProfileImageDto;
 import com.example.prep_pilot.dto.UserDto;
@@ -72,5 +73,13 @@ public class UserService {
         User user = userRepository.findByUsername(username);
         user.setProfileImageUrl(null);
         userRepository.save(user);
+    }
+
+    public IntroduceDto updateIntroduce(String username, IntroduceDto dto) {
+
+        User user = userRepository.findByUsername(username);
+        user.setIntroduce(dto.getIntroduce());
+
+        return IntroduceDto.toDto(userRepository.save(user));
     }
 }

@@ -1,9 +1,6 @@
 package com.example.prep_pilot.controller;
 
-import com.example.prep_pilot.dto.CustomUserDetails;
-import com.example.prep_pilot.dto.NicknameBioDto;
-import com.example.prep_pilot.dto.ProfileImageDto;
-import com.example.prep_pilot.dto.UserDto;
+import com.example.prep_pilot.dto.*;
 import com.example.prep_pilot.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +64,17 @@ public class UserController {
         userService.deleteProfileImage(username);
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    // 소개(introduce) 수정
+    @PatchMapping("userinfo/introduce")
+    public ResponseEntity<IntroduceDto> updateMyIntroduce(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                          @RequestBody IntroduceDto dto){
+
+        String username = userDetails.getUsername();
+        IntroduceDto introduceDto = userService.updateIntroduce(username, dto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(introduceDto);
     }
 
 
