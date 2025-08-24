@@ -12,7 +12,10 @@ import lombok.Setter;
 public class LikesDto {
 
     private Long id;
+
     private Long postsId;
+
     private Long userId;
+
     private String createdAt;
 }

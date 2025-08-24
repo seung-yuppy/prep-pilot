@@ -12,5 +12,6 @@ import lombok.Setter;
 public class TagCountDto {
 
     private String tagName;
+
     private Long count;
 }
