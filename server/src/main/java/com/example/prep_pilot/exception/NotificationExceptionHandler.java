@@ -14,4 +14,9 @@ public class NotificationExceptionHandler {
     public ResponseEntity<?> handleNotificationNotFound(NotificationNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
     }
+
+    @ExceptionHandler(NotificationNotAuthorException.class)
+    public ResponseEntity<?> handleNotificationNotAuthor(NotificationNotAuthorException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", ex.getMessage()));
+    }
 }
