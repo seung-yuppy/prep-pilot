@@ -1,10 +1,7 @@
 package com.example.prep_pilot.service;
 
 import com.example.prep_pilot.dto.NotificationDto;
-import com.example.prep_pilot.entity.Likes;
-import com.example.prep_pilot.entity.Notifications;
-import com.example.prep_pilot.entity.Posts;
-import com.example.prep_pilot.entity.User;
+import com.example.prep_pilot.entity.*;
 import com.example.prep_pilot.exception.PostsNotFoundException;
 import com.example.prep_pilot.repository.LikesRepository;
 import com.example.prep_pilot.repository.NotificationRepository;
@@ -53,6 +50,9 @@ public class LikesService {
             likesRepository.delete(like.get());
         else {
             likesRepository.save(new Likes(null, posts, user, LocalDateTime.now()));
+            Optional<Notifications> n = notificationRepository.findByUserToAndUserFromAndType(posts.getUser(), user, NotificationType.LIKE);
+            if(n.isPresent() || posts.getUser().getUsername().equals(username))
+                return getLikesNum(postsId);
             Notifications notification = Notifications.createLikeNotification(posts, user);
             notificationRepository.save(notification);
             NotificationDto notificationDto = NotificationDto.toDto(notification);

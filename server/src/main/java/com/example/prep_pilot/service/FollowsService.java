@@ -3,6 +3,7 @@ package com.example.prep_pilot.service;
 import com.example.prep_pilot.dto.FollowsDto;
 import com.example.prep_pilot.dto.NotificationDto;
 import com.example.prep_pilot.entity.Follows;
+import com.example.prep_pilot.entity.NotificationType;
 import com.example.prep_pilot.entity.Notifications;
 import com.example.prep_pilot.entity.User;
 import com.example.prep_pilot.exception.UserNotFoundException;
@@ -48,6 +49,9 @@ public class FollowsService {
             followsRepository.delete(follows.get());
         else {
             followsRepository.save(new Follows(null, followed, following, LocalDateTime.now()));
+            Optional<Notifications> n = notificationRepository.findByUserToAndUserFromAndType(followed, following, NotificationType.FOLLOW);
+            if(n.isPresent())
+                return;
             Notifications notification = Notifications.createFollowNotification(following, followed);
             notificationRepository.save(notification);
             NotificationDto notificationDto = NotificationDto.toDto(notification);
