@@ -30,6 +30,10 @@ function App() {
         {
           path: "/mypage",
           element: <MyPage />
+        },
+        {
+          path: "/trending",
+          element: <Home />
         }
       ]
     }

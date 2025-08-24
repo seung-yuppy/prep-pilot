@@ -32,3 +32,16 @@
     font-size: 3rem;
   }
 }
+
+.home-category {
+  font-size: 2rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 2rem 3rem;
+
+  .category-tab {
+    display: flex;
+    gap: 2rem;
+  }
+}

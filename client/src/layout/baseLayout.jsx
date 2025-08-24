@@ -6,7 +6,7 @@ export default function BaseLayout() {
   return (
     <>
       <Header />
-      <main>
+      <main className="main">
         <Outlet />
       </main>
       <Popup />
