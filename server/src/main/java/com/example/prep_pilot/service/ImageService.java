@@ -52,4 +52,11 @@ public class ImageService {
         // S3에 저장된 URL 반환
         return s3Config.amazonS3Client().getUrl(bucket, uuidFileName).toString();
     }
+
+    public void deleteImage(String imageUrl) {
+
+        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+        s3Config.amazonS3Client().deleteObject(bucket, fileName);
+    }
 }
