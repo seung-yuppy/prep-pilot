@@ -18,7 +18,7 @@ public class ViewsController {
         this.viewsService = viewsService;
     }
 
-    //
+    // 글 읽은사람
     @PostMapping("/{postsId}/views")
     public ResponseEntity<ViewsDto> getViews(@AuthenticationPrincipal CustomUserDetails userDetails,
                                              @PathVariable Long postsId){

@@ -2,6 +2,7 @@ package com.example.prep_pilot.controller;
 
 import com.example.prep_pilot.dto.TagCountDto;
 import com.example.prep_pilot.dto.TagsDto;
+import com.example.prep_pilot.entity.Tags;
 import com.example.prep_pilot.service.TagsService;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ public class TagsController {
         this.tagsService = tagsService;
     }
 
+    // 태그 등록
     @PostMapping("/tags")
     public ResponseEntity<TagsDto> postTags(@RequestBody TagsDto tagsDto){
 
@@ -28,6 +30,16 @@ public class TagsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    // 태그 삭제
+    @DeleteMapping("/tags/{id}")
+    public ResponseEntity<TagsDto> deleteTags(@PathVariable Long id){
+
+        TagsDto dto = tagsService.deleteTags(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+
+    // 해당 글의 태그리스트
     @GetMapping("/{postsId}/tags")
     public ResponseEntity<List<TagsDto>> getTags(@PathVariable Long postsId){
 

@@ -4,6 +4,7 @@ import com.example.prep_pilot.dto.TagCountDto;
 import com.example.prep_pilot.dto.TagsDto;
 import com.example.prep_pilot.entity.Post_tags;
 import com.example.prep_pilot.entity.Tags;
+import com.example.prep_pilot.exception.TagsNotFoundException;
 import com.example.prep_pilot.repository.Post_tagsRepository;
 import com.example.prep_pilot.repository.TagsRepository;
 import jakarta.transaction.Transactional;
@@ -49,5 +50,16 @@ public class TagsService {
     public List<TagCountDto> getTagsCount(Long userId) {
 
         return tagsRepository.findTagUsageCountByUserId(userId);
+    }
+
+    public TagsDto deleteTags(Long id) {
+
+        Tags tags = tagsRepository.findById(id).orElseThrow(() ->
+                new TagsNotFoundException(id)
+        );
+
+        tagsRepository.delete(tags);
+
+        return TagsDto.toDto(tags);
     }
 }
