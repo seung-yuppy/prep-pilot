@@ -1,15 +1,15 @@
 import os
 import json
-import numpy as np
 from fastapi import FastAPI
 from pydantic import BaseModel
 from openai import OpenAI
-from pymilvus.model.dense import VoyageEmbeddingFunction
 from dotenv import load_dotenv
 import nltk
 nltk.download("punkt")
 
 from nltk.tokenize import sent_tokenize
+import chromadb
+from langchain_openai import OpenAIEmbeddings
 
 # --- .env 로드 ---
 load_dotenv()
@@ -17,29 +17,17 @@ load_dotenv()
 # --- OpenAI (LLM) ---
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# --- Voyage (임베딩) ---
-voyage_ef = VoyageEmbeddingFunction(
-    model_name="voyage-3",
-    api_key=os.getenv("VOYAGE_API_KEY")
-)
+# --- Chroma DB ---
+chroma_client = chromadb.PersistentClient(path="./chroma_db")
+collection = chroma_client.get_or_create_collection("blogs")
+
+# --- Embedding 모델 (사용자 쿼리 임베딩용) ---
+embedding_model = OpenAIEmbeddings(model="text-embedding-3-large")
 
 # --- FastAPI ---
-app = FastAPI(title="RAG Correction & Quiz API", version="0.2")
+app = FastAPI(title="RAG Correction & Quiz API (Chroma, pre-embedded)", version="0.4")
 
-# --- 데이터 로드 ---
-embeddings_data = []
-with open("../data/data.jsonl", "r", encoding="utf-8") as f:
-    for line in f:
-        embeddings_data.append(json.loads(line))
-
-print(f"✅ Loaded {len(embeddings_data)} chunks from data.jsonl")
-
-# --- Helper ---
-def cosine_similarity(vec1, vec2):
-    vec1 = np.array(vec1)
-    vec2 = np.array(vec2)
-    return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
-
+# --- Helper: 청크 분리 ---
 def chunk_text_nltk(text, max_chars=500, overlap=1):
     sentences = sent_tokenize(text)
     chunks, current_chunk, current_len = [], [], 0
@@ -69,7 +57,7 @@ class QuizResponse(BaseModel):
     input: str
     quizzes: list
 
-# --- 기존 교정 API ---
+# --- 교정 API ---
 @app.post("/correct", response_model=CorrectionResponse)
 def correct_text(request: TextRequest):
     user_text = request.text.strip()
@@ -77,15 +65,14 @@ def correct_text(request: TextRequest):
 
     results_all = []
     for query in user_chunks:
-        query_embedding = voyage_ef.encode_queries([query])[0]
-        results = []
-        for item in embeddings_data:
-            sim = cosine_similarity(query_embedding, item["embedding"])
-            results.append((sim, item))
-        results.sort(key=lambda x: x[0], reverse=True)
-        top_chunks = [item for _, item in results[:3]]
+        # 사용자 입력 임베딩
+        query_vec = embedding_model.embed_query(query)
 
-        context = "\n".join([c["text"] for c in top_chunks])
+        # Chroma에서 검색
+        docs = collection.query(query_embeddings=[query_vec], n_results=3)
+        top_chunks = docs["documents"][0]
+
+        context = "\n".join(top_chunks)
         prompt = f"""
         다음 문장을 옳게 교정해줘.
         출력 형식은 반드시 아래처럼:

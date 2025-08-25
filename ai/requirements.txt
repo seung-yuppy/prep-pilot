@@ -1,9 +1,19 @@
-fastapi==0.116.1
-uvicorn==0.35.0
-openai==1.100.2
-pymilvus==2.6.0
-pymilvus.model==0.3.2
-nltk==3.9.1
-numpy==2.0.2
-python-dotenv==1.1.1
-voyageai==0.3.4
+# === API 서버 ===
+fastapi>=0.116.0
+uvicorn[standard]>=0.29.0
+
+# === OpenAI / Voyage ===
+openai>=1.30.0
+voyageai>=0.3.0
+
+# === 벡터DB ===
+chromadb>=0.5.5
+langchain-openai>=0.1.7
+langchain-chroma>=0.1.2
+pymilvus[model]>=2.6.0
+milvus-model>=0.2.0
+
+# === NLP / 유틸 ===
+nltk>=3.9
+numpy>=1.24
+python-dotenv>=1.0.1
