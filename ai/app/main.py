@@ -133,9 +133,19 @@ def generate_quiz(request: TextRequest):
 
             prompt = f"""
             아래 글을 기반으로 학습용 **주관식 문제**를 3개 만들어줘.
-            - 반드시 글 속에서 답을 찾을 수 있어야 한다.
-            - 각 문제와 정답을 JSON 배열 형식으로 출력: 
-              [{{"question": "...", "answer": "..."}}]
+
+            ⚠️ 반드시 아래 조건을 지켜야 한다:
+            - 출력은 JSON 배열 형식만 허용한다.
+            - JSON 배열 외의 텍스트(설명, 문구 등)는 절대 포함하지 말 것.
+            - 각 항목은 "question"과 "answer" 두 개의 key만 가져야 한다.
+            - 답변은 글 속에서 반드시 찾을 수 있어야 한다.
+
+            출력 예시:
+            [
+              {{"question": "Java는 어떤 언어인가?", "answer": "객체지향 언어"}},
+              {{"question": "Java는 어디서 실행되는가?", "answer": "JVM"}},
+              {{"question": "JVM의 약자는 무엇인가?", "answer": "Java Virtual Machine"}}
+            ]
 
             글:
             {chunk}
@@ -144,10 +154,15 @@ def generate_quiz(request: TextRequest):
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
-                response_format={"type": "json_object"}  # ✅ 수정됨
+                response_format={"type": "json_object"}  # ✅ JSON 객체 강제
             )
 
             generated = json.loads(response.choices[0].message.content)
+
+            # 혹시 단일 dict로 반환되면 배열로 감싸기
+            if isinstance(generated, dict):
+                generated = [generated]
+
             quizzes_all.extend(generated)
 
         except Exception as e:
@@ -158,3 +173,4 @@ def generate_quiz(request: TextRequest):
             })
 
     return QuizResponse(input=user_text, quizzes=quizzes_all)
+
