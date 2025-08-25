@@ -6,6 +6,7 @@ import com.example.prep_pilot.dto.ProfileImageDto;
 import com.example.prep_pilot.dto.UserDto;
 import com.example.prep_pilot.entity.User;
 import com.example.prep_pilot.exception.DuplicateNicknameException;
+import com.example.prep_pilot.exception.NullNicknameException;
 import com.example.prep_pilot.exception.UserNotFoundException;
 import com.example.prep_pilot.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,8 @@ public class UserService {
 
         checkDuplicateNickname(dto.getNickname());
         User user = userRepository.findByUsername(username);
+        if(dto.getNickname() == null)
+            throw new NullNicknameException();
         user.setNickname(dto.getNickname());
         user.setBio(dto.getBio());
 

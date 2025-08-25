@@ -41,7 +41,7 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
-    // 전체 알림 가져오기
+    // 전체 알림 보기
     @GetMapping("/notification/all")
     public ResponseEntity<List<NotificationDto>> getAllNotification(@AuthenticationPrincipal CustomUserDetails userDetails){
 

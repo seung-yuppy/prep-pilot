@@ -160,7 +160,7 @@ public class PostsController {
         return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }
 
-    // 최근 n일간 트렌딩 글 가져오기
+    // 트렌딩 글 가져오기
     @GetMapping("/posts/trending")
     public ResponseEntity<Page<PostsDto>> getTrendingPosts(@RequestParam(defaultValue = "0") int page){
 

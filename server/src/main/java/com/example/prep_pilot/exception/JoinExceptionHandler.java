@@ -25,4 +25,9 @@ public class JoinExceptionHandler {
     public ResponseEntity<?> handleDuplicateNickname(DuplicateNicknameException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
     }
+
+    @ExceptionHandler(NullNicknameException.class)
+    public ResponseEntity<?> handleNullNickname(NullNicknameException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+    }
 }
