@@ -44,7 +44,7 @@ def get_page_content(url):
         print(f"Error crawling {url}: {e}")
         return None
 
-def crawl_urls_to_jsonl(url_file_path='url.txt', output_file_path='crawled_data.jsonl'):
+def crawl_urls_to_jsonl(url_file_path='data/url.txt', output_file_path='data/crawled_data.jsonl'):
     """
     url.txt에서 URL을 읽어와 크롤링하고 결과를 JSONL 파일로 저장합니다.
     """

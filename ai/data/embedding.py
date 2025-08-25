@@ -10,14 +10,14 @@ voyage_ef = VoyageEmbeddingFunction(
 
 # chunked_data.jsonl 읽기
 chunks = []
-with open("chunked_data.jsonl", "r", encoding="utf-8") as f:
+with open("data/chunked_data.jsonl", "r", encoding="utf-8") as f:
     for line in f:
         chunks.append(json.loads(line))
 
 # 배치 사이즈
 BATCH_SIZE = 500  
 
-with open("data.jsonl", "w", encoding="utf-8") as f_out:
+with open("data/data.jsonl", "w", encoding="utf-8") as f_out:
     for i in range(0, len(chunks), BATCH_SIZE):
         batch = chunks[i:i + BATCH_SIZE]
         texts = [c["text"] for c in batch]

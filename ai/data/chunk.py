@@ -62,7 +62,7 @@ def clean_and_preserve_code(raw_html: str) -> str:
     return cleaned_text
 
 
-def process_chunks(input_file='crawled_data.jsonl', output_file='chunked_data.jsonl'):
+def process_chunks(input_file='data/crawled_data.jsonl', output_file='data/chunked_data.jsonl'):
     """
     크롤링된 데이터를 읽어와 청크로 분리하고 새로운 JSONL 파일에 저장합니다.
     """
