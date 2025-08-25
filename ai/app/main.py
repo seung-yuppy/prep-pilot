@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 from fastapi import FastAPI
 from pydantic import BaseModel
 from openai import OpenAI
@@ -7,13 +8,12 @@ from dotenv import load_dotenv
 import nltk
 from nltk.tokenize import sent_tokenize
 import chromadb
-from langchain_openai import OpenAIEmbeddings
-import traceback
+from pymilvus.model.dense import VoyageEmbeddingFunction
 
 # --- NLTK 리소스 다운로드 ---
 nltk.download("punkt")
 try:
-    nltk.download("punkt_tab")  # 최신버전에서 추가된 토큰
+    nltk.download("punkt_tab")  # 일부 버전에서 필요
 except:
     pass
 
@@ -24,20 +24,24 @@ load_dotenv()
 OPENAI_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_KEY) if OPENAI_KEY else None
 
+# --- Voyage 임베딩 (DB와 통일) ---
+voyage_api_key = os.getenv("VOYAGE_API_KEY")
+embedding_model = VoyageEmbeddingFunction(
+    model_name="voyage-3",
+    api_key=voyage_api_key
+)
+
 # --- Chroma DB ---
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 collection = chroma_client.get_or_create_collection("blogs")
 
-# --- Embedding 모델 (사용자 쿼리 임베딩용) ---
-embedding_model = OpenAIEmbeddings(model="text-embedding-3-large")
-
 # --- FastAPI ---
 app = FastAPI(
-    title="RAG Correction & Quiz API (Chroma, pre-embedded)", 
-    version="0.5"
+    title="RAG Correction & Quiz API (Chroma + Voyage)",
+    version="0.6"
 )
 
-# --- Helper: 청크 분리 ---
+# --- Helper: 텍스트 청크 분리 ---
 def chunk_text_nltk(text, max_chars=500, overlap=1):
     sentences = sent_tokenize(text)
     chunks, current_chunk, current_len = [], [], 0
@@ -72,7 +76,6 @@ class QuizResponse(BaseModel):
 def correct_text(request: TextRequest):
     user_text = request.text.strip()
     user_chunks = chunk_text_nltk(user_text, max_chars=500, overlap=1)
-
     results_all = []
 
     for query in user_chunks:
@@ -80,10 +83,10 @@ def correct_text(request: TextRequest):
             if not client:
                 raise RuntimeError("❌ OPENAI_API_KEY가 설정되지 않았습니다.")
 
-            # 사용자 입력 임베딩
-            query_vec = embedding_model.embed_query(query)
+            # 사용자 입력 임베딩 (Voyage)
+            query_vec = embedding_model.encode_queries([query])[0]
 
-            # Chroma에서 검색
+            # Chroma 검색
             docs = collection.query(query_embeddings=[query_vec], n_results=3)
             if not docs.get("documents") or not docs["documents"][0]:
                 raise ValueError("⚠️ Chroma DB에서 검색 결과가 없습니다.")
@@ -121,8 +124,8 @@ def correct_text(request: TextRequest):
 def generate_quiz(request: TextRequest):
     user_text = request.text.strip()
     user_chunks = chunk_text_nltk(user_text, max_chars=500, overlap=1)
-
     quizzes_all = []
+
     for chunk in user_chunks:
         try:
             if not client:
@@ -141,7 +144,7 @@ def generate_quiz(request: TextRequest):
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
-                response_format={"type": "json"}  # JSON 강제
+                response_format={"type": "json_object"}  # ✅ 수정됨
             )
 
             generated = json.loads(response.choices[0].message.content)
