@@ -24,3 +24,65 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+
+# === Virtual environment ===
+.venv/
+venv/
+ENV/
+env/
+.conda/
+
+# === Jupyter / notebooks ===
+.ipynb_checkpoints/
+*.ipynb
+
+# === IDE / Editor ===
+.vscode/
+.idea/
+*.iml
+
+# === macOS ===
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# === Logs & temp ===
+*.log
+*.out
+*.err
+*.swp
+*.swo
+*.tmp
+
+# === Env files ===
+.env
+.env.*
+
+# === Build / dist ===
+dist/
+build/
+.eggs/
+*.whl
+*.tar.gz
+
+# === Data (optional) ===
+# 대용량 raw 데이터는 올리지 않는 게 좋음
+*.jsonl
+*.csv
+*.tsv
+*.sqlite
+
+# === Docker ===
+*.pid
+
