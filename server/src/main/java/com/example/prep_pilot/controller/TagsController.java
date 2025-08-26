@@ -31,10 +31,11 @@ public class TagsController {
     }
 
     // 태그 삭제
-    @DeleteMapping("/tags/{id}")
-    public ResponseEntity<TagsDto> deleteTags(@PathVariable Long id){
+    @DeleteMapping("/tags/{postsId}/{id}")
+    public ResponseEntity<TagsDto> deleteTags(@PathVariable Long postsId,
+                                              @PathVariable Long id){
 
-        TagsDto dto = tagsService.deleteTags(id);
+        TagsDto dto = tagsService.deleteTags(postsId, id);
 
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }

@@ -94,6 +94,15 @@ public class PostsService {
         target.patch(dto);
         Posts updated = postsRepository.save(target);
 
+        for(Long tagId : dto.getTagIds()) {
+            Optional<Tags> tags = tagsRepository.findById(tagId);
+            Post_tags pt = postTagsRepository.findByPostsIdAndTagsId(id, tagId);
+            if(tags.isPresent() && pt != null) {
+                Post_tags postTags = new Post_tags(updated, tags.get());
+                postTagsRepository.save(postTags);
+            }
+        }
+
         return PostsDto.toDto(updated);
     }
 
