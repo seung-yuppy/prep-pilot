@@ -30,7 +30,7 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
      - 화제글 점수 공식: (댓글 수 * 3) + (좋아요 수 * 5) - (경과 시간(h) * 0.02)
      */
     @Query("SELECT new com.example.prep_pilot.dto.PostsDto(" +
-            "p.id, p.title, p.slug, p.isPrivate, p.createdAt, p.updatedAt, u.nickname, " +
+            "p.id, p.title, p.content, p.slug, p.isPrivate, p.createdAt, p.updatedAt, u.nickname, " +
             "COUNT(DISTINCT c.id), COUNT(DISTINCT l.id)) " +
             "FROM Posts p " +
             "LEFT JOIN p.user u " +

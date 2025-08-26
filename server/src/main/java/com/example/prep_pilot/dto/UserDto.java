@@ -55,7 +55,7 @@ public class UserDto {
         return new UserDto(
                 newUser.getId(),
                 newUser.getUsername(),
-                newUser.getPassword(),
+                null,
                 newUser.getEmail(),
                 newUser.getName(),
                 newUser.getNickname(),
