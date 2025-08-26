@@ -1,13 +1,25 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SERVER_URL from "../constant/url";
 import useGetUserInfo from "../service/user/useGetUserInfo";
 import { useQueryClient } from "@tanstack/react-query";
+import useThemeStore from "../store/useThemeStore";
 
 export default function ProfileEdit() {
   const queryClient = useQueryClient();
   const [_, setFile] = useState();
   const fileInputRef = useRef(null);
   const { data: userInfo } = useGetUserInfo();
+  const { setLightTheme, setDarkTheme, theme } = useThemeStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedNickname, setEditedNickname] = useState("");
+  const [editedBio, setEditedBio] = useState("");
+
+  useEffect(() => {
+  if (userInfo) {
+    setEditedNickname(userInfo.nickname || "");
+    setEditedBio(userInfo.bio || "");
+  }
+}, [userInfo]);
 
   const handleImageClick = () => {
     fileInputRef.current.click();
@@ -56,9 +68,9 @@ export default function ProfileEdit() {
       const res2 = await fetch(`${SERVER_URL}userinfo/image`, {
         method: "PATCH",
         headers: {
-        'Content-Type': 'application/json',
-        'access': `${accessToken}`
-      },
+          'Content-Type': 'application/json',
+          'access': `${accessToken}`
+        },
         body: JSON.stringify({profileImageUrl: data?.url}),
       });
 
@@ -70,7 +82,7 @@ export default function ProfileEdit() {
     } catch (error) {
       console.error("좋아요 에러", error);
     }
-  }
+  };
 
   // const deleteUser = async () => {
   //   const accessToken = localStorage.access;
@@ -118,6 +130,24 @@ export default function ProfileEdit() {
     }
   };
   
+  // 닉네임 & bio 수정
+  const editUserInfo = async () => {
+    const accessToken = localStorage.access;
+    try {
+      const res = await fetch(`${SERVER_URL}userinfo/profile`, {
+        method:"PATCH",
+        headers: {
+          'Content-Type': 'application/json',
+          'access': `${accessToken}`
+        },
+        body: JSON.stringify({ nickname: editedNickname, bio: editedBio }),
+      });
+      queryClient.invalidateQueries({ queryKey: ["userinfo"] });
+      return res;
+    } catch (error) {
+      console.error("닉네임 & bio 수정 오류", error);
+    }
+  }
 
   return (
     <>
@@ -137,14 +167,46 @@ export default function ProfileEdit() {
               className="profile-file-input"
             />
           </div>
-          <button type="button" onClick={deleteImage}>삭제하기</button>
+          {/* <button type="button" onClick={deleteImage}>삭제하기</button> */}
           <div className="edit-text">
-            <h2 className="edit-nickname">{userInfo?.nickname}</h2>
-            <p className="edit-bio">{userInfo?.bio}</p>
-            <div className="edit-text-btn-container">
-              <button type="button" className="edit-text-btn">수정</button>
-            </div>
+            {!isEditing ? (
+              <>
+                <h2 className="edit-nickname">{userInfo?.nickname}</h2>
+                <p className="edit-bio">{userInfo?.bio}</p>
+                <div className="edit-text-btn-container">
+                  <button type="button" className="edit-text-btn" onClick={() => setIsEditing(true)}>수정</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <form className="edit-form" onSubmit={editUserInfo}>
+                  <div className="edit-form-input-container">
+                    <input
+                      type="text"
+                      value={editedNickname}
+                      onChange={(e) => setEditedNickname(e.target.value)}
+                      className="edit-nickname editing"
+                    />
+                    <input
+                      type="text"
+                      value={editedBio}
+                      onChange={(e) => setEditedBio(e.target.value)}
+                      className="edit-bio editing"
+                    />
+                  </div>
+                  <div className="edit-form-btn-container">
+                    <button type="submit" className="edit-form-btn-editing">수정하기</button>
+                    <button type="button" className="edit-form-btn-cancel" onClick={() => setIsEditing(false)}>수정취소</button>
+                  </div>
+                </form>
+              </>
+            )}
           </div>
+        </div>
+        <div className="edit-btn-container">
+          <h2 className="edit-delete-caption">테마 변경</h2>
+          <button type="button" className={theme === "light" ? "edit-btn-dark-theme active" : "edit-btn-dark-theme"} onClick={setLightTheme}>☀️</button>
+          <button type="button" className={theme === "dark" ? "edit-btn-light-theme active" : "edit-btn-light-theme"} onClick={setDarkTheme}>🌙</button>
         </div>
         <div className="edit-btn-container">
           <h2 className="edit-delete-caption">회원 탈퇴</h2>
@@ -155,5 +217,3 @@ export default function ProfileEdit() {
     </>
   );
 };
-
-

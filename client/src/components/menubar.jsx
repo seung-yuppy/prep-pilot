@@ -4,13 +4,12 @@ import useLogOut from "../service/user/useLogOut";
 import useModalStore from "../store/useModalStore";
 import Modal from "./modal";
 import { Link } from "react-router-dom";
-import useThemeStore from "../store/useThemeStore";
+// import useThemeStore from "../store/useThemeStore";
 
 export default function Menubar() {
   const { isOpen, openModal, closeModal } = useModalStore();
   const logOutMutation = useLogOut();
-  const { theme, toggleTheme } = useThemeStore();
-  // const [theme, setTheme] = useState("light");
+  // const { theme, toggleTheme } = useThemeStore();
 
   const onLogout = async (e) => {
     e.preventDefault();
@@ -38,9 +37,9 @@ export default function Menubar() {
             회원가입
           </button>
         )}
-        <button className="btn-theme" onClick={toggleTheme}>
+        {/* <button className="btn-theme" onClick={toggleTheme}>
           {theme === "dark" ? "🌙" : "☀️"}
-        </button>
+        </button> */}
       </nav>
 
       {/* 모달 관리 */}

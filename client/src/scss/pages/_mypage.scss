@@ -11,21 +11,22 @@
 
   .mypage-info {
     display: flex;
-    gap: 1rem;
+    gap: 3rem;
     align-items: center;
     padding-bottom: 3rem;
     border-bottom: 1px solid var(--color-text);
 
     .mypage-profile-image {
-      width: 13rem;
-      height: 13rem;
+      width: 15rem;
+      height: 15rem;
+      object-fit: cover;
       border-radius: 50%;
     }
 
     .mypage-nickname-intro {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
 
       .info-nickname {
         font-weight: bold;

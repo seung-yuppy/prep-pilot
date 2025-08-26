@@ -35,12 +35,57 @@
       justify-content: center;
       gap: 1.5rem;
 
+      .edit-form {
+        display: flex;
+        gap: 1rem;
+
+        .edit-form-input-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem
+        }
+
+        .edit-form-btn-container {
+          display: flex;
+          align-items: center;
+          gap: 1.3rem;
+
+          .edit-form-btn-editing {
+            padding: 0.75rem 2rem;
+            background-color: $main;
+            color: $white;
+            border-radius: 0.7rem;
+            font-size: 1.5rem;
+          }
+
+          .edit-form-btn-cancel {
+            padding: 0.75rem 2rem;
+            background-color: $red;
+            color: $white;
+            border-radius: 0.7rem;
+            font-size: 1.5rem;            
+          }
+        }
+      }
+
       .edit-nickname {
+        font-weight: bold;
         font-size: 2rem;
       }
 
       .edit-bio {
-        font-size: 1.5rem
+        font-size: 1.7rem;
+        color: $gray3;
+      }
+
+      .editing {
+        padding: 1rem 2rem;
+        border: 1px solid var(--color-text);
+        border-radius: 3rem;
+
+        &:focus {
+          border: 1px solid $main;
+        }
       }
 
       .edit-text-btn-container {
@@ -61,11 +106,29 @@
   .edit-btn-container {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 2rem;
 
     .edit-delete-caption {
       font-weight: bold;
       font-size: 2rem;
+    }
+
+    .edit-btn-dark-theme {
+      padding: 1rem 2rem;
+      background-color: $white;
+      color: $white;
+      font-size: 2rem;
+    }
+
+    .edit-btn-light-theme {
+      padding: 1rem 2rem;
+      background-color: $semi-black;
+      color: $white;
+      font-size: 2rem;
+    }
+
+    .active {
+      border: 1px solid $main;
     }
 
     .edit-btn-delete {
