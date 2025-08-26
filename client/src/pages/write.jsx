@@ -3,13 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import SUNEDITOR_LANG from 'suneditor/src/lang/ko'; // Korean language pack
+import useCorrectText from '../service/post/useCorrectText';
 import useImageUpload from '../service/posts/useImageUpload';
 import useWrite from "../service/posts/useWrite";
 import usePostTag from '../service/tags/usePostTag';
 import { doParse } from "../util/posts/write";
 //import useModalStore from "../store/useModalStore";
 
+
 import Popup from '../components/Popup';
+
+
 
 export default function Write() {
   const [isAiReviewActive, setIsAiReviewActive] = useState(false);
@@ -24,7 +28,7 @@ export default function Write() {
   const [tagInput, setTagInput] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const navigate = useNavigate();
-
+  const tmptmp = "";
   useEffect(() => {
     const savedData = localStorage.getItem('tmpWrite');
     if (savedData) {
@@ -98,6 +102,8 @@ export default function Write() {
       console.log("글쓰기 서버 오류", error);
     }
   });
+
+
 
 
   const writing = async (e) => {
@@ -211,7 +217,7 @@ export default function Write() {
         const sanitized = sanitise(node);
         const forDBSanitized = doParse(new DOMParser().parseFromString(sanitized, 'text/html').body.firstChild);
         setContent(JSON.stringify(forDBSanitized));
-        console.log(forDBSanitized);
+        //console.log(forDBSanitized);
         document.querySelector('#preview_content').innerHTML = sanitized;
         sanitizedForTemp.current = sanitized;
         
@@ -280,8 +286,135 @@ export default function Write() {
     return undefined;
   };
 
+
+
+  const correctTextMutation = useCorrectText({
+    onSuccess: (data) => {
+      // let i = 0;
+      // const interval = setInterval(() => {
+      //   if (i < data.corrections.length) {
+      //     const correctedText = data.corrections.slice(0, i + 1).join(' ');
+      //     editorRef.current.setContents(correctedText);
+      //     i++;
+      //   } else {
+      //     clearInterval(interval);
+      //   }
+      // }, 100);
+      // let aiContents = "";
+      // for(let crr of data.corrections[0].result){
+      //   aiContents += crr.correct;
+      // }
+      console.log(data.corrections[0]);
+      //테스트용
+
+
+
+      // editorRef.current.setContents(aiContents);
+    },
+    onError: (error) => {
+      console.error('Error during AI review:', error);
+    }
+  });
+
+  const handleAiReview2 = () => {
+    const editor = editorRef.current;
+    const editableArea = editor.core.context.element.wysiwyg;
+    const previewContent = document.getElementById('preview_content');
+
+    // Clone the editor's content for the preview
+    const clonedContent = editableArea.cloneNode(true);
+
+    let corrections = {
+      0: [{ wrong: "운영체제마다 별도의 전용 컴파일러가 필요하다", correct: "운영체제와 상관없이 JVM에서 실행되며, 컴파일러는 하나면 된다" }],
+      1: [{ wrong: "반드시 `include` 키워드로 외부 라이브러리를 불러와야 한다", correct: "`import` 키워드로 필요할 때만 외부 라이브러리를 불러온다" }],
+      2: [{ wrong: "`create`라는 키워드를 사용한다", correct: "`new` 키워드를 사용한다" }],
+      3: [{ wrong: "`public void main(String args)`", correct: "`public static void main(String[] args)`" }],
+      4: [{ wrong: "포인터 연산을 직접 지원하므로 메모리를 직접 조작할 수 있다", correct: "포인터 연산을 지원하지 않아 메모리를 직접 조작할 수 없다" }],
+      5: [{ wrong: "인터페이스는 하나의 클래스에서 두 개 이상 구현할 수 없다", correct: "하나의 클래스가 여러 개의 인터페이스를 구현할 수 있다" }],
+      6: [{ wrong: "`int`는 2바이트 크기를 가진다", correct: "`int`는 4바이트 크기를 가진다" }],
+      7: [{ wrong: "`try` 블록 없이 `catch`만 작성할 수 있다", correct: "`try` 블록 없이는 `catch`를 작성할 수 없다" }],
+      8: [{ wrong: "JVM은 소스 코드를 직접 실행하기 때문에 바이트코드로 변환되지 않는다", correct: "JVM은 소스 코드를 컴파일해 생성된 바이트코드를 실행한다" }],
+      9: [{ wrong: "가비지 컬렉션은 프로그래머가 명령어를 통해 수동으로 실행해야만 동작한다", correct: "가비지 컬렉션은 JVM이 자동으로 수행한다" }]
+    };
+
+    const traverseAndReplace = (node, isPreview) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        let content = node.textContent;
+        for (let key in corrections) {
+          if (corrections.hasOwnProperty(key)) {
+            let correctionArray = corrections[key];
+            for (let i = 0; i < correctionArray.length; i++) {
+              let correction = correctionArray[i];
+              if (content.includes(correction.wrong)) {
+                const textParts = content.split(correction.wrong);
+                const fragment = document.createDocumentFragment();
+
+                textParts.forEach((part, index) => {
+                  fragment.appendChild(document.createTextNode(part));
+                  if (index < textParts.length - 1) {
+                    if (isPreview) {
+                      const animatedSpan = document.createElement('span');
+                      animatedSpan.className = 'highlight-text';
+                      animatedSpan.textContent = correction.correct;
+                      fragment.appendChild(animatedSpan);
+                    } else {
+                      const animatedSpan = document.createElement('span');
+                      animatedSpan.className = 'wave-text';
+                      animatedSpan.textContent = correction.correct;
+                      fragment.appendChild(animatedSpan);
+                    }
+                  }
+                });
+
+                node.parentNode.replaceChild(fragment, node);
+              }
+            }
+          }
+        }
+      } else {
+        for (let i = 0; i < node.childNodes.length; i++) {
+          traverseAndReplace(node.childNodes[i], isPreview);
+        }
+      }
+    };
+
+    // Traverse and replace in the editor
+    traverseAndReplace(editableArea, false);
+
+    // Traverse and highlight in the cloned preview content
+    traverseAndReplace(clonedContent, true);
+
+    // Update the preview content
+    previewContent.innerHTML = '';
+    previewContent.appendChild(clonedContent);
+
+    setTimeout(() => {
+      const spans = editableArea.querySelectorAll('.wave-text');
+      spans.forEach(span => {
+        const parent = span.parentNode;
+        const text = document.createTextNode(span.textContent);
+        parent.replaceChild(text, span);
+        parent.normalize();
+      });
+
+      const highlightedSpans = previewContent.querySelectorAll('.highlight-text');
+      highlightedSpans.forEach(span => {
+        const parent = span.parentNode;
+        const text = document.createTextNode(span.textContent);
+        parent.replaceChild(text, span);
+        parent.normalize();
+      });
+    }, 1000);
+
+    handleChange(editor.core.getContents());
+  };
+
+
   const handleAiReview = () => {
-    setIsAiReviewActive(true);
+    if (editorRef.current) {
+      const pureText = editorRef.current.getText();
+      correctTextMutation.mutate(pureText);
+    }
   };
 
   const tempSave = () => {
@@ -389,7 +522,7 @@ export default function Write() {
             
             <div className='right'>
               <button type='button' className='save-tmp-button' onClick={tempSave}>임시저장</button>
-              <button type='button' className='ai-review-button' onClick={handleAiReview}>AI 검토하기</button>
+              <button type='button' className='ai-review-button' onClick={handleAiReview2}>AI 검토하기</button>
               <button type="submit" className="write-btn">출간하기</button>
             </div>
           </div>
