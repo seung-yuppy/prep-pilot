@@ -9,6 +9,7 @@ import nltk
 from nltk.tokenize import sent_tokenize
 import chromadb
 from pymilvus.model.dense import VoyageEmbeddingFunction
+from fastapi.middleware.cors import CORSMiddleware
 
 # --- NLTK 리소스 다운로드 ---
 nltk.download("punkt")
@@ -35,10 +36,22 @@ embedding_model = VoyageEmbeddingFunction(
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 collection = chroma_client.get_or_create_collection("blogs")
 
-# --- FastAPI ---
+# --- FastAPI 앱 생성 ---
 app = FastAPI(
     title="RAG Correction & Quiz API (Chroma + Voyage)",
-    version="0.7"
+    version="0.6"
+)
+
+# --- CORS 허용 설정 ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:8080"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # --- Helper: 텍스트 청크 분리 ---
