@@ -101,7 +101,7 @@ export function jsonToJsx(node, key = 0) {
 }
 
 
-const onWrite = async ({ title, content, slug, is_private }) => {
+const onWrite = async ({ title, content, slug, isPrivate, tagIds }) => {
   try {
     const accessToken = localStorage.access;
     const response = await fetch(`${SERVER_URL}posts`,{
@@ -110,7 +110,7 @@ const onWrite = async ({ title, content, slug, is_private }) => {
           'Content-Type': 'application/json',
           'access': `${accessToken}`
         },
-        body: JSON.stringify({ title, content, slug, is_private }),
+        body: JSON.stringify({ title, content, slug, isPrivate, tagIds }),
     });
     const data = await response.json();
     return{ response, data };
