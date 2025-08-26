@@ -38,7 +38,7 @@ collection = chroma_client.get_or_create_collection("blogs")
 # --- FastAPI ---
 app = FastAPI(
     title="RAG Correction & Quiz API (Chroma + Voyage)",
-    version="0.6"
+    version="0.7"
 )
 
 # --- Helper: 텍스트 청크 분리 ---
@@ -76,7 +76,7 @@ class QuizResponse(BaseModel):
 def correct_text(request: TextRequest):
     user_text = request.text.strip()
     user_chunks = chunk_text_nltk(user_text, max_chars=500, overlap=1)
-    results_all = []
+    corrections_all = []
 
     for query in user_chunks:
         try:
@@ -95,10 +95,15 @@ def correct_text(request: TextRequest):
             context = "\n".join(top_chunks)
 
             prompt = f"""
-            다음 문장을 옳게 교정해줘.
-            출력 형식은 반드시 아래처럼:
-            잘못된 문장: ...
-            추천 문장: ...
+            아래 문장에서 잘못된 부분을 찾아 교정해줘.
+            ⚠️ 출력은 반드시 JSON 배열 형식으로!
+            - 각 항목은 "wrong", "correct" 두 개의 key만 가져야 한다.
+            - JSON 배열 외 텍스트는 절대 포함하지 말 것.
+
+            예시 출력:
+            [
+              {{"wrong": "잘못된 문장 예시", "correct": "교정된 문장 예시"}}
+            ]
 
             문장:
             {query}
@@ -109,15 +114,26 @@ def correct_text(request: TextRequest):
 
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}]
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"}  # ✅ JSON 강제
             )
-            results_all.append(response.choices[0].message.content.strip())
+
+            generated = json.loads(response.choices[0].message.content)
+
+            # 혹시 단일 dict로 반환되면 배열로 감싸기
+            if isinstance(generated, dict):
+                generated = [generated]
+
+            corrections_all.extend(generated)
 
         except Exception as e:
             tb = traceback.format_exc()
-            results_all.append(f"⚠️ 에러 발생: {str(e)}\n{tb}")
+            corrections_all.append({
+                "wrong": "⚠️ 에러 발생",
+                "correct": f"{str(e)}\n{tb}"
+            })
 
-    return CorrectionResponse(input=user_text, corrections=results_all)
+    return CorrectionResponse(input=user_text, corrections=corrections_all)
 
 # --- 문제 생성 API ---
 @app.post("/generate-quiz", response_model=QuizResponse)
@@ -136,8 +152,7 @@ def generate_quiz(request: TextRequest):
 
             ⚠️ 반드시 아래 조건을 지켜야 한다:
             - 출력은 JSON 배열 형식만 허용한다.
-            - JSON 배열 외의 텍스트(설명, 문구 등)는 절대 포함하지 말 것.
-            - 각 항목은 "question"과 "answer" 두 개의 key만 가져야 한다.
+            - 각 항목은 "question", "answer" 두 개의 key만 가져야 한다.
             - 답변은 글 속에서 반드시 찾을 수 있어야 한다.
 
             출력 예시:
@@ -154,12 +169,11 @@ def generate_quiz(request: TextRequest):
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
-                response_format={"type": "json_object"}  # ✅ JSON 객체 강제
+                response_format={"type": "json_object"}  # ✅ JSON 강제
             )
 
             generated = json.loads(response.choices[0].message.content)
 
-            # 혹시 단일 dict로 반환되면 배열로 감싸기
             if isinstance(generated, dict):
                 generated = [generated]
 
@@ -173,4 +187,3 @@ def generate_quiz(request: TextRequest):
             })
 
     return QuizResponse(input=user_text, quizzes=quizzes_all)
-
