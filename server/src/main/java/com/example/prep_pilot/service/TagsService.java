@@ -52,13 +52,18 @@ public class TagsService {
         return tagsRepository.findTagUsageCountByUserId(userId);
     }
 
-    public TagsDto deleteTags(Long id) {
+    public TagsDto deleteTags(Long postsId, Long id) {
 
         Tags tags = tagsRepository.findById(id).orElseThrow(() ->
                 new TagsNotFoundException(id)
         );
 
-        tagsRepository.delete(tags);
+        Post_tags pt = postTagsRepository.findByPostsIdAndTagsId(postsId, id);
+        if(pt != null)
+            postTagsRepository.delete(pt);
+
+        if(postTagsRepository.countByTagsId(id) == 1)
+            tagsRepository.delete(tags);
 
         return TagsDto.toDto(tags);
     }

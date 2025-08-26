@@ -15,6 +15,10 @@ public interface Post_tagsRepository extends JpaRepository<Post_tags, PostTagsId
 
     List<Post_tags> findAllByPostsId(Long postsId);
 
+    Long countByTagsId(Long postsId);
+
+    Post_tags findByPostsIdAndTagsId(Long postsId, Long tagsId);
+
     @Query("SELECT pt.posts FROM Post_tags pt WHERE pt.tags.id = :tagsId")
     Page<Posts> findPostsByTagsId(@Param("tagsId") Long tagsId, Pageable pageable);
 }
