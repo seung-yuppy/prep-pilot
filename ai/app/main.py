@@ -10,11 +10,12 @@ from nltk.tokenize import sent_tokenize
 import chromadb
 from pymilvus.model.dense import VoyageEmbeddingFunction
 from fastapi.middleware.cors import CORSMiddleware
+from typing import List
 
 # --- NLTK 리소스 다운로드 ---
 nltk.download("punkt")
 try:
-    nltk.download("punkt_tab")  # 일부 버전에서 필요
+    nltk.download("punkt_tab")
 except:
     pass
 
@@ -25,7 +26,7 @@ load_dotenv()
 OPENAI_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_KEY) if OPENAI_KEY else None
 
-# --- Voyage 임베딩 (DB와 통일) ---
+# --- Voyage 임베딩 ---
 voyage_api_key = os.getenv("VOYAGE_API_KEY")
 embedding_model = VoyageEmbeddingFunction(
     model_name="voyage-3",
@@ -36,19 +37,16 @@ embedding_model = VoyageEmbeddingFunction(
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 collection = chroma_client.get_or_create_collection("blogs")
 
-# --- FastAPI 앱 생성 ---
+# --- FastAPI 앱 ---
 app = FastAPI(
     title="RAG Correction & Quiz API (Chroma + Voyage)",
-    version="0.6"
+    version="0.7"
 )
 
-# --- CORS 허용 설정 ---
+# --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:8080"
-    ],
+    allow_origins=["http://localhost:5173", "http://localhost:8080"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -76,13 +74,44 @@ def chunk_text_nltk(text, max_chars=500, overlap=1):
 class TextRequest(BaseModel):
     text: str
 
+class CorrectionItem(BaseModel):
+    wrong: str
+    correct: str
+
 class CorrectionResponse(BaseModel):
     input: str
-    corrections: list
+    corrections: List[CorrectionItem]
+
+class QuizItem(BaseModel):
+    question: str
+    answer: str
 
 class QuizResponse(BaseModel):
     input: str
-    quizzes: list
+    quizzes: List[QuizItem]
+
+# --- Normalize ---
+def normalize_corrections(data) -> List[dict]:
+    if isinstance(data, dict):
+        data = [data]
+    normalized = []
+    for item in data:
+        normalized.append({
+            "wrong": str(item.get("wrong", "")).strip(),
+            "correct": str(item.get("correct", "")).strip()
+        })
+    return normalized
+
+def normalize_quizzes(data) -> List[dict]:
+    if isinstance(data, dict):
+        data = [data]
+    normalized = []
+    for item in data:
+        normalized.append({
+            "question": str(item.get("question", "")).strip(),
+            "answer": str(item.get("answer", "")).strip()
+        })
+    return normalized
 
 # --- 교정 API ---
 @app.post("/correct", response_model=CorrectionResponse)
@@ -96,10 +125,7 @@ def correct_text(request: TextRequest):
             if not client:
                 raise RuntimeError("❌ OPENAI_API_KEY가 설정되지 않았습니다.")
 
-            # 사용자 입력 임베딩 (Voyage)
             query_vec = embedding_model.encode_queries([query])[0]
-
-            # Chroma 검색
             docs = collection.query(query_embeddings=[query_vec], n_results=3)
             if not docs.get("documents") or not docs["documents"][0]:
                 raise ValueError("⚠️ Chroma DB에서 검색 결과가 없습니다.")
@@ -109,11 +135,12 @@ def correct_text(request: TextRequest):
 
             prompt = f"""
             아래 문장에서 잘못된 부분을 찾아 교정해줘.
-            ⚠️ 출력은 반드시 JSON 배열 형식으로!
-            - 각 항목은 "wrong", "correct" 두 개의 key만 가져야 한다.
-            - JSON 배열 외 텍스트는 절대 포함하지 말 것.
 
-            예시 출력:
+            ⚠️ 반드시 JSON 배열만 출력하세요.
+            - 각 항목은 "wrong", "correct" 두 개의 key만 가져야 합니다.
+            - JSON 배열 이외의 텍스트는 절대 포함하지 마세요.
+
+            예시:
             [
               {{"wrong": "잘못된 문장 예시", "correct": "교정된 문장 예시"}}
             ]
@@ -127,17 +154,11 @@ def correct_text(request: TextRequest):
 
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-                response_format={"type": "json_object"}  # ✅ JSON 강제
+                messages=[{"role": "user", "content": prompt}]
             )
 
             generated = json.loads(response.choices[0].message.content)
-
-            # 혹시 단일 dict로 반환되면 배열로 감싸기
-            if isinstance(generated, dict):
-                generated = [generated]
-
-            corrections_all.extend(generated)
+            corrections_all.extend(normalize_corrections(generated))
 
         except Exception as e:
             tb = traceback.format_exc()
@@ -148,7 +169,7 @@ def correct_text(request: TextRequest):
 
     return CorrectionResponse(input=user_text, corrections=corrections_all)
 
-# --- 문제 생성 API ---
+# --- 퀴즈 API ---
 @app.post("/generate-quiz", response_model=QuizResponse)
 def generate_quiz(request: TextRequest):
     user_text = request.text.strip()
@@ -163,10 +184,10 @@ def generate_quiz(request: TextRequest):
             prompt = f"""
             아래 글을 기반으로 학습용 **주관식 문제**를 3개 만들어줘.
 
-            ⚠️ 반드시 아래 조건을 지켜야 한다:
-            - 출력은 JSON 배열 형식만 허용한다.
-            - 각 항목은 "question", "answer" 두 개의 key만 가져야 한다.
-            - 답변은 글 속에서 반드시 찾을 수 있어야 한다.
+            ⚠️ 반드시 JSON 배열만 출력하세요.
+            - 각 항목은 "question", "answer" 두 개의 key만 가져야 합니다.
+            - 답변은 반드시 글 속에서 찾을 수 있어야 합니다.
+            - JSON 배열 이외의 텍스트는 절대 포함하지 마세요.
 
             출력 예시:
             [
@@ -181,16 +202,11 @@ def generate_quiz(request: TextRequest):
 
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-                response_format={"type": "json_object"}  # ✅ JSON 강제
+                messages=[{"role": "user", "content": prompt}]
             )
 
             generated = json.loads(response.choices[0].message.content)
-
-            if isinstance(generated, dict):
-                generated = [generated]
-
-            quizzes_all.extend(generated)
+            quizzes_all.extend(normalize_quizzes(generated))
 
         except Exception as e:
             tb = traceback.format_exc()
