@@ -7,6 +7,7 @@ const Home = lazy(() => import("./pages/home.jsx"));
 const Write = lazy(() => import("./pages/write.jsx"));
 const Post = lazy(() => import("./pages/post.jsx"));
 const MyPage = lazy(() => import("./pages/mypage.jsx"));
+const EditProfile = lazy(() => import("./pages/profileEdit.jsx"));
 
 
 function App() {
@@ -34,6 +35,10 @@ function App() {
         {
           path: "/trending",
           element: <Home />
+        },
+        {
+          path: "/editprofile",
+          element: <EditProfile />
         }
       ]
     }

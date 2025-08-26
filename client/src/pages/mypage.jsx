@@ -1,21 +1,24 @@
 import { Link } from "react-router-dom";
 import Feed from "../components/feed";
+import useGetUserInfo from "../service/user/useGetUserInfo";
 
 export default function MyPage() {
+  const { data: userInfo } = useGetUserInfo();
+  console.log(userInfo)
+
   return (
     <>
       <div className="mypage-wrapper">
         <div className="mypage-info">
           <img
-            src="https://velog.velcdn.com/images/prettylee620/profile/4d44e3a6-dca0-4c1a-be20-63d0be4b2feb/image.jpeg"
+            src={userInfo?.profileImageUrl}
             className="mypage-profile-image"
             alt="프로필 이미지 없음"
           />
           <div className="mypage-nickname-intro">
-            <h1 className="info-nickname">배고픈 둘리</h1>
+            <h1 className="info-nickname">{userInfo?.nickname}</h1>
             <p className="info-intro">
-              내 지식을 기록하여, 다른 사람들과 공유하여 함께 발전하는 사람이
-              되고 싶다.
+              {userInfo?.bio}
             </p>
           </div>
         </div>
@@ -30,9 +33,9 @@ export default function MyPage() {
           </h2>
         </div>
         <div className="follow-btn">
-          <button type="button" className="post-edit">
+          <Link to={"/editprofile"} className="post-edit">
             정보 수정
-          </button>
+          </Link>
           <button type="button" className="post-follow">
             팔로우
           </button>
@@ -40,7 +43,6 @@ export default function MyPage() {
         <div className="mypage-content">
           <div className="mypage-tab">
             <Link>글</Link>
-            <Link>시리즈</Link>
             <Link>소개</Link>
           </div>
           {/* <Feed /> */}
