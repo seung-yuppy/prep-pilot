@@ -5,12 +5,14 @@ import 'suneditor/dist/css/suneditor.min.css';
 import SUNEDITOR_LANG from 'suneditor/src/lang/ko'; // Korean language pack
 import useImageUpload from '../service/posts/useImageUpload';
 import useWrite from "../service/posts/useWrite";
+import usePostTag from '../service/tags/usePostTag';
 import { doParse } from "../util/posts/write";
 //import useModalStore from "../store/useModalStore";
 
 import Popup from '../components/Popup';
 
 export default function Write() {
+  const [isAiReviewActive, setIsAiReviewActive] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupContent, setPopupContent] = useState("");
   const [popupColor, setPopupColor] = useState("#4CAF50");
@@ -18,8 +20,9 @@ export default function Write() {
   const [content, setContent] = useState("");
   const [slug, setSlug] = useState("");
   const [initialContent, setInitialContent] = useState("");
-  const [tag, setTag] = useState("");
-  const [is_private, setIsPrivate] = useState(false);
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export default function Write() {
       try {
         const parsedData = JSON.parse(savedData);
         setTitle(parsedData.title);
-        setTag(parsedData.tag);
+        setTags(parsedData.tags || []);
         setInitialContent(parsedData.content);
         document.querySelector('#preview_title').textContent = parsedData.title;
       } catch (error) {
@@ -72,6 +75,15 @@ export default function Write() {
     },
     onError: (error) => {
       console.log("글쓰기 서버 오류", error);
+    }
+  });
+
+  const postTagMutation = usePostTag({
+    onSuccess: (response) => {
+      console.log("태그 포스트 성공", response);
+    },
+    onError: (error) => {
+      console.log("태그 포스트 서버 오류", error);
     }
   });
 
@@ -124,7 +136,15 @@ export default function Write() {
     const forDBSanitized = doParse(new DOMParser().parseFromString(updatedHtml, 'text/html').body);
     const finalContent = JSON.stringify(forDBSanitized);
 
-    writeMutation.mutate({ title, content: finalContent, slug, is_private });
+    const tagNames = tags;
+    let tagIds = [];
+    if (tagNames.length > 0) {
+      const tagPromises = tagNames.map(tagName => postTagMutation.mutateAsync({ name: tagName }));
+      const tagResponses = await Promise.all(tagPromises);
+      tagIds = tagResponses.map(res => res.data.id);
+    }
+
+    writeMutation.mutate({ title, content: finalContent, slug, isPrivate, tagIds });
   };
 
   
@@ -212,6 +232,7 @@ export default function Write() {
     }
   };
 
+
   const handleTitle = (value) => {
     document.querySelector('#preview_title').textContent = value;
   };
@@ -259,10 +280,14 @@ export default function Write() {
     return undefined;
   };
 
+  const handleAiReview = () => {
+    setIsAiReviewActive(true);
+  };
+
   const tempSave = () => {
     const dataToSave = {
       title,
-      tag,
+      tags,
       content: sanitizedForTemp.current,
     };
     localStorage.setItem('tmpWrite', JSON.stringify(dataToSave));
@@ -271,6 +296,28 @@ export default function Write() {
     setIsPopupVisible(true);
   }
 
+  const handleTagInputChange = (e) => {
+    setTagInput(e.target.value);
+  };
+
+  const handleTagInputKeyDown = (e) => {
+    if (e.key === ',' && tagInput.trim() !== '') {
+      e.preventDefault();
+      setTags([...tags, tagInput.trim()]);
+      setTagInput('');
+    } else if (e.key === 'Enter' && tagInput.trim() !== '') {
+      e.preventDefault();
+      setTags([...tags, tagInput.trim()]);
+      setTagInput('');
+    } else if (e.key === 'Backspace' && tagInput === '' && tags.length > 0) {
+      setTags(tags.slice(0, -1));
+    }
+  };
+
+  const removeTag = (indexToRemove) => {
+    setTags(tags.filter((_, index) => index !== indexToRemove));
+  };
+
 
   return (
     <div className="write-container">
@@ -278,12 +325,29 @@ export default function Write() {
         <form className="write-form" onSubmit={writing}>
           <div>
             <input id='write_title' type='text' name='title' placeholder='제목을 입력하세요' onChange={(e) => setTitle(e.target.value)} onKeyUp={(e) => handleTitle(e.target.value)} value={title}></input>
-            <input className='write-tag' type='text' name='tag' placeholder='태그를 입력하세요' onChange={(e) => setTag(e.target.value)} value={tag}></input>
+                        <div className="tag-input-container">
+              {tags.map((tag, index) => (
+                <div key={index} className="tag">
+                  {tag}
+                  <button type="button" className="remove-tag-button" onClick={() => removeTag(index)}>
+                    &times;
+                  </button>
+                </div>
+              ))}
+              <input
+                className="tag-input"
+                type="text"
+                placeholder="태그를 입력하세요"
+                value={tagInput}
+                onChange={handleTagInputChange}
+                onKeyDown={handleTagInputKeyDown}
+              />
+            </div>
             <input type="hidden" name="slug" value={slug} />
-            <input type="hidden" name="is_private" value={is_private} />
+            <input type="hidden" name="isPrivate" value={isPrivate} />
           </div>
           
-          <div className='editor-container' style={{ marginBottom: '1em' }}>
+          <div className={`editor-container ${isAiReviewActive ? 'ai-review-active' : ''}`} style={{ marginBottom: '1em' }}>
             <SunEditor
                 getSunEditorInstance={(sunEditor) => { editorRef.current = sunEditor; }}
                 onImageUploadBefore={handleImageUploadBefore}
@@ -325,6 +389,7 @@ export default function Write() {
             
             <div className='right'>
               <button type='button' className='save-tmp-button' onClick={tempSave}>임시저장</button>
+              <button type='button' className='ai-review-button' onClick={handleAiReview}>AI 검토하기</button>
               <button type="submit" className="write-btn">출간하기</button>
             </div>
           </div>

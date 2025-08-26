@@ -6,15 +6,25 @@ body{
 }
 
 .sun-editor, .sun-editor .se-toolbar{
-    border: none;
-    outline: none;
-    background-color: white;
+    border: none !important;
+    outline: none !important;
+    background-color: white !important;
 }
 #write_title, #write_tag {
     width: 100%;
     box-sizing: border-box;
     padding: 0.5em;
     font-size: 3rem;
+    font-family: 'Consolas', monospace;
+}
+
+.sun-editor .se-wrapper .se-container, .sun-editor-editable {
+  font-family: 'Consolas', monospace !important;
+}
+
+.sun-editor .se-resizing-bar {
+  border-top : none !important;
+  background-color: white !important;
 }
 
 
@@ -38,6 +48,7 @@ body{
 .write-editor{
   display: flex;
   flex-direction: column;
+  padding-bottom: 80px;
 }
 
 .write-form {
@@ -51,8 +62,15 @@ body{
 }
 
 .button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  width: 100%;
+  z-index: 100;
 }
 
 .button-container .right{
@@ -84,14 +102,14 @@ body{
   }
 }
 
-.write-btn, .save-tmp-button, .go-back-button {
+.write-btn, .save-tmp-button, .go-back-button, .ai-review-button {
   border-radius: 1rem;
   transition: background-color 0.3s;
   padding: 1rem 2.2rem;
   font-size: 1.5rem;
 }
 
-.save-tmp-button {
+.ai-review-button, .save-tmp-button {
   background-color: white;
   color: #12b886;
   margin-right: 0.5rem;
@@ -99,6 +117,8 @@ body{
     background-color: #eaeaea;
   }
 }
+
+
 .write-btn {
     background-color: #12b886;
     border-color: #12b886;
@@ -149,4 +169,12 @@ body{
 
 .preview-content ol{
   list-style-type: decimal;
+}
+
+.write-preview h1, .write-preview .preview-content {
+  font-family: 'Consolas', monospace;
+}
+
+.editor-container.ai-review-active .sun-editor-editable p {
+  background-color: #B6FCDD;
 }

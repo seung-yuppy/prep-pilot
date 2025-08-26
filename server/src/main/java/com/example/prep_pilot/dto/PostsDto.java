@@ -38,7 +38,7 @@ public class PostsDto {
 
     private List<Long> tagIds;
 
-    public PostsDto(Long id, String title, String slug, Boolean isPrivate,
+    public PostsDto(Long id, String title, String content, String slug, Boolean isPrivate,
                     LocalDateTime createdAt, LocalDateTime updatedAt, String nickname,
                     Long commentCounts, Long likesCounts) {
 
@@ -46,6 +46,7 @@ public class PostsDto {
 
         this.id = id;
         this.title = title;
+        this.content = content;
         this.slug = slug;
         this.isPrivate = isPrivate;
         this.createdAt = createdAt != null ? createdAt.format(formatter) : null;
@@ -53,7 +54,6 @@ public class PostsDto {
         this.nickname = nickname;
         this.commentCounts = commentCounts;
         this.likesCounts = likesCounts;
-        this.content = null;
         this.tagIds = null;
     }
 

@@ -57,8 +57,11 @@ public class PostsService {
         Posts posts = postsRepository.findById(id).orElseThrow(() ->
                 new PostsNotFoundException(id)
         );
+        PostsDto dto = PostsDto.toDto(posts);
+        dto.setCommentCounts((long) commentRepository.findByPostsId(dto.getId()).size());
+        dto.setLikesCounts(likesRepository.countByPostsId(dto.getId()));
 
-        return PostsDto.toDto(posts);
+        return dto;
     }
 
     @Transactional
