@@ -1,9 +1,16 @@
+@use "../base/" as *;
+@use "../abstracts/" as *;
+
 .edit-container {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
+  width: 768px;
+  margin: 0 auto;
 
   .edit-profile-header {
     display: flex;
+    gap: 3rem;
     
     .edit-profile-image {
       display: flex;
@@ -11,10 +18,67 @@
       gap: 1rem;
 
       .profile-image {
-        width: 10rem;
-        height: 10rem;
+        width: 15rem;
+        height: 15rem;
+        object-fit: cover;
         border-radius: 50%;
       }
+
+      .profile-file-input {
+        display: none;
+      }
     }
+
+    .edit-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+
+      .edit-nickname {
+        font-size: 2rem;
+      }
+
+      .edit-bio {
+        font-size: 1.5rem
+      }
+
+      .edit-text-btn-container {
+        display: flex;
+        justify-content: flex-start;
+
+        .edit-text-btn {
+          display: inline-block;
+          padding-bottom: 0.2rem;
+          font-size: 1.7rem;
+          color: $main;
+          border-bottom: 1px solid $main;
+        }
+      }
+    }
+  }
+
+  .edit-btn-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .edit-delete-caption {
+      font-weight: bold;
+      font-size: 2rem;
+    }
+
+    .edit-btn-delete {
+      padding: 0.75rem 2rem;
+      background-color: $red;
+      color: $white;
+      border-radius: 0.7rem;
+      font-size: 1.5rem;
+    }
+  }
+
+  .edit-delete-text {
+    color: $gray3;
+    font-size: 1.5rem;
   }
 }

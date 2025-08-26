@@ -1,20 +1,42 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SERVER_URL from "../constant/url";
+import useGetUserInfo from "../service/user/useGetUserInfo";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ProfileEdit() {
-  const [file, setFile] = useState();
-  const createImage = async () => {
+  const queryClient = useQueryClient();
+  const [_, setFile] = useState();
+  const fileInputRef = useRef(null);
+  const { data: userInfo } = useGetUserInfo();
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      createImage(selectedFile);
+    }
+  };
+
+  const createImage = async (fileToUpload) => {
+    if (!fileToUpload) {
+      alert("업로드할 파일이 선택되지 않았습니다.");
+      return;
+    }
     const accessToken = localStorage.access;
     const formData = new FormData();
-    formData.append('upload', file);
+    formData.append('upload', fileToUpload);
     try {
+      deleteImage();
       const res = await fetch(`${SERVER_URL}image/upload`, {
         method: "POST",
         body: formData,
       });
 
       const data = await res.json();
-      console.log(data);
         
       if (!res.ok) {
         const response = await fetch(`${SERVER_URL}reissue`, {
@@ -40,62 +62,88 @@ export default function ProfileEdit() {
         body: JSON.stringify({profileImageUrl: data?.url}),
       });
 
+      queryClient.invalidateQueries({
+        queryKey: ["userinfo"], 
+      });
+
       return res2;
     } catch (error) {
       console.error("좋아요 에러", error);
     }
   }
 
-  // const deleteImage = async () => {
+  // const deleteUser = async () => {
   //   const accessToken = localStorage.access;
   //   try {
-  //     const res = await fetch(`${SERVER_URL}image/delete?imageUrl=${userinfo?.profileImageUrl}`, {
+  //     const res = await fetch(`${SERVER_URL}quit`, {
   //       method: "DELETE",
   //     });
-  
-  //     if (!res.ok) {
-  //       const response = await fetch(`${SERVER_URL}reissue`, {
-  //         method: "POST",
-  //         credentials: "include",
-  //       });
-
-  //       const newAccessToken = response.headers.get("access");
-  //       if (newAccessToken) {
-  //         localStorage.setItem("access", newAccessToken);
-  //       } else {
-  //         throw new Error("액세스 토큰이 응답에 없음");
-  //       }
-  //     };
-
-  //     const res2 = await fetch(`${SERVER_URL}userinfo/image/delete`, {
-  //       method: "PATCH",
-  //       headers: {
-  //       'Content-Type': 'application/json',
-  //       'access': `${accessToken}`
-  //       },
-  //     });
-
-  //     return res2;
   //   } catch (error) {
-  //     console.error("좋아요 에러", error);
+  //     console.error("회원 탈퇴 오류 : ", error);
   //   }
   // };
+
+  const deleteImage = async () => {
+    const accessToken = localStorage.access;
+    try {
+      const res = await fetch(`${SERVER_URL}image/delete?imageUrl=${userInfo?.profileImageUrl}`, {
+        method: "DELETE",
+      });
+  
+      if (!res.ok) {
+        const response = await fetch(`${SERVER_URL}reissue`, {
+          method: "POST",
+          credentials: "include",
+        });
+
+        const newAccessToken = response.headers.get("access");
+        if (newAccessToken) {
+          localStorage.setItem("access", newAccessToken);
+        } else {
+          throw new Error("액세스 토큰이 응답에 없음");
+        }
+      };
+
+      const res2 = await fetch(`${SERVER_URL}userinfo/image/delete`, {
+        method: "PATCH",
+        headers: {
+        'Content-Type': 'application/json',
+        'access': `${accessToken}`
+        },
+      });
+
+      return res2;
+    } catch (error) {
+      console.error("좋아요 에러", error);
+    }
+  };
   
 
   return (
     <>
       <div className="edit-container">
         <div className="edit-profile-header">
-          <div className="edit-profile-image">
-            <img src="" alt="프로필 이미지 없음" className="profile-image" />
-            <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-            <button type="button" onClick={createImage}>이미지 업로드</button>
-            <button type="button">이미지 삭제 버튼</button>
+          <div className="edit-profile-image" style={{ position: 'relative', cursor: 'pointer' }} onClick={handleImageClick}>
+            <img 
+              src={userInfo?.profileImageUrl} 
+              alt="프로필 이미지 없음" 
+              className="profile-image"
+            />
+            <input 
+              type="file" 
+              onChange={handleFileChange} 
+              accept="image/*"
+              ref={fileInputRef}
+              className="profile-file-input"
+            />
           </div>
+          <button type="button" onClick={deleteImage}>삭제하기</button>
           <div className="edit-text">
-            <h2>송승엽{}</h2>
-            <p>프론트엔드 개발...{}</p>
-            <button type="button">수정</button>
+            <h2 className="edit-nickname">{userInfo?.nickname}</h2>
+            <p className="edit-bio">{userInfo?.bio}</p>
+            <div className="edit-text-btn-container">
+              <button type="button" className="edit-text-btn">수정</button>
+            </div>
           </div>
         </div>
         <div className="edit-btn-container">

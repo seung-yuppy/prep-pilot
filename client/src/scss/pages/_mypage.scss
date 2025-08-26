@@ -76,17 +76,19 @@
     }
   }
 
-  .mypage-content {
-    
-    .mypage-tab {
-      display: flex;
-      justify-content: center;
-      gap: 10rem;
-      font-size: 1.8rem;
-    }
+  .mypage-tab {
+    display: flex;
+    justify-content: center;
+    gap: 10rem;
+    font-size: 1.8rem;
+  }
+
+  .mypage-content-list {
+    display: flex;
   }
 
   .mypage-side-menu {
+    width: 35%;
 
     .side-menu-title {
       border-bottom: 1px solid black;
@@ -112,5 +114,12 @@
         font-size: 1.7rem;
       }
     }
+  }
+
+  .mypage-mypost {
+    display:flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 90%;
   }
 }
