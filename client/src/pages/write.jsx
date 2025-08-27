@@ -352,16 +352,14 @@ export default function Write() {
                 textParts.forEach((part, index) => {
                   fragment.appendChild(document.createTextNode(part));
                   if (index < textParts.length - 1) {
-                    if (isPreview) {
-                      const animatedSpan = document.createElement('span');
-                      animatedSpan.className = 'highlight-text';
-                      animatedSpan.textContent = correction.correct;
-                      fragment.appendChild(animatedSpan);
-                    } else {
+                    if (!isPreview) {
                       const animatedSpan = document.createElement('span');
                       animatedSpan.className = 'wave-text';
                       animatedSpan.textContent = correction.correct;
                       fragment.appendChild(animatedSpan);
+                    } else {
+                      // 프리뷰에서는 그냥 일반 텍스트로 추가
+                      //fragment.appendChild(document.createTextNode(correction.correct));
                     }
                   }
                 });
@@ -387,24 +385,6 @@ export default function Write() {
     // Update the preview content
     previewContent.innerHTML = '';
     previewContent.appendChild(clonedContent);
-
-    setTimeout(() => {
-      const spans = editableArea.querySelectorAll('.wave-text');
-      spans.forEach(span => {
-        const parent = span.parentNode;
-        const text = document.createTextNode(span.textContent);
-        parent.replaceChild(text, span);
-        parent.normalize();
-      });
-
-      const highlightedSpans = previewContent.querySelectorAll('.highlight-text');
-      highlightedSpans.forEach(span => {
-        const parent = span.parentNode;
-        const text = document.createTextNode(span.textContent);
-        parent.replaceChild(text, span);
-        parent.normalize();
-      });
-    }, 1000);
 
     handleChange(editor.core.getContents());
   };

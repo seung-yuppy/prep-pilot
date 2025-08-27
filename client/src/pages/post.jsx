@@ -1,12 +1,13 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import useGetPost from "../service/post/useGetPost";
 import SafeContent from "../components/safeContent";
 import useGetComments from "../service/comment/useGetComments";
-import { useState } from "react";
 import usePostComment from "../service/comment/usePostComment";
-import { useQueryClient } from "@tanstack/react-query";
-import usePostLikePost from "../service/post/usePostLikePost";
 import useGetIsLikePost from "../service/post/useGetIsLikePost";
+import useGetPost from "../service/post/useGetPost";
+import useGetTags from "../service/post/useGetTags";
+import usePostLikePost from "../service/post/usePostLikePost";
 import useUserStore from "../store/useUserStore";
 
 export default function Post() {
@@ -15,6 +16,7 @@ export default function Post() {
   const { isLoggedIn } = useUserStore();
   const { data: post } = useGetPost(id);
   const { data: comments } = useGetComments(id);
+  const { data: tags } = useGetTags(id);
   const [commentText, setCommentText] = useState("");
   const { data: isLikePost } = useGetIsLikePost(id);
   const likePostMutation = usePostLikePost(id, {
@@ -79,7 +81,7 @@ export default function Post() {
           </div>
         </div>
         <div className="post-tags">
-          <span className="tag-item">Spring MVC</span>
+          <span className="tag-item">tags</span>
           <span className="tag-item">Spring MVC</span>
           <span className="tag-item">Spring MVC</span>
         </div>

@@ -1,51 +1,11 @@
 .wave-text {
   display: inline-block;
-  animation: many-blinks 5s ease-in-out 15;
-}
-
-@keyframes many-blinks {
-  0%, 10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90% {
-    transform: scale(1.05);
-    color: #007bff;
-    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-  
-  5%, 15%, 25%, 35%, 45%, 55%, 65%, 75%, 85%, 95% {
-    transform: scale(1);
-    color: initial;
-    text-shadow: none;
-  }
-
-  100% {
-    transform: scale(1);
-    color: initial;
-    text-shadow: none;
-  }
+  background-color: rgba(144, 238, 144, 0.6); /* 파스텔 톤의 그린색 */
+  border-radius: 3px;
+  padding: 0 2px;
+  color: #000; /* 텍스트 색상을 검정으로 */
 }
 
 
 /* --- REPLACEMENT FOR THE PREVIEW --- */
 
-/* Use a more specific selector to ensure the style applies */
-#preview_content .highlight-text {
-  animation: highlight-blink 1.2s ease-in-out; /* Increased duration slightly for blinks */
-  border-radius: 3px;
-  padding: 0 2px;
-}
-
-/* New keyframes for a 3-blink effect */
-@keyframes highlight-blink {
-  /* Each pair of percentages creates one "on" and "off" cycle */
-  0%, 32%, 66% {
-    background-color: rgba(255, 255, 0, 0.7); /* ON */
-    box-shadow: 0 0 8px rgba(255, 255, 0, 0.5);
-  }
-  16%, 50%, 83% {
-    background-color: transparent; /* OFF */
-    box-shadow: none;
-  }
-  100% {
-    background-color: transparent; /* Ensures it ends in the OFF state */
-    box-shadow: none;
-  }
-}
