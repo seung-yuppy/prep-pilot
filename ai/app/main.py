@@ -113,61 +113,65 @@ def normalize_quizzes(data) -> List[dict]:
         })
     return normalized
 
-# --- 교정 API ---
+# --- 교정 API (단순 전체 텍스트) ---
 @app.post("/correct", response_model=CorrectionResponse)
 def correct_text(request: TextRequest):
     user_text = request.text.strip()
-    user_chunks = chunk_text_nltk(user_text, max_chars=500, overlap=1)
     corrections_all = []
 
-    for query in user_chunks:
-        try:
-            if not client:
-                raise RuntimeError("❌ OPENAI_API_KEY가 설정되지 않았습니다.")
+    try:
+        if not client:
+            raise RuntimeError("❌ OPENAI_API_KEY가 설정되지 않았습니다.")
 
-            query_vec = embedding_model.encode_queries([query])[0]
-            docs = collection.query(query_embeddings=[query_vec], n_results=3)
-            if not docs.get("documents") or not docs["documents"][0]:
-                raise ValueError("⚠️ Chroma DB에서 검색 결과가 없습니다.")
+        # --- 프롬프트 ---
+        prompt = f"""
+        아래 문장에서 잘못된 부분을 찾아 교정해줘.
 
-            top_chunks = docs["documents"][0]
-            context = "\n".join(top_chunks)
+        ⚠️ 반드시 JSON 배열([])만 출력하세요.
+        - 각 항목은 "wrong", "correct" 두 개의 key만 가져야 합니다.
+        - JSON 배열 외 텍스트(설명, 공백, 마크다운, 코드블록) 절대 포함 금지
+        - 출력이 비어 있으면 안 됩니다.
 
-            prompt = f"""
-            아래 문장에서 잘못된 부분을 찾아 교정해줘.
+        예시:
+        [
+          {{"wrong": "잘못된 문장 예시", "correct": "교정된 문장 예시"}}
+        ]
 
-            ⚠️ 반드시 JSON 배열만 출력하세요.
-            - 각 항목은 "wrong", "correct" 두 개의 key만 가져야 합니다.
-            - JSON 배열 이외의 텍스트는 절대 포함하지 마세요.
+        문장:
+        {user_text}
+        """
 
-            예시:
-            [
-              {{"wrong": "잘못된 문장 예시", "correct": "교정된 문장 예시"}}
-            ]
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}]
+        )
 
-            문장:
-            {query}
+        raw_content = response.choices[0].message.content or ""
+        if not raw_content.strip():
+            corrections_all.append({
+                "wrong": "⚠️ 빈 응답",
+                "correct": "LLM이 아무 내용도 반환하지 않았습니다."
+            })
+        else:
+            # 안전 JSON 파싱
+            def safe_json_parse(content: str):
+                try:
+                    return json.loads(content)
+                except Exception as e:
+                    return [{"wrong": "⚠️ JSON 파싱 실패", "correct": content.strip() or str(e)}]
 
-            참고 문맥:
-            {context}
-            """
-
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}]
-            )
-
-            generated = json.loads(response.choices[0].message.content)
+            generated = safe_json_parse(raw_content)
             corrections_all.extend(normalize_corrections(generated))
 
-        except Exception as e:
-            tb = traceback.format_exc()
-            corrections_all.append({
-                "wrong": "⚠️ 에러 발생",
-                "correct": f"{str(e)}\n{tb}"
-            })
+    except Exception as e:
+        tb = traceback.format_exc()
+        corrections_all.append({
+            "wrong": "⚠️ 에러 발생",
+            "correct": f"{str(e)}\n{tb}"
+        })
 
     return CorrectionResponse(input=user_text, corrections=corrections_all)
+
 
 # --- 퀴즈 API ---
 @app.post("/generate-quiz", response_model=QuizResponse)
