@@ -1,5 +1,6 @@
 package com.example.prep_pilot.service;
 
+import com.example.prep_pilot.dto.FollowCountDto;
 import com.example.prep_pilot.dto.FollowsDto;
 import com.example.prep_pilot.dto.NotificationDto;
 import com.example.prep_pilot.entity.Follows;
@@ -79,5 +80,14 @@ public class FollowsService {
         List<Follows> followings = followsRepository.findByFollowingUserId(id);
 
         return followings.stream().map(FollowsDto::getFollowings).collect(Collectors.toList());
+    }
+
+    public FollowCountDto getFollowCount(Long id) {
+
+        FollowCountDto followCountDto = new FollowCountDto();
+        followCountDto.setFollowerCount(followsRepository.countByFollowerUserId(id));
+        followCountDto.setFollowingCount(followsRepository.countByFollowingUserId(id));
+
+        return followCountDto;
     }
 }

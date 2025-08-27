@@ -8,7 +8,7 @@
   font-style: normal;
 }
 
-* {
+*:not(.write-container *) {
   font-family: "Pretendard Variable", "BMDOHYEON";
 }
 

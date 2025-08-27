@@ -11,21 +11,22 @@
 
   .mypage-info {
     display: flex;
-    gap: 1rem;
+    gap: 3rem;
     align-items: center;
     padding-bottom: 3rem;
     border-bottom: 1px solid var(--color-text);
 
     .mypage-profile-image {
-      width: 13rem;
-      height: 13rem;
+      width: 15rem;
+      height: 15rem;
+      object-fit: cover;
       border-radius: 50%;
     }
 
     .mypage-nickname-intro {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
 
       .info-nickname {
         font-weight: bold;
@@ -76,17 +77,19 @@
     }
   }
 
-  .mypage-content {
-    
-    .mypage-tab {
-      display: flex;
-      justify-content: center;
-      gap: 10rem;
-      font-size: 1.8rem;
-    }
+  .mypage-tab {
+    display: flex;
+    justify-content: center;
+    gap: 10rem;
+    font-size: 1.8rem;
+  }
+
+  .mypage-content-list {
+    display: flex;
   }
 
   .mypage-side-menu {
+    width: 35%;
 
     .side-menu-title {
       border-bottom: 1px solid black;
@@ -112,5 +115,12 @@
         font-size: 1.7rem;
       }
     }
+  }
+
+  .mypage-mypost {
+    display:flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 90%;
   }
 }

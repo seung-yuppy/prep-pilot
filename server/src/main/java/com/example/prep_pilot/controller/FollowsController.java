@@ -1,6 +1,7 @@
 package com.example.prep_pilot.controller;
 
 import com.example.prep_pilot.dto.CustomUserDetails;
+import com.example.prep_pilot.dto.FollowCountDto;
 import com.example.prep_pilot.dto.FollowsDto;
 import com.example.prep_pilot.service.FollowsService;
 import org.springframework.http.HttpStatus;
@@ -60,6 +61,15 @@ public class FollowsController {
         List<FollowsDto> followsDtoList = followsService.getFollowings(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(followsDtoList);
+    }
+
+    // primary key가 id인 유저의 팔로워, 팔로잉 수
+    @GetMapping("/{id}/follow/count")
+    public ResponseEntity<FollowCountDto> getFollowCount(@PathVariable Long id){
+
+        FollowCountDto followCountDto = followsService.getFollowCount(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(followCountDto);
     }
 
 }
