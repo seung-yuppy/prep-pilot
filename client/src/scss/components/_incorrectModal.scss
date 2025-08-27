@@ -1,0 +1,88 @@
+@use "../abstracts/" as *;
+@use "../base/" as *;
+
+.review-modal {
+  min-height:  350px;
+  overflow-y: auto;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.review-item {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUpFadeIn 0.5s ease-out forwards;
+}
+.review-item:last-child {
+  margin-bottom: 0;
+}
+.question-text {
+  font-size: 1.7rem;
+  font-weight: 500;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+.question-number {
+  font-weight: 700;
+  color: $main;
+  margin-right: 0.25rem;
+}
+.answer-text.correct-answer {
+  font-size: 1.5rem;
+  color: #16a34a; /* green */
+  margin-top: 0.5rem;
+}
+.no-incorrect {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #4b5563;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.explanation-container {
+  margin-top: 1rem;
+  border-top: 1px dashed #d1d5db;
+  padding-top: 1rem;
+}
+.explanation-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: $main;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+  font-size: 1.3rem;
+}
+.explanation-content {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out,
+    margin-top 0.4s ease-in-out;
+  color: #374151;
+  font-size: 1.7rem;
+  line-height: 1.6;
+}
+.explanation-content.open {
+  max-height: 200px; /* 충분한 높이 */
+  opacity: 1;
+  margin-top: 0.75rem;
+}
+@keyframes slideUpFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

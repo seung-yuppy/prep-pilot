@@ -75,8 +75,10 @@ export default function MyPage() {
         </div>
 
         <div className="mypage-tab">
-          <Link>글</Link>
-          <Link>소개</Link>
+          <div className="mypage-tab-menu">
+            <Link className="active-tab">글</Link>
+            <Link>퀴즈</Link>
+          </div>
         </div>
 
         {/* 내가 쓴 글 & 태그 목록들 */}

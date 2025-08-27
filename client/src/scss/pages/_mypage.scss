@@ -79,9 +79,19 @@
 
   .mypage-tab {
     display: flex;
-    justify-content: center;
-    gap: 10rem;
-    font-size: 1.8rem;
+    justify-content: flex-end;
+    
+    .mypage-tab-menu {
+      display: flex;
+      gap: 5rem;
+      width: 70%;
+      justify-content: center;
+      font-size: 1.8rem;
+
+      .active-tab {
+        color: $main;
+      }
+    }
   }
 
   .mypage-content-list {

@@ -9,11 +9,15 @@ import useGetPost from "../service/post/useGetPost";
 import useGetTags from "../service/post/useGetTags";
 import usePostLikePost from "../service/post/usePostLikePost";
 import useUserStore from "../store/useUserStore";
+import useModalStore from "../store/useModalStore";
+import QuizModal from "../components/quizModal";
+import IncorrectModal from "../components/incorrectModal";
 
 export default function Post() {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const { isLoggedIn } = useUserStore();
+  const { isOpen, openModal, closeModal } = useModalStore();
   const { data: post } = useGetPost(id);
   const { data: comments } = useGetComments(id);
   const { data: tags } = useGetTags(id);
@@ -21,17 +25,16 @@ export default function Post() {
   const { data: isLikePost } = useGetIsLikePost(id);
   const likePostMutation = usePostLikePost(id, {
     onSuccess: () => {
-      if(isLoggedIn) {
-        if(!isLikePost)
-          alert("이 게시글을 좋아합니다.");
-        else
-          alert("이 게시물을 안좋아합니다.");
+      if (isLoggedIn) {
+        if (!isLikePost) alert("이 게시글을 좋아합니다.");
+        else alert("이 게시물을 안좋아합니다.");
         queryClient.invalidateQueries({ queryKey: ["isLikePost", id] });
+        queryClient.invalidateQueries({ queryKey: ["post", id] });
       } else {
         alert("로그인을 진행해주세요!");
       }
     },
-    onError: (error) => alert("게시글 좋아요 에러 발생", error)
+    onError: (error) => alert("게시글 좋아요 에러 발생", error),
   });
 
   const commentMutation = usePostComment(id, {
@@ -39,7 +42,7 @@ export default function Post() {
       alert("댓글을 작성하였습니다.");
       setCommentText("");
       queryClient.invalidateQueries({
-        queryKey: ["comments", id], 
+        queryKey: ["comments", id],
       });
     },
     onError: (error) => {
@@ -49,10 +52,8 @@ export default function Post() {
 
   const onCreateComment = async (e) => {
     e.preventDefault();
-    if(!(commentText.trim())) 
-      alert("댓글을 입력하세요!");
-    else
-      commentMutation.mutate({ content: commentText });
+    if (!commentText.trim()) alert("댓글을 입력하세요!");
+    else commentMutation.mutate({ content: commentText });
   };
 
   const onLikePost = () => {
@@ -72,8 +73,12 @@ export default function Post() {
             <span className="post-like">♥ {post?.likesCounts}</span>
           </div>
           <div className="post-btn-container">
-            <button type="button" className={isLikePost ? "post-dislike" : "post-like"} onClick={onLikePost}>
-              {isLikePost ? "안 좋아요" : "♥ 좋아요" }
+            <button
+              type="button"
+              className={isLikePost ? "post-dislike" : "post-like"}
+              onClick={onLikePost}
+            >
+              {isLikePost ? "안 좋아요" : "♥ 좋아요"}
             </button>
             <button type="button" className="post-follow">
               팔로우
@@ -81,13 +86,46 @@ export default function Post() {
           </div>
         </div>
         <div className="post-tags">
-          <span className="tag-item">tags</span>
-          <span className="tag-item">Spring MVC</span>
-          <span className="tag-item">Spring MVC</span>
+          {tags &&
+            tags.map((tag, index) => (
+              <span className="tag-item" key={index}>
+                {tag?.name}
+              </span>
+            ))}
         </div>
         <div className="post-decription">
           <SafeContent content={post?.content} />
         </div>
+
+        {/* 문제 풀기 버튼 영역 */}
+        <hr className="content-comment-gap" />
+        <div className="quiz-btn-container">
+          <button
+            type="button"
+            className="quiz-btn-test"
+            onClick={() => openModal("quizModal")}
+          >
+            문제 풀기
+          </button>
+          <button
+            type="button"
+            className="quiz-btn-incorrect"
+            onClick={() => openModal("incorrectModal")}
+          >
+            오답 노트
+          </button>
+        </div>
+
+        {/* 문제 푸는 모달 영역 */}
+        {isOpen("quizModal") && (
+          <QuizModal closeModal={() => closeModal("quizModal")} />
+        )}
+
+        {isOpen("incorrectModal") && (
+          <IncorrectModal closeModal={() => closeModal("incorrectModal")} />
+        )}
+
+        {/* 댓글 영역 */}
         <hr className="content-comment-gap" />
         <div className="post-comment-container">
           <span className="post-comment-count">
@@ -118,7 +156,9 @@ export default function Post() {
                     className="post-comment-userImage"
                   />
                   <div className="post-comment-namedate">
-                    <span className="post-comment-name">{comment.nickname}</span>
+                    <span className="post-comment-name">
+                      {comment.nickname}
+                    </span>
                     <span className="post-comment-date">
                       {comment.createdAt}
                     </span>
