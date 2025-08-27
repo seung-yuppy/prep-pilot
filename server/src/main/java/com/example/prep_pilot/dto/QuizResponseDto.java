@@ -1,5 +1,6 @@
 package com.example.prep_pilot.dto;
 
+import com.example.prep_pilot.entity.Quiz;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,11 @@ public class QuizResponseDto {
 
     private String answer;
 
+    public static QuizResponseDto toDto(Quiz quiz) {
+
+        return new QuizResponseDto(
+                quiz.getQuestion(),
+                quiz.getAnswer()
+        );
+    }
 }

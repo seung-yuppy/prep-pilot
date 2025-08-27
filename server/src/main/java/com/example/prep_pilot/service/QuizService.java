@@ -8,6 +8,8 @@ import com.example.prep_pilot.entity.Quiz;
 import com.example.prep_pilot.exception.PostsNotFoundException;
 import com.example.prep_pilot.repository.PostsRepository;
 import com.example.prep_pilot.repository.QuizRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -56,9 +58,18 @@ public class QuizService {
     }
 
     private HttpHeaders getHeaders() {
+
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Content-type", "application/json");
 
         return httpHeaders;
+    }
+
+    public Page<QuizResponseDto> getQuiz(int page, int pageSize, Long postId) {
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        Page<Quiz> quizPage = quizRepository.findByPostsId(postId, pageRequest);
+
+        return quizPage.map(QuizResponseDto::toDto);
     }
 }
