@@ -16,6 +16,7 @@ export default function QuizModal({ closeModal, id, text }) {
   const totalQuestions = quiz?.totalPages || 0;
   const currentQuestionData = quiz?.content?.[0];
 
+
   const { mutate: saveAnswer } = usePostMyQuiz();
 
   useEffect(() => {
@@ -39,10 +40,13 @@ export default function QuizModal({ closeModal, id, text }) {
     setIsCorrect(isAnswerCorrect);
     if (isAnswerCorrect) {
       setScore((prevScore) => prevScore + 1);
-      if (currentQuestionData?.id) {
-        saveAnswer(currentQuestionData.id);
-      }
-    }
+    } 
+    // 👇 수정된 부분: 인자들을 하나의 객체로 묶어 전달
+    saveAnswer({
+      id: currentQuestionData?.id,
+      userAnswer: userAnswer,
+      isCorrect: isAnswerCorrect
+    });
     setIsSubmitted(true);
   };
 

@@ -65,7 +65,6 @@ export default function Post() {
   // 👇 2. DOM 요소를 참조할 ref와 순수 텍스트를 저장할 state를 생성합니다.
   const contentRef = useRef(null);
   const [plainTextForQuiz, setPlainTextForQuiz] = useState("");
-  console.log(plainTextForQuiz);
 
   // 👇 3. post 데이터가 로드되거나 변경될 때마다 실행됩니다.
   useEffect(() => {

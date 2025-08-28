@@ -6,6 +6,7 @@ import Feed from "../components/feed";
 import useGetMyTags from "../service/user/useGetMyTags";
 import useGetUserInfo from "../service/user/useGetUserInfo";
 import getMyPosts from "../util/user/getMyPosts";
+import useGetMyAllQuiz from "../service/quiz/useGetMyAllQuiz";
 
 export default function MyPage() {
   const { scrollYProgress } = useScroll();
@@ -13,6 +14,8 @@ export default function MyPage() {
   const { data: userInfo } = useGetUserInfo();
   const { data: myTags } = useGetMyTags(userInfo?.id);
   const [activeTab, setActiveTab] = useState('posts'); // 기본값을 'posts'로 설정
+  const { data: myAllQuiz } = useGetMyAllQuiz(142);
+  console.log("myallquiz는", myAllQuiz);
 
   // 임시 퀴즈 결과 데이터 (나중에 API로 교체)
   const quizResults = [
