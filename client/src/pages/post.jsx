@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import IncorrectModal from "../components/incorrectModal";
 import QuizModal from "../components/quizModal";
@@ -39,8 +39,10 @@ export default function Post() {
 
   const commentMutation = usePostComment(id, {
     onSuccess: () => {
-      alert("댓글을 작성하였습니다.");
-      setCommentText("");
+      if (isLoggedIn) {
+        alert("댓글을 작성하였습니다.");
+        setCommentText("");
+      }
       queryClient.invalidateQueries({
         queryKey: ["comments", id],
       });
@@ -59,6 +61,20 @@ export default function Post() {
   const onLikePost = () => {
     likePostMutation.mutate();
   };
+
+  // 👇 2. DOM 요소를 참조할 ref와 순수 텍스트를 저장할 state를 생성합니다.
+  const contentRef = useRef(null);
+  const [plainTextForQuiz, setPlainTextForQuiz] = useState("");
+  console.log(plainTextForQuiz);
+
+  // 👇 3. post 데이터가 로드되거나 변경될 때마다 실행됩니다.
+  useEffect(() => {
+    // contentRef.current가 DOM에 연결되면 (즉, 렌더링이 완료되면)
+    if (contentRef.current) {
+      // DOM 요소의 순수 텍스트(textContent)를 state에 저장합니다.
+      setPlainTextForQuiz(contentRef.current.textContent);
+    }
+  }, [post?.content]); // post.content가 바뀔 때마다 이 effect를 재실행합니다.
 
   return (
     <>
@@ -93,7 +109,7 @@ export default function Post() {
               </span>
             ))}
         </div>
-        <div className="post-decription">
+        <div className="post-decription" ref={contentRef}>
           <SafeContent content={post?.content} />
         </div>
 
@@ -118,11 +134,18 @@ export default function Post() {
 
         {/* 문제 푸는 모달 영역 */}
         {isOpen("quizModal") && (
-          <QuizModal closeModal={() => closeModal("quizModal")} />
+          <QuizModal
+            closeModal={() => closeModal("quizModal")}
+            id={id}
+            text={plainTextForQuiz}
+          />
         )}
 
         {isOpen("incorrectModal") && (
-          <IncorrectModal closeModal={() => closeModal("incorrectModal")} />
+          <IncorrectModal
+            closeModal={() => closeModal("incorrectModal")}
+            id={id}
+          />
         )}
 
         {/* 댓글 영역 */}

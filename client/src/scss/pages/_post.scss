@@ -240,11 +240,11 @@
           margin: 0 auto;
           max-width: 100%;
           height: auto;
-          transition: transform 0.3s ease;
+          // transition: transform 0.3s ease;
 
-          &:hover {
-            transform: scale(1.02);
-          }
+          // &:hover {
+          //   transform: scale(1.02);
+          // }
         }
       }
     }
@@ -259,9 +259,9 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease;
 
-      &:hover {
-        transform: scale(1.02);
-      }
+      // &:hover {
+      //   transform: scale(1.02);
+      // }
     }
   }
 

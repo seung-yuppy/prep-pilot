@@ -1,24 +1,8 @@
 import { useEffect, useState } from "react";
+import useGetQuiz from "../service/quiz/useGetQuiz";
+import usePostMyQuiz from "../service/quiz/usePostMyQuiz";
 
-const questions = [
-    { 
-      question: "Java에서 객체의 내용(값) 자체를 비교하는 메소드는 무엇인가요?", 
-      answer: "equals",
-      explanation: "'==' 연산자는 객체의 메모리 주소값을 비교하지만, '.equals()' 메소드는 객체 내부의 값을 비교하여 내용이 같은지 확인합니다."
-    },
-    { 
-      question: "Spring MVC의 모든 요청을 처리하는 Front Controller의 이름은 무엇인가요?", 
-      answer: "DispatcherServlet",
-      explanation: "DispatcherServlet은 클라이언트의 모든 요청을 단일 지점에서 받아 처리하고, 적절한 핸들러에게 작업을 위임하는 Spring MVC의 핵심 구성요소입니다."
-    },
-    { 
-      question: "객체 간의 의존관계를 외부에서 주입하여 클래스 간의 결합도를 낮추는 Spring의 핵심 원칙은 무엇인가요?", 
-      answer: "의존성 주입",
-      explanation: "의존성 주입은 객체가 직접 의존성을 생성하지 않고 외부(Spring 컨테이너)로부터 받아 사용함으로써, 코드의 유연성과 테스트 용이성을 높이는 디자인 패턴입니다."
-    },
-];
-
-export default function QuizModal({ closeModal }) {
+export default function QuizModal({ closeModal, id, text }) {
   const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
@@ -26,8 +10,13 @@ export default function QuizModal({ closeModal }) {
   const [isCorrect, setIsCorrect] = useState(null);
   const [score, setScore] = useState(0);
 
-  const totalQuestions = questions.length;
-  const currentQuestionData = questions[currentStep];
+  const [page, setPage] = useState(0);
+  const { data: quiz } = useGetQuiz(id, text, page);
+
+  const totalQuestions = quiz?.totalPages || 0;
+  const currentQuestionData = quiz?.content?.[0];
+
+  const { mutate: saveAnswer } = usePostMyQuiz();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -50,6 +39,9 @@ export default function QuizModal({ closeModal }) {
     setIsCorrect(isAnswerCorrect);
     if (isAnswerCorrect) {
       setScore((prevScore) => prevScore + 1);
+      if (currentQuestionData?.id) {
+        saveAnswer(currentQuestionData.id);
+      }
     }
     setIsSubmitted(true);
   };
@@ -60,15 +52,7 @@ export default function QuizModal({ closeModal }) {
     setIsCorrect(null);
     setUserAnswer("");
     setCurrentStep((prevStep) => prevStep + 1);
-  };
-
-  // '다시 풀기' 버튼 클릭 시 실행되는 함수
-  const handleRestart = () => {
-    setCurrentStep(0);
-    setUserAnswer("");
-    setIsSubmitted(false);
-    setIsCorrect(null);
-    setScore(0);
+    setPage((prevPage) => prevPage + 1);
   };
 
   // 사용자가 Enter 키를 눌렀을 때의 동작 처리
@@ -121,9 +105,6 @@ export default function QuizModal({ closeModal }) {
             </p>
           </div>
           <div className="modal-footer">
-            <button onClick={handleRestart} className="button-primary">
-              다시 풀기
-            </button>
             <button onClick={closeModal} className="button-secondary">
               닫기
             </button>
@@ -155,7 +136,7 @@ export default function QuizModal({ closeModal }) {
         <div className="modal-body">
           <p className="question-text">
             <span className="question-number">Q{currentStep + 1}.</span>{" "}
-            {currentQuestionData.question}
+            {quiz?.content[0].question}
           </p>
           <input
             type="text"
@@ -177,7 +158,7 @@ export default function QuizModal({ closeModal }) {
             >
               {isCorrect
                 ? "🎉 정답입니다!"
-                : `😥 오답입니다. 정답은 "${currentQuestionData.answer}" 입니다.`}
+                : `😥 오답입니다. 정답은 ${quiz?.content[0].answer} 입니다.`}
             </p>
           )}
         </div>

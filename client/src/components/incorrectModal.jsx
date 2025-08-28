@@ -1,4 +1,5 @@
 import { useState } from "react";
+import useGetIncorrectQuiz from "../service/quiz/useGetIncorrectQuiz";
 
 const incorrectAnswers = [
     { 
@@ -18,9 +19,11 @@ const incorrectAnswers = [
     },
 ];
 
-export default function IncorrectModal({ closeModal }) {
+export default function IncorrectModal({ closeModal, id }) {
   const [openStates, setOpenStates] = useState({});
-
+  const { data: incorrectQuiz } = useGetIncorrectQuiz(id);
+  console.log(incorrectQuiz);
+  
   // 해설 보기/숨기기 토글 함수
   const toggleExplanation = (index) => {
     setOpenStates(prevStates => ({
