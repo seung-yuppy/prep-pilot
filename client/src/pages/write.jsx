@@ -367,95 +367,65 @@ export default function Write() {
       previewContent.appendChild(clonedContent);
   
       handleChange(editor.core.getContents());
-      //테스트용
-
-
-
-      // editorRef.current.setContents(aiContents);
+      
+      // AI 검토 완료 - blur 효과와 메시지 제거
+      const editorContainer = document.querySelector('.editor-container');
+      editorContainer.classList.remove('ai-reviewing');
+      const aiMessage = document.querySelector('.ai-review-message');
+      if (aiMessage && aiMessage.parentNode) {
+        aiMessage.parentNode.removeChild(aiMessage);
+      }
+      
+      // 성공 메시지 표시
+      setPopupContent("AI 검토가 완료되었습니다!");
+      setPopupColor("#4CAF50");
+      setIsPopupVisible(true);
     },
     onError: (error) => {
       console.error('Error during AI review:', error);
+      
+      // AI 검토 실패 - blur 효과와 메시지 제거
+      const editorContainer = document.querySelector('.editor-container');
+      editorContainer.classList.remove('ai-reviewing');
+      const aiMessage = document.querySelector('.ai-review-message');
+      if (aiMessage && aiMessage.parentNode) {
+        aiMessage.parentNode.removeChild(aiMessage);
+      }
+      
+      // 에러 메시지 표시
+      setPopupContent("AI 검토 중 오류가 발생했습니다.");
+      setPopupColor("#e74c3c");
+      setIsPopupVisible(true);
     }
   });
 
-  const handleAiReview2 = () => {
-    const editor = editorRef.current;
-    const editableArea = editor.core.context.element.wysiwyg;
-    const previewContent = document.getElementById('preview_content');
-
-    // Clone the editor's content for the preview
-    const clonedContent = editableArea.cloneNode(true);
-
-    let corrections = {
-      0: [{ wrong: "운영체제마다 별도의 전용 컴파일러가 필요하다", correct: "운영체제와 상관없이 JVM에서 실행되며, 컴파일러는 하나면 된다" }],
-      1: [{ wrong: "반드시 `include` 키워드로 외부 라이브러리를 불러와야 한다", correct: "`import` 키워드로 필요할 때만 외부 라이브러리를 불러온다" }],
-      2: [{ wrong: "`create`라는 키워드를 사용한다", correct: "`new` 키워드를 사용한다" }],
-      3: [{ wrong: "`public void main(String args)`", correct: "`public static void main(String[] args)`" }],
-      4: [{ wrong: "포인터 연산을 직접 지원하므로 메모리를 직접 조작할 수 있다", correct: "포인터 연산을 지원하지 않아 메모리를 직접 조작할 수 없다" }],
-      5: [{ wrong: "인터페이스는 하나의 클래스에서 두 개 이상 구현할 수 없다", correct: "하나의 클래스가 여러 개의 인터페이스를 구현할 수 있다" }],
-      6: [{ wrong: "`int`는 2바이트 크기를 가진다", correct: "`int`는 4바이트 크기를 가진다" }],
-      7: [{ wrong: "`try` 블록 없이 `catch`만 작성할 수 있다", correct: "`try` 블록 없이는 `catch`를 작성할 수 없다" }],
-      8: [{ wrong: "JVM은 소스 코드를 직접 실행하기 때문에 바이트코드로 변환되지 않는다", correct: "JVM은 소스 코드를 컴파일해 생성된 바이트코드를 실행한다" }],
-      9: [{ wrong: "가비지 컬렉션은 프로그래머가 명령어를 통해 수동으로 실행해야만 동작한다", correct: "가비지 컬렉션은 JVM이 자동으로 수행한다" }]
-    };
-
-    const traverseAndReplace = (node, isPreview) => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        let content = node.textContent;
-        for (let key in corrections) {
-          if (corrections.hasOwnProperty(key)) {
-            let correctionArray = corrections[key];
-            for (let i = 0; i < correctionArray.length; i++) {
-              let correction = correctionArray[i];
-              if (content.includes(correction.wrong)) {
-                const textParts = content.split(correction.wrong);
-                const fragment = document.createDocumentFragment();
-
-                textParts.forEach((part, index) => {
-                  fragment.appendChild(document.createTextNode(part));
-                  if (index < textParts.length - 1) {
-                    if (!isPreview) {
-                      const animatedSpan = document.createElement('span');
-                      animatedSpan.className = 'wave-text';
-                      animatedSpan.textContent = correction.correct;
-                      fragment.appendChild(animatedSpan);
-                    } else {
-                      // 프리뷰에서는 그냥 일반 텍스트로 추가
-                      //fragment.appendChild(document.createTextNode(correction.correct));
-                    }
-                  }
-                });
-
-                node.parentNode.replaceChild(fragment, node);
-              }
-            }
-          }
-        }
-      } else {
-        for (let i = 0; i < node.childNodes.length; i++) {
-          traverseAndReplace(node.childNodes[i], isPreview);
-        }
-      }
-    };
-
-    // Traverse and replace in the editor
-    traverseAndReplace(editableArea, false);
-
-    // Traverse and highlight in the cloned preview content
-    traverseAndReplace(clonedContent, true);
-
-    // Update the preview content
-    previewContent.innerHTML = '';
-    previewContent.appendChild(clonedContent);
-
-    handleChange(editor.core.getContents());
-  };
+  
 
 
   const handleAiReview = () => {
     if (editorRef.current) {
       const pureText = editorRef.current.getText();
+      
+      // AI 검토 시작 - blur 효과와 메시지 추가
+      const editorContainer = document.querySelector('.editor-container');
+      editorContainer.classList.add('ai-reviewing');
+      
+      // AI 검토 메시지를 body에 추가 (blur 효과 밖에)
+      const aiMessage = document.createElement('div');
+      aiMessage.className = 'ai-review-message';
+      aiMessage.innerHTML = '🌟 AI가 글 고치는중... 🌟';
+      document.body.appendChild(aiMessage);
+      
+      // 애니메이션 시작과 동시에 서버 요청 보내기
       correctTextMutation.mutate(pureText);
+      
+      // 최대 10초 후 blur 효과 제거 (타임아웃 보호)
+      setTimeout(() => {
+        editorContainer.classList.remove('ai-reviewing');
+        if (aiMessage.parentNode) {
+          aiMessage.parentNode.removeChild(aiMessage);
+        }
+      }, 10000);
     }
   };
 
@@ -499,8 +469,16 @@ export default function Write() {
       <div className="write-editor">
         <form className="write-form" onSubmit={writing}>
           <div>
-            <input id='write_title' type='text' name='title' placeholder='제목을 입력하세요' onChange={(e) => setTitle(e.target.value)} onKeyUp={(e) => handleTitle(e.target.value)} value={title}></input>
-                        <div className="tag-input-container">
+            <input 
+              id='write_title' 
+              type='text' 
+              name='title' 
+              placeholder='제목을 입력하세요' 
+              onChange={(e) => setTitle(e.target.value)} 
+              onKeyUp={(e) => handleTitle(e.target.value)} 
+              value={title}
+            />
+            <div className="tag-input-container">
               {tags.map((tag, index) => (
                 <div key={index} className="tag">
                   {tag}
@@ -512,7 +490,7 @@ export default function Write() {
               <input
                 className="tag-input"
                 type="text"
-                placeholder="태그를 입력하세요"
+                placeholder="태그를 입력하세요 (쉼표 또는 엔터로 구분)"
                 value={tagInput}
                 onChange={handleTagInputChange}
                 onKeyDown={handleTagInputKeyDown}
@@ -522,14 +500,14 @@ export default function Write() {
             <input type="hidden" name="isPrivate" value={isPrivate} />
           </div>
           
-          <div className={`editor-container ${isAiReviewActive ? 'ai-review-active' : ''}`} style={{ marginBottom: '7em' }}>
+          <div className={`editor-container ${isAiReviewActive ? 'ai-review-active' : ''}`}>
             <SunEditor
                 getSunEditorInstance={(sunEditor) => { editorRef.current = sunEditor; }}
                 onImageUploadBefore={handleImageUploadBefore}
                 lang={SUNEDITOR_LANG}
                 width="100%"
                 height="auto"
-                minHeight="300px"
+                minHeight="400px"
                 onKeyUp = {(e) => handleContentKeyUp(e.target.innerHTML)}
                 onChange={handleChange}
                 setOptions={{
@@ -547,7 +525,6 @@ export default function Write() {
                     imageFileInput: true,
                 }}
                 placeholder='내용을 입력하세요'
-                
             />
           </div>
 
@@ -575,7 +552,6 @@ export default function Write() {
         <h1 id="preview_title"></h1>
         <div className='preview-content' id="preview_content"></div>
       </div>
-
     </div>
   );
 }

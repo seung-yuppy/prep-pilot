@@ -6,109 +6,316 @@
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
-  gap: 1.3rem;
-  width: 768px;
+  gap: 2rem;
+  width: 1000px;
+  padding: 3rem 2rem;
+  background-color: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f8f9fa;
 
   .post-title {
-    font-size: 4rem;
-    line-height: 1.5;
-    font-weight: 800;
-    margin-bottom: 3rem;
+    font-size: 3.5rem;
+    line-height: 1.4;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: #1a1a1a;
+    text-align: center;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, $main, #10a876);
+      border-radius: 2px;
+    }
   }
 
   .post-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 2rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 2rem;
 
     .post-header {
       display: flex;
-      gap: 1rem;
-      font-size: 1.7rem;
+      align-items: center;
+      gap: 1.2rem;
+      font-size: 1.6rem;
 
       .post-nickname {
-        font-weight: 700;
+        font-weight: 600;
+        color: #333;
+        padding: 0.5rem 1rem;
+        background-color: #f8f9fa;
+        border-radius: 2rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: #e9ecef;
+          transform: translateY(-1px);
+        }
+      }
+
+      .post-dot {
+        color: #ccc;
+        font-weight: bold;
       }
 
       .post-date {
-        color: $gray3;
-      }
-    }
-    .post-btn-container {
-      display: flex;
-      gap: 2.3rem;
-
-      .post-follow {
-        background-color: var(--color-background);
-        border: 1px solid $main;
-        border-radius: 2rem;
-        padding: 0.7rem 3rem;
-        font-size: 1.7rem;
-        color: $main;
+        color: #888;
+        font-weight: 500;
       }
 
       .post-like {
-        background-color: var(--color-background);
-        border: 1px solid $red;
+        color: #e74c3c;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+
+        &::before {
+          content: '♥';
+          font-size: 1.4rem;
+        }
+      }
+    }
+
+    .post-btn-container {
+      display: flex;
+      gap: 1rem;
+
+      .post-follow {
+        background-color: white;
+        border: 2px solid $main;
         border-radius: 2rem;
-        padding: 0.7rem 3rem;
-        font-size: 1.7rem;
-        color: $red;
+        padding: 0.8rem 2rem;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: $main;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          background-color: $main;
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(18, 184, 134, 0.3);
+        }
+      }
+
+      .post-like {
+        background-color: white;
+        border: 2px solid #e74c3c;
+        border-radius: 2rem;
+        padding: 0.8rem 2rem;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #e74c3c;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #e74c3c;
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
       }
 
       .post-dislike {
-        background-color: var(--color-background);
-        border: 1px solid $gray3;
+        background-color: white;
+        border: 2px solid #6c757d;
         border-radius: 2rem;
-        padding: 0.7rem 3rem;
-        font-size: 1.7rem;
-        color: $gray3;
+        padding: 0.8rem 2rem;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #6c757d;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #6c757d;
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
       }
     }
   }
 
   .post-tags {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1.5rem 0;
 
     .tag-item {
-      background-color: $gray5;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
       color: $main;
-      padding: 1rem 2rem;
-      border-radius: 5rem;
-      font-size: 1.5rem;
-      font-weight: bold;
+      padding: 0.6rem 1.2rem;
+      border-radius: 2rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      border: 1px solid #e9ecef;
+      transition: all 0.3s ease;
+      cursor: pointer;
+
+      &:hover {
+        background: linear-gradient(135deg, $main 0%, #10a876 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(18, 184, 134, 0.3);
+      }
     }
   }
 
   .post-decription {
-    font-size: 2rem;
-    margin: 1.5rem auto;
+    font-size: 1.8rem;
+    margin: 2rem 0;
     width: 100%;
-    text-align: left;
+    text-align: justify;
+    font-family: 'Consolas', monospace !important;
+    background-color: #fafbfc;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid #e9ecef;
+    position: relative;
+    box-sizing: border-box;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, $main, #10a876);
+      border-radius: 1rem 1rem 0 0;
+    }
+
+    // 내부 div에도 폰트 적용
+    div {
+      font-family: 'Consolas', monospace !important;
+    }
+
+    // 모든 p 태그에 패딩 추가 (더 구체적으로)
+    p {
+      padding: 1.2rem 0;
+      margin: 0.8rem 0;
+      line-height: 1.8;
+      text-align: justify;
+      font-family: 'Consolas', monospace !important;
+      color: #2c3e50;
+      position: relative;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    // SunEditor 이미지 컨테이너 스타일링
+    .se-component.se-image-container {
+      margin: 2rem 0;
+      
+      figure {
+        margin: 0;
+        border-radius: 0.8rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        
+        img {
+          display: block;
+          margin: 0 auto;
+          max-width: 100%;
+          height: auto;
+          transition: transform 0.3s ease;
+
+          &:hover {
+            transform: scale(1.02);
+          }
+        }
+      }
+    }
+
+    // 일반 이미지도 가운데 정렬
+    img {
+      display: block;
+      margin: 1rem auto;
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.8rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.02);
+      }
+    }
   }
 
   .quiz-btn-container {
     display: flex;
     justify-content: center;
-    gap: 1.3rem;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    margin: 2rem 0;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
 
     .quiz-btn-test {
-      padding: 1rem 2rem;
-      border: 1px solid $main;
-      border-radius: 1rem;
-      color: $main;
-      font-size: 1.5rem;
-      font-weight: bold;
+      padding: 1.2rem 2.5rem;
+      background: linear-gradient(135deg, $main 0%, #10a876 100%);
+      border: none;
+      border-radius: 2rem;
+      color: white;
+      font-size: 1.4rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(18, 184, 134, 0.3);
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(18, 184, 134, 0.4);
+      }
+
+      &:active {
+        transform: translateY(-1px);
+      }
     }
 
     .quiz-btn-incorrect {
-      padding: 1rem 2rem;
-      border: 1px solid $red;
-      border-radius: 1rem;
-      color: $red;
-      font-size: 1.5rem;
-      font-weight: bold;
+      padding: 1.2rem 2.5rem;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      border: none;
+      border-radius: 2rem;
+      color: white;
+      font-size: 1.4rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+      }
+
+      &:active {
+        transform: translateY(-1px);
+      }
     }
   }
 

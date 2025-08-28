@@ -6,131 +6,428 @@
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
-  gap: 1.3rem;
-  width: 768px;
+  gap: 2rem;
+  width: 1000px;
+  padding: 3rem 2rem;
+  background-color: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f8f9fa;
 
   .mypage-info {
     display: flex;
     gap: 3rem;
     align-items: center;
-    padding-bottom: 3rem;
-    border-bottom: 1px solid var(--color-text);
+    padding: 2rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 2rem;
 
     .mypage-profile-image {
-      width: 15rem;
-      height: 15rem;
+      width: 12rem;
+      height: 12rem;
       object-fit: cover;
       border-radius: 50%;
+      border: 4px solid #f8f9fa;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      }
     }
 
     .mypage-nickname-intro {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1rem;
+      flex: 1;
 
       .info-nickname {
-        font-weight: bold;
-        font-size: 2rem;
+        font-weight: 700;
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        margin: 0;
       }
 
       .info-intro {
-        font-size: 1.7rem;
-        color: $gray3;
+        font-size: 1.6rem;
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+
+    .mypage-follow {
+      display: flex;
+      gap: 3rem;
+      margin-right: 2rem;
+
+      .mypage-followers {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.6rem;
+        color: #666;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          color: $main;
+          transform: translateY(-2px);
+        }
+
+        .mypage-followings {
+          font-weight: 700;
+          font-size: 2rem;
+          color: #1a1a1a;
+        }
+      }
+    }
+
+    .follow-btn {
+      display: flex;
+      gap: 1rem;
+
+      .post-follow {
+        background-color: white;
+        border: 2px solid $main;
+        border-radius: 2rem;
+        padding: 0.8rem 2rem;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: $main;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          background-color: $main;
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(18, 184, 134, 0.3);
+        }
+      }
+
+      .post-edit {
+        background-color: white;
+        border: 2px solid #6c757d;
+        border-radius: 2rem;
+        padding: 0.8rem 2rem;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #6c757d;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+
+        &:hover {
+          background-color: #6c757d;
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
       }
     }
   }
 
-  .mypage-follow {
-    display: flex;
-    justify-content: flex-end;
-    gap: 2rem;
 
-    .mypage-followers {
-      font-size: 1.7rem;
-
-      .mypage-followings {
-        font-weight: bold;
-      }
-    }
-  }
-  .follow-btn {
-    display: flex;
-    gap: 2.3rem;
-    justify-content: flex-end;
-
-    .post-follow {
-      background-color: var(--color-background);
-      border: 1px solid $main;
-      border-radius: 2rem;
-      padding: 0.7rem 3rem;
-      font-size: 1.7rem;
-      color: $main;
-    }
-
-    .post-edit {
-      background-color: var(--color-background);
-      border: 1px solid $gray2;
-      border-radius: 2rem;
-      padding: 0.7rem 3rem;
-      font-size: 1.7rem;
-      color: $gray2;
-    }
-  }
 
   .mypage-tab {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    margin-bottom: 2rem;
     
     .mypage-tab-menu {
       display: flex;
-      gap: 5rem;
-      width: 70%;
-      justify-content: center;
-      font-size: 1.8rem;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background-color: #f8f9fa;
+      border-radius: 2rem;
+      border: 1px solid #e9ecef;
+      position: relative;
 
-      .active-tab {
-        color: $main;
+      button {
+        padding: 1rem 2rem;
+        border-radius: 1.5rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #666;
+        background: none;
+        border: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+
+        &:hover {
+          color: $main;
+        }
+
+        &.active-tab {
+          color: white;
+          background: linear-gradient(135deg, $main 0%, #10a876 100%);
+          box-shadow: 0 4px 12px rgba(18, 184, 134, 0.3);
+          transform: translateY(-1px);
+
+          &::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, $main, #10a876);
+            border-radius: 1.7rem;
+            z-index: -1;
+            opacity: 0.3;
+          }
+        }
+
+        &:not(.active-tab) {
+          &:hover {
+            background-color: rgba(18, 184, 134, 0.1);
+            transform: translateY(-1px);
+          }
+        }
       }
     }
   }
 
   .mypage-content-list {
     display: flex;
+    gap: 3rem;
+    margin-top: 2rem;
   }
 
   .mypage-side-menu {
-    width: 35%;
+    width: 25%;
+    background-color: #fafbfc;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid #e9ecef;
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
 
     .side-menu-title {
-      border-bottom: 1px solid black;
-      width: 12rem;
+      border-bottom: 2px solid $main;
       padding-bottom: 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
 
       .side-menu-title-text {
-        font-size: 2rem;
-        font-weight: bold;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0;
       }
     }
 
     .side-menu-category {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1rem;
 
       .side-menu-item {
         display: flex;
-        gap: 1rem;
-        color: $gray3;
-        font-size: 1.7rem;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+        font-size: 1.4rem;
+        padding: 0.8rem 1rem;
+        border-radius: 0.8rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          background-color: rgba(18, 184, 134, 0.1);
+          color: $main;
+          transform: translateX(5px);
+        }
+
+        a {
+          color: inherit;
+          text-decoration: none;
+          font-weight: 500;
+        }
       }
     }
   }
 
+  .mypage-main-content {
+    width: 75%;
+  }
+
   .mypage-mypost {
-    display:flex;
+    display: flex;
     flex-direction: column;
-    gap: 1rem;
-    width: 90%;
+    gap: 2rem;
+  }
+
+  // 퀴즈 통계 스타일
+  .quiz-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      background-color: white;
+      border-radius: 0.8rem;
+      border: 1px solid #e9ecef;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $main;
+      }
+
+      .stat-label {
+        font-size: 1.2rem;
+        color: #666;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // 퀴즈 결과 카드 스타일
+  .mypage-quiz-results {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .quiz-result-card {
+      background-color: white;
+      border: 1px solid #e9ecef;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, $main, #10a876);
+      }
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      }
+
+      .quiz-result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+
+        .quiz-title {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          margin: 0;
+          flex: 1;
+        }
+
+        .quiz-score {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 0.3rem;
+
+          .score-text {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: $main;
+          }
+
+          .score-percentage {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .quiz-result-content {
+        margin-bottom: 1.5rem;
+
+        .post-title {
+          font-size: 1.4rem;
+          color: #666;
+          margin: 0 0 0.5rem 0;
+          font-weight: 500;
+        }
+
+        .quiz-date {
+          font-size: 1.2rem;
+          color: #888;
+          margin: 0;
+        }
+      }
+
+      .quiz-progress-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+
+        .quiz-progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $main, #10a876);
+          border-radius: 4px;
+          transition: width 0.8s ease;
+        }
+      }
+
+      .quiz-card-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+
+        .view-post-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.8rem 1.5rem;
+          background: linear-gradient(135deg, $main 0%, #10a876 100%);
+          color: white;
+          text-decoration: none;
+          border-radius: 2rem;
+          font-size: 1.3rem;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(18, 184, 134, 0.3);
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(18, 184, 134, 0.4);
+            background: linear-gradient(135deg, #10a876 0%, $main 100%);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
+    }
   }
 }

@@ -3,21 +3,112 @@
 
 .menu-gnb {
   display: flex;
-  gap: 3rem;
+  gap: 1.5rem;
   align-items: center;
   justify-content: center;
 
   .btn-log {
-    font-size: 1.7rem;
-    transition: all 0.5s;
-    color: var(--color-text);
+    padding: 0.8rem 1.5rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #666;
+    background-color: white;
+    border: 2px solid #e9ecef;
+    border-radius: 2rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
 
     &:hover {
-      color: $main2;
+      color: $main;
+      border-color: $main;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(18, 184, 134, 0.2);
+
+      &::before {
+        left: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    // 로그인/회원가입 버튼 특별 스타일
+    &:nth-child(1):not([href]) {
+      background: linear-gradient(135deg, $main 0%, #10a876 100%);
+      color: white;
+      border-color: $main;
+
+      &:hover {
+        background: linear-gradient(135deg, #10a876 0%, $main 100%);
+        box-shadow: 0 4px 12px rgba(18, 184, 134, 0.3);
+      }
+    }
+
+    // 글쓰기 버튼 특별 스타일
+    &[href="/write"] {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: #667eea;
+
+      &:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+    }
+
+    // 마이페이지 버튼 특별 스타일
+    &[href="/mypage"] {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      border-color: #f093fb;
+
+      &:hover {
+        background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+        box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);
+      }
+    }
+
+    // 로그아웃 버튼 특별 스타일
+    &:not([href]):not(:nth-child(1)) {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #e74c3c;
+      border-color: #ff9a9e;
+
+      &:hover {
+        background: linear-gradient(135deg, #fecfef 0%, #ff9a9e 100%);
+        color: #c0392b;
+        box-shadow: 0 4px 12px rgba(255, 154, 158, 0.3);
+      }
     }
   }
 
   .btn-theme {
     font-size: 2rem;
+    padding: 0.8rem;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #e9ecef;
+      transform: rotate(180deg);
+    }
   }
 }

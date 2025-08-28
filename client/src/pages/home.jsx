@@ -1,9 +1,9 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useMotionValueEvent, useScroll } from "framer-motion";
-import Feed from "../components/feed";
-import getPosts from "../util/post/getPosts"; // pageParam 받아야 함
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Feed from "../components/feed";
+import getPosts from "../util/post/getPosts"; // pageParam 받아야 함
 import getTrendingPosts from "../util/post/getTrendingPosts";
 
 export default function Home() {
@@ -45,18 +45,21 @@ export default function Home() {
         </div>
         <div className="category-search">
           <form>
-            <select>
-              <option>제목</option>
-              <option>닉네임</option>
-              <option>내용</option>
-            </select>
-            <input 
-              type="text" 
-              placeholder="검색어를 입력하세요." 
-              value={searchText} 
-              onChange={(e) =>  setSearchText(e.target.value)} 
-            />
-            <button type="submit">검색</button>
+            <div className="search-input-container">
+              <select className="search-select">
+                <option>제목</option>
+                <option>닉네임</option>
+                <option>내용</option>
+              </select>
+              <input 
+                type="text" 
+                placeholder="검색어를 입력하세요." 
+                value={searchText} 
+                onChange={(e) =>  setSearchText(e.target.value)} 
+                className="search-input"
+              />
+              <button type="submit" className="search-button">검색</button>
+            </div>
           </form>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import IncorrectModal from "../components/incorrectModal";
+import QuizModal from "../components/quizModal";
 import SafeContent from "../components/safeContent";
 import useGetComments from "../service/comment/useGetComments";
 import usePostComment from "../service/comment/usePostComment";
@@ -8,10 +10,8 @@ import useGetIsLikePost from "../service/post/useGetIsLikePost";
 import useGetPost from "../service/post/useGetPost";
 import useGetTags from "../service/post/useGetTags";
 import usePostLikePost from "../service/post/usePostLikePost";
-import useUserStore from "../store/useUserStore";
 import useModalStore from "../store/useModalStore";
-import QuizModal from "../components/quizModal";
-import IncorrectModal from "../components/incorrectModal";
+import useUserStore from "../store/useUserStore";
 
 export default function Post() {
   const queryClient = useQueryClient();
@@ -70,7 +70,7 @@ export default function Post() {
             <span className="post-dot">•</span>
             <span className="post-date">{post?.createdAt}</span>
             <span className="post-dot">•</span>
-            <span className="post-like">♥ {post?.likesCounts}</span>
+            <span className="post-like">{post?.likesCounts}</span>
           </div>
           <div className="post-btn-container">
             <button
