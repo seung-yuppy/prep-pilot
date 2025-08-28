@@ -1,10 +1,12 @@
 package com.example.prep_pilot.entity;
 
+import com.example.prep_pilot.dto.QuizWrongAnswerDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -36,4 +38,15 @@ public class QuizWrongAnswer {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public static QuizWrongAnswer toEntity(User user, Quiz quiz, QuizWrongAnswerDto dto) {
+
+        return new QuizWrongAnswer(
+                null,
+                dto.getUserAnswer(),
+                dto.getIsCorrect(),
+                LocalDateTime.now(),
+                quiz,
+                user
+        );
+    }
 }

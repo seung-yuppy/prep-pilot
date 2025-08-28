@@ -3,11 +3,17 @@ package com.example.prep_pilot.service;
 import com.example.prep_pilot.dto.QuizRequestDto;
 import com.example.prep_pilot.dto.QuizResponseDto;
 import com.example.prep_pilot.dto.QuizResponseListDto;
+import com.example.prep_pilot.dto.QuizWrongAnswerDto;
 import com.example.prep_pilot.entity.Posts;
 import com.example.prep_pilot.entity.Quiz;
+import com.example.prep_pilot.entity.QuizWrongAnswer;
+import com.example.prep_pilot.entity.User;
 import com.example.prep_pilot.exception.PostsNotFoundException;
+import com.example.prep_pilot.exception.QuizNotFoundException;
 import com.example.prep_pilot.repository.PostsRepository;
 import com.example.prep_pilot.repository.QuizRepository;
+import com.example.prep_pilot.repository.QuizWrongAnswerRepository;
+import com.example.prep_pilot.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
@@ -23,11 +29,15 @@ public class QuizService {
 
     private final QuizRepository quizRepository;
     private final PostsRepository postsRepository;
+    private final UserRepository userRepository;
+    private final QuizWrongAnswerRepository quizWrongAnswerRepository;
 
-    public QuizService(QuizRepository quizRepository, PostsRepository postsRepository){
+    public QuizService(QuizRepository quizRepository, PostsRepository postsRepository, UserRepository userRepository, QuizWrongAnswerRepository quizWrongAnswerRepository){
 
         this.quizRepository = quizRepository;
         this.postsRepository = postsRepository;
+        this.userRepository = userRepository;
+        this.quizWrongAnswerRepository = quizWrongAnswerRepository;
     }
 
 
@@ -71,5 +81,22 @@ public class QuizService {
         Page<Quiz> quizPage = quizRepository.findByPostsId(postId, pageRequest);
 
         return quizPage.map(QuizResponseDto::toDto);
+    }
+
+    public Boolean isPresentQuiz(Long postsId) {
+
+        return quizRepository.existsByPostsId(postsId);
+    }
+
+    public QuizWrongAnswerDto saveMyQuiz(String username, QuizWrongAnswerDto dto, Long id) {
+
+        User user = userRepository.findByUsername(username);
+        Quiz quiz = quizRepository.findById(id).orElseThrow(() ->
+                new QuizNotFoundException(id)
+        );
+
+        QuizWrongAnswer quizWrongAnswer = QuizWrongAnswer.toEntity(user, quiz, dto);
+
+        return QuizWrongAnswerDto.toDto(quizWrongAnswerRepository.save(quizWrongAnswer));
     }
 }

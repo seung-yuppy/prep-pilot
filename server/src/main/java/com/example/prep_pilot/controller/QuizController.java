@@ -1,12 +1,11 @@
 package com.example.prep_pilot.controller;
 
-import com.example.prep_pilot.dto.QuizRequestDto;
-import com.example.prep_pilot.dto.QuizResponseDto;
-import com.example.prep_pilot.dto.QuizResponseListDto;
+import com.example.prep_pilot.dto.*;
 import com.example.prep_pilot.service.QuizService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +18,15 @@ public class QuizController {
     public QuizController(QuizService quizService){
 
         this.quizService = quizService;
+    }
+
+    // ai 퀴즈 있는지 확인
+    @GetMapping("/{postsId}/quiz/present")
+    public ResponseEntity<Boolean> isPresentQuiz(@PathVariable Long postsId){
+
+        Boolean isPresent = quizService.isPresentQuiz(postsId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(isPresent);
     }
 
     // 퀴즈 생성후 db 저장
@@ -42,5 +50,15 @@ public class QuizController {
         return ResponseEntity.status(HttpStatus.OK).body(quizResponseDto);
     }
 
-    // 퀴즈
+    // 푼 퀴즈 내 답과 함께 db에 등록
+    @PostMapping("/quiz/{id}/save")
+    public ResponseEntity<QuizWrongAnswerDto> saveMyQuiz(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                         @RequestBody QuizWrongAnswerDto dto,
+                                                         @PathVariable Long id){
+
+        String username = userDetails.getUsername();
+        QuizWrongAnswerDto quizWrongAnswerDto = quizService.saveMyQuiz(username, dto, id);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(quizWrongAnswerDto);
+    }
 }
