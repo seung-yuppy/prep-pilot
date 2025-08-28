@@ -290,21 +290,83 @@ export default function Write() {
 
   const correctTextMutation = useCorrectText({
     onSuccess: (data) => {
-      // let i = 0;
-      // const interval = setInterval(() => {
-      //   if (i < data.corrections.length) {
-      //     const correctedText = data.corrections.slice(0, i + 1).join(' ');
-      //     editorRef.current.setContents(correctedText);
-      //     i++;
-      //   } else {
-      //     clearInterval(interval);
-      //   }
-      // }, 100);
-      // let aiContents = "";
-      // for(let crr of data.corrections[0].result){
-      //   aiContents += crr.correct;
-      // }
-      console.log(data.corrections[0]);
+      const editor = editorRef.current;
+      const editableArea = editor.core.context.element.wysiwyg;
+      const previewContent = document.getElementById('preview_content');
+
+      // Clone the editor's content for the preview
+      const clonedContent = editableArea.cloneNode(true);
+      console.log(data.corrections);
+      let corrections = data.corrections;
+      /*
+      let corrections = {
+        0: { wrong: "운영체제마다 별도의 전용 컴파일러가 필요하다", correct: "운영체제와 상관없이 JVM에서 실행되며, 컴파일러는 하나면 된다" },
+        1: { wrong: "반드시 `include` 키워드로 외부 라이브러리를 불러와야 한다", correct: "`import` 키워드로 필요할 때만 외부 라이브러리를 불러온다" },
+        2: { wrong: "`create`라는 키워드를 사용한다", correct: "`new` 키워드를 사용한다" },
+        3: { wrong: "`public void main(String args)`", correct: "`public static void main(String[] args)`" },
+        4: { wrong: "포인터 연산을 직접 지원하므로 메모리를 직접 조작할 수 있다", correct: "포인터 연산을 지원하지 않아 메모리를 직접 조작할 수 없다" },
+        5: { wrong: "인터페이스는 하나의 클래스에서 두 개 이상 구현할 수 없다", correct: "하나의 클래스가 여러 개의 인터페이스를 구현할 수 있다" },
+        6: { wrong: "`int`는 2바이트 크기를 가진다", correct: "`int`는 4바이트 크기를 가진다" },
+        7: { wrong: "`try` 블록 없이 `catch`만 작성할 수 있다", correct: "`try` 블록 없이는 `catch`를 작성할 수 없다" },
+        8: { wrong: "JVM은 소스 코드를 직접 실행하기 때문에 바이트코드로 변환되지 않는다", correct: "JVM은 소스 코드를 컴파일해 생성된 바이트코드를 실행한다" },
+        9: { wrong: "가비지 컬렉션은 프로그래머가 명령어를 통해 수동으로 실행해야만 동작한다", correct: "가비지 컬렉션은 JVM이 자동으로 수행한다" }
+      };
+      */
+
+
+      const traverseAndReplace = (node, isPreview) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          let content = node.textContent;
+          let hasReplacement = false;
+          
+          for (let key in corrections) {
+            if (corrections.hasOwnProperty(key) && !hasReplacement) {
+              let correction = corrections[key];
+              if (content.includes(correction.wrong)) {
+                const textParts = content.split(correction.wrong);
+                const fragment = document.createDocumentFragment();
+  
+                textParts.forEach((part, index) => {
+                  fragment.appendChild(document.createTextNode(part));
+                  if (index < textParts.length - 1) {
+                    if (!isPreview) {
+                      const animatedSpan = document.createElement('span');
+                      animatedSpan.className = 'wave-text';
+                      animatedSpan.textContent = correction.correct;
+                      fragment.appendChild(animatedSpan);
+                    } else {
+                      // 프리뷰에서는 그냥 일반 텍스트로 추가
+                      fragment.appendChild(document.createTextNode(correction.correct));
+                    }
+                  }
+                });
+  
+                if (node.parentNode) {
+                  node.parentNode.replaceChild(fragment, node);
+                  hasReplacement = true; // 한 번 교체했으면 더 이상 처리하지 않음
+                }
+              }
+            }
+          }
+        } else {
+          // 자식 노드들을 역순으로 순회하여 노드가 제거되어도 인덱스 문제가 없도록 함
+          for (let i = node.childNodes.length - 1; i >= 0; i--) {
+            traverseAndReplace(node.childNodes[i], isPreview);
+          }
+        }
+      };
+  
+      // Traverse and replace in the editor
+      traverseAndReplace(editableArea, false);
+  
+      // Traverse and highlight in the cloned preview content
+      traverseAndReplace(clonedContent, true);
+  
+      // Update the preview content
+      previewContent.innerHTML = '';
+      previewContent.appendChild(clonedContent);
+  
+      handleChange(editor.core.getContents());
       //테스트용
 
 
@@ -460,7 +522,7 @@ export default function Write() {
             <input type="hidden" name="isPrivate" value={isPrivate} />
           </div>
           
-          <div className={`editor-container ${isAiReviewActive ? 'ai-review-active' : ''}`} style={{ marginBottom: '1em' }}>
+          <div className={`editor-container ${isAiReviewActive ? 'ai-review-active' : ''}`} style={{ marginBottom: '7em' }}>
             <SunEditor
                 getSunEditorInstance={(sunEditor) => { editorRef.current = sunEditor; }}
                 onImageUploadBefore={handleImageUploadBefore}
@@ -497,12 +559,12 @@ export default function Write() {
           />
           <div className='button-container'>
             <div className='left'>
-              <button type='button' className='go-back-button' onClick={() => navigate('/')}>&lt;- 나가기</button>
+              <button type='button' className='go-back-button' onClick={() => navigate('/')}>← 나가기</button>
             </div>
             
             <div className='right'>
               <button type='button' className='save-tmp-button' onClick={tempSave}>임시저장</button>
-              <button type='button' className='ai-review-button' onClick={handleAiReview2}>AI 검토하기</button>
+              <button type='button' className='ai-review-button' onClick={handleAiReview}>AI 검토하기</button>
               <button type="submit" className="write-btn">출간하기</button>
             </div>
           </div>

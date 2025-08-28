@@ -35,7 +35,8 @@ body{
 
 .write-container {
     display: flex;
-    width: 100%;
+    width: 90%;
+    margin: auto;
 }
 
 .write-editor,
@@ -68,7 +69,7 @@ body{
   width: 50%;
   padding: 1rem;
   background-color: white;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  
   display: flex;
   z-index: 100;
 }
@@ -130,6 +131,7 @@ body{
 
 .preview-content {
   font-size: 15px;
+  margin-top: 9.6em;
 }
 .preview-content p {
   padding: 8px

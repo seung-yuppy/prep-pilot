@@ -7,6 +7,7 @@ export const correctText = async (pureText) => {
       },
       body: JSON.stringify({ text: pureText }),
     });
+    console.log(response);
     const data = await response.json();
     if (response.ok) {
       return data;
