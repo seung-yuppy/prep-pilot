@@ -1,9 +1,6 @@
 package com.example.prep_pilot.service;
 
-import com.example.prep_pilot.dto.QuizRequestDto;
-import com.example.prep_pilot.dto.QuizResponseDto;
-import com.example.prep_pilot.dto.QuizResponseListDto;
-import com.example.prep_pilot.dto.QuizWrongAnswerDto;
+import com.example.prep_pilot.dto.*;
 import com.example.prep_pilot.entity.Posts;
 import com.example.prep_pilot.entity.Quiz;
 import com.example.prep_pilot.entity.QuizWrongAnswer;
@@ -21,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -98,5 +96,15 @@ public class QuizService {
         QuizWrongAnswer quizWrongAnswer = QuizWrongAnswer.toEntity(user, quiz, dto);
 
         return QuizWrongAnswerDto.toDto(quizWrongAnswerRepository.save(quizWrongAnswer));
+    }
+
+    public List<MyQuizDto> getAllMySolvedQuiz(String username, Long postsId) {
+
+        return quizWrongAnswerRepository.findMyQuizzes(username, postsId);
+    }
+
+    public List<MyQuizDto> getMyWrongQuiz(String username, Long postsId) {
+
+        return quizWrongAnswerRepository.findMyWrongQuizzes(username, postsId);
     }
 }

@@ -61,4 +61,26 @@ public class QuizController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(quizWrongAnswerDto);
     }
+
+    // 내가 푼 해당 포스트id 모든 문제들 가져오기
+    @GetMapping("/{postsId}/quiz/solved")
+    public ResponseEntity<List<MyQuizDto>> getAllMySolvedQuiz(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                              @PathVariable Long postsId){
+
+        String username = userDetails.getUsername();
+        List<MyQuizDto> list = quizService.getAllMySolvedQuiz(username, postsId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    // 내가 푼 해당 포스트id 오답 문제들 가져오기
+    @GetMapping("/{postsId}/quiz/wrong")
+    public ResponseEntity<List<MyQuizDto>> getMyWrongQuiz(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                              @PathVariable Long postsId){
+
+        String username = userDetails.getUsername();
+        List<MyQuizDto> list = quizService.getMyWrongQuiz(username, postsId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
 }
