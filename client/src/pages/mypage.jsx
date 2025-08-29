@@ -6,6 +6,7 @@ import Feed from "../components/feed";
 import useGetMyTags from "../service/user/useGetMyTags";
 import useGetUserInfo from "../service/user/useGetUserInfo";
 import getMyPosts from "../util/user/getMyPosts";
+import useGetMyAllQuizList from "../service/quiz/useGetMyAllQuizList";
 import useGetMyAllQuiz from "../service/quiz/useGetMyAllQuiz";
 
 export default function MyPage() {
@@ -14,8 +15,27 @@ export default function MyPage() {
   const { data: userInfo } = useGetUserInfo();
   const { data: myTags } = useGetMyTags(userInfo?.id);
   const [activeTab, setActiveTab] = useState('posts'); // 기본값을 'posts'로 설정
-  const { data: myAllQuiz } = useGetMyAllQuiz(142);
-  console.log("myallquiz는", myAllQuiz);
+  const { data: myAllQuizList } = useGetMyAllQuizList();
+
+    // 👇 1. 클릭된 퀴즈 ID를 저장할 state를 추가합니다. 초기값은 null.
+  const [selectedQuizId, setSelectedQuizId] = useState(null);
+
+  // 👇 2. selectedQuizId를 사용해 퀴즈 상세 정보를 가져옵니다.
+  const { data: myQuizItem } = useGetMyAllQuiz(selectedQuizId);
+
+  // 👇 3. myQuizItem 데이터가 변경될 때마다 콘솔에 출력합니다.
+  useEffect(() => {
+    if (myQuizItem) {
+      console.log("선택된 퀴즈의 상세 정보:", myQuizItem);
+      // 여기서 모달을 열거나 다른 UI를 보여줄 수 있습니다.
+    }
+  }, [myQuizItem]);
+
+    // 👇 4. 퀴즈 카드 클릭 시 실행될 핸들러 함수를 정의합니다.
+  const handleQuizCardClick = (quizId) => {
+    setSelectedQuizId(quizId);
+  };
+
 
   // 임시 퀴즈 결과 데이터 (나중에 API로 교체)
   const quizResults = [
@@ -70,8 +90,6 @@ export default function MyPage() {
       queryKey: ["myPosts"],
     });
   }, [queryClient]);
-
-  console.log(myPosts);
 
   return (
     <>
@@ -190,10 +208,10 @@ export default function MyPage() {
               </ul>
             ) : (
               <ul className="mypage-quiz-results">
-                {quizResults.map((quiz) => (
-                  <li key={quiz.id} className="quiz-result-card">
+                {myAllQuizList?.map((quiz) => (
+                  <li key={quiz.id} className="quiz-result-card" onClick={() => handleQuizCardClick(quiz.id)}>
                     <div className="quiz-result-header">
-                      <h3 className="quiz-title">{quiz.quizTitle}</h3>
+                      <h3 className="quiz-title">{quiz.title}</h3>
                       <div className="quiz-score">
                         <span className="score-text">
                           {quiz.correctAnswers}/{quiz.totalQuestions}
@@ -204,8 +222,8 @@ export default function MyPage() {
                       </div>
                     </div>
                     <div className="quiz-result-content">
-                      <p className="post-title">글: {quiz.postTitle}</p>
-                      <p className="quiz-date">{quiz.date}</p>
+                      <p className="post-title">글: {quiz.title}</p>
+                      <p className="quiz-date">{quiz.createdAt}</p>
                     </div>
                     <div className="quiz-progress-bar">
                       <div 
