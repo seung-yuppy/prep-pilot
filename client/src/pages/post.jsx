@@ -144,6 +144,7 @@ export default function Post() {
           <IncorrectModal
             closeModal={() => closeModal("incorrectModal")}
             id={id}
+            isAll={false}
           />
         )}
 

@@ -8,16 +8,22 @@ import useGetUserInfo from "../service/user/useGetUserInfo";
 import getMyPosts from "../util/user/getMyPosts";
 import useGetMyAllQuizList from "../service/quiz/useGetMyAllQuizList";
 import useGetMyAllQuiz from "../service/quiz/useGetMyAllQuiz";
+import useModalStore from "../store/useModalStore";
+import IncorrectModal from "../components/incorrectModal";
+import useGetQuizResult from "../service/quiz/useGetQuizResult";
 
 export default function MyPage() {
   const { scrollYProgress } = useScroll();
   const queryClient = useQueryClient();
   const { data: userInfo } = useGetUserInfo();
   const { data: myTags } = useGetMyTags(userInfo?.id);
-  const [activeTab, setActiveTab] = useState('posts'); // 기본값을 'posts'로 설정
+  const [activeTab, setActiveTab] = useState("posts"); // 기본값을 'posts'로 설정
   const { data: myAllQuizList } = useGetMyAllQuizList();
+  const { isOpen, openModal, closeModal } = useModalStore();
+  const { data: quizStat } = useGetQuizResult();
+  console.log(quizStat);
 
-    // 👇 1. 클릭된 퀴즈 ID를 저장할 state를 추가합니다. 초기값은 null.
+  // 👇 1. 클릭된 퀴즈 ID를 저장할 state를 추가합니다. 초기값은 null.
   const [selectedQuizId, setSelectedQuizId] = useState(null);
 
   // 👇 2. selectedQuizId를 사용해 퀴즈 상세 정보를 가져옵니다.
@@ -31,39 +37,11 @@ export default function MyPage() {
     }
   }, [myQuizItem]);
 
-    // 👇 4. 퀴즈 카드 클릭 시 실행될 핸들러 함수를 정의합니다.
+  // 👇 4. 퀴즈 카드 클릭 시 실행될 핸들러 함수를 정의합니다.
   const handleQuizCardClick = (quizId) => {
     setSelectedQuizId(quizId);
+    openModal("incorrectModal");
   };
-
-
-  // 임시 퀴즈 결과 데이터 (나중에 API로 교체)
-  const quizResults = [
-    {
-      id: 1,
-      quizTitle: "자바 기초 문법 퀴즈",
-      correctAnswers: 8,
-      totalQuestions: 10,
-      postTitle: "자바 프로그래밍 기초",
-      date: "2024-01-15"
-    },
-    {
-      id: 2,
-      quizTitle: "객체지향 프로그래밍 퀴즈",
-      correctAnswers: 7,
-      totalQuestions: 10,
-      postTitle: "OOP 개념 정리",
-      date: "2024-01-10"
-    },
-    {
-      id: 3,
-      quizTitle: "자바 컬렉션 프레임워크 퀴즈",
-      correctAnswers: 9,
-      totalQuestions: 10,
-      postTitle: "자바 컬렉션 완벽 가이드",
-      date: "2024-01-05"
-    }
-  ];
 
   const {
     data: myPosts,
@@ -126,15 +104,15 @@ export default function MyPage() {
 
         <div className="mypage-tab">
           <div className="mypage-tab-menu">
-            <button 
-              className={activeTab === 'posts' ? 'active-tab' : ''}
-              onClick={() => setActiveTab('posts')}
+            <button
+              className={activeTab === "posts" ? "active-tab" : ""}
+              onClick={() => setActiveTab("posts")}
             >
               글
             </button>
-            <button 
-              className={activeTab === 'quizzes' ? 'active-tab' : ''}
-              onClick={() => setActiveTab('quizzes')}
+            <button
+              className={activeTab === "quizzes" ? "active-tab" : ""}
+              onClick={() => setActiveTab("quizzes")}
             >
               내가 푼 문제들
             </button>
@@ -147,10 +125,10 @@ export default function MyPage() {
           <aside className="mypage-side-menu">
             <div className="side-menu-title">
               <h1 className="side-menu-title-text">
-                {activeTab === 'posts' ? '태그 목록' : '퀴즈 통계'}
+                {activeTab === "posts" ? "태그 목록" : "퀴즈 통계"}
               </h1>
             </div>
-            {activeTab === 'posts' ? (
+            {activeTab === "posts" ? (
               <ul className="side-menu-category">
                 <li className="side-menu-item">
                   <Link>전체보기</Link>
@@ -167,22 +145,30 @@ export default function MyPage() {
             ) : (
               <div className="quiz-stats">
                 <div className="stat-item">
-                  <span className="stat-number">{quizResults.length}</span>
+                  <span className="stat-number">
+                    {quizStat?.totalQuizCount}
+                  </span>
                   <span className="stat-label">총 퀴즈 수</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-number">
-                    {Math.round(quizResults.reduce((acc, quiz) => acc + (quiz.correctAnswers / quiz.totalQuestions), 0) / quizResults.length * 100)}%
+                    {(quizStat?.totalQuizCount > 0
+                      ? ((quizStat?.totalQuizCount - quizStat?.wrongQuizCount) /
+                          quizStat?.totalQuizCount) *
+                        100
+                      : 0
+                    ).toFixed(2)}
+                    %
                   </span>
                   <span className="stat-label">평균 정답률</span>
                 </div>
               </div>
             )}
           </aside>
-          
+
           {/* 메인 콘텐츠 영역 */}
           <div className="mypage-main-content">
-            {activeTab === 'posts' ? (
+            {activeTab === "posts" ? (
               <ul className="mypage-mypost">
                 {myPosts?.pages.map((page) =>
                   page.content.map((value) => (
@@ -209,34 +195,60 @@ export default function MyPage() {
             ) : (
               <ul className="mypage-quiz-results">
                 {myAllQuizList?.map((quiz) => (
-                  <li key={quiz.id} className="quiz-result-card" onClick={() => handleQuizCardClick(quiz.id)}>
-                    <div className="quiz-result-header">
-                      <h3 className="quiz-title">{quiz.title}</h3>
-                      <div className="quiz-score">
-                        <span className="score-text">
-                          {quiz.correctAnswers}/{quiz.totalQuestions}
-                        </span>
-                        <span className="score-percentage">
-                          {Math.round((quiz.correctAnswers / quiz.totalQuestions) * 100)}%
-                        </span>
+                  <>
+                    <li
+                      key={quiz.id}
+                      className="quiz-result-card"
+                      onClick={() => handleQuizCardClick(quiz.postsId)}
+                    >
+                      <div className="quiz-result-header">
+                        <h3 className="quiz-title">{quiz.title}</h3>
+                        <div className="quiz-score">
+                          <span className="score-text">
+                            {quiz.correctAnswers}/{quiz.totalQuestions}
+                          </span>
+                          <span className="score-percentage">
+                            {Math.round(
+                              (quiz.correctAnswers / quiz.totalQuestions) * 100
+                            )}
+                            %
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="quiz-result-content">
-                      <p className="post-title">글: {quiz.title}</p>
-                      <p className="quiz-date">{quiz.createdAt}</p>
-                    </div>
-                    <div className="quiz-progress-bar">
-                      <div 
-                        className="quiz-progress-fill"
-                        style={{ width: `${(quiz.correctAnswers / quiz.totalQuestions) * 100}%` }}
-                      ></div>
-                    </div>
-                    <div className="quiz-card-footer">
-                      <Link to={`/post/139`} className="view-post-btn">
-                        글 자세히 보기 →
-                      </Link>
-                    </div>
-                  </li>
+                      <div className="quiz-result-content">
+                        <p className="post-title">글: {quiz.title}</p>
+                        <p className="quiz-date">{quiz.createdAt}</p>
+                      </div>
+                      <div className="quiz-progress-bar">
+                        <div
+                          className="quiz-progress-fill"
+                          style={{
+                            width: `${
+                              (quiz.correctAnswers / quiz.totalQuestions) * 100
+                            }%`,
+                          }}
+                        ></div>
+                      </div>
+                      <div className="quiz-card-footer">
+                        <Link
+                          to={`/post/${quiz.postsId}`}
+                          className="view-post-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          글 자세히 보기 →
+                        </Link>
+                      </div>
+                    </li>
+                    {isOpen("incorrectModal") && (
+                      <IncorrectModal
+                        closeModal={() => closeModal("incorrectModal")}
+                        id={quiz.postsId}
+                        isAll={true}
+                      />
+                    )}
+                  </>
                 ))}
               </ul>
             )}
