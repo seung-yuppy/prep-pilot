@@ -12,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class QuizResponseDto {
 
+    private Long id;
+
     private String question;
 
     private String answer;
@@ -19,6 +21,7 @@ public class QuizResponseDto {
     public static QuizResponseDto toDto(Quiz quiz) {
 
         return new QuizResponseDto(
+                quiz.getId(),
                 quiz.getQuestion(),
                 quiz.getAnswer()
         );

@@ -107,4 +107,23 @@ public class QuizService {
 
         return quizWrongAnswerRepository.findMyWrongQuizzes(username, postsId);
     }
+
+    public List<QuizPostResponseDto> getMyQuizPosts(String username) {
+
+        return quizWrongAnswerRepository.findQuizPostsByUsername(username);
+    }
+
+    public List<QuizPostResponseDto> getMyQuizPostsWrong(String username) {
+
+        return quizWrongAnswerRepository.findWrongQuizPostsByUsername(username);
+    }
+
+    public QuizStatDto getMyQuizStat(String username) {
+
+        QuizStatDto quizStatDto = new QuizStatDto();
+        quizStatDto.setTotalQuizCount(quizWrongAnswerRepository.countByUserUsername(username));
+        quizStatDto.setWrongQuizCount(quizWrongAnswerRepository.countByUserUsernameAndIsCorrectFalse(username));
+
+        return quizStatDto;
+    }
 }

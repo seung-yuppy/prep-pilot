@@ -76,11 +76,41 @@ public class QuizController {
     // 내가 푼 해당 포스트id 오답 문제들 가져오기
     @GetMapping("/{postsId}/quiz/wrong")
     public ResponseEntity<List<MyQuizDto>> getMyWrongQuiz(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                              @PathVariable Long postsId){
+                                                          @PathVariable Long postsId){
 
         String username = userDetails.getUsername();
         List<MyQuizDto> list = quizService.getMyWrongQuiz(username, postsId);
 
         return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    // 내가 퀴즈 푼 이력이 있는 posts
+    @GetMapping("quiz/info")
+    public ResponseEntity<List<QuizPostResponseDto>> getMyQuizPosts(@AuthenticationPrincipal CustomUserDetails userDetails){
+
+        String username = userDetails.getUsername();
+        List<QuizPostResponseDto> list = quizService.getMyQuizPosts(username);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    // 내가 퀴즈 푼 이력이 있는 posts(오답 있는 포스트만)
+    @GetMapping("quiz/wrong/info")
+    public ResponseEntity<List<QuizPostResponseDto>> getMyQuizPostsWrong(@AuthenticationPrincipal CustomUserDetails userDetails){
+
+        String username = userDetails.getUsername();
+        List<QuizPostResponseDto> list = quizService.getMyQuizPostsWrong(username);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    // 총 퀴즈수, 정답률 구하기
+    @GetMapping("quiz/stat")
+    public ResponseEntity<QuizStatDto> myQuizStat(@AuthenticationPrincipal CustomUserDetails userDetails){
+
+        String username = userDetails.getUsername();
+        QuizStatDto quizStatDto = quizService.getMyQuizStat(username);
+
+        return ResponseEntity.status(HttpStatus.OK).body(quizStatDto);
     }
 }
