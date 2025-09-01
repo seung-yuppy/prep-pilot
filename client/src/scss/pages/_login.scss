@@ -1,18 +1,31 @@
 @use "../abstracts/" as *;
 @use "../base/" as *;
 
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  min-width: 350px;
+  max-width: 400px;
+}
+
 .login-title {
-  font-size: 3rem;
+  font-size: 2.8rem;
+  font-weight: 700;
   text-align: center;
-  padding: 2rem;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  padding: 2rem 3rem;
+  gap: 2rem;
+  width: 100%;
 }
 
 .pw-show-btn {
@@ -32,34 +45,115 @@
 }
 
 .input-username {
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  width: 20rem;
-  padding: 0.5rem 3rem;
-  border: 1px solid var(--color-text);
-  border-radius: 1rem;
-}
-
-.input-username:has(input:focus) {
-  border: 2px solid $main;
+  position: relative;
+  width: 100%;
+  
+  .log-username {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    font-size: 1.6rem;
+    border: 2px solid #e9ecef;
+    border-radius: 1rem;
+    background-color: #fafbfc;
+    color: #1a1a1a;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    
+    &::placeholder {
+      color: #6c757d;
+      font-weight: 400;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: $main;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.1);
+    }
+  }
 }
 
 .input-password {
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  width: 20rem;
-  padding: 0.5rem 3rem;
-  border: 1px solid var(--color-text);
-  border-radius: 1rem;
+  position: relative;
+  width: 100%;
+  
+  .log-password {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    padding-right: 4rem;
+    font-size: 1.6rem;
+    border: 2px solid #e9ecef;
+    border-radius: 1rem;
+    background-color: #fafbfc;
+    color: #1a1a1a;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    
+    &::placeholder {
+      color: #6c757d;
+      font-weight: 400;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: $main;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.1);
+    }
+  }
+  
+  .pw-show-btn,
+  .pw-hide-btn {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: rgba(18, 184, 134, 0.1);
+    }
+  }
 }
 
-.input-password:has(input:focus) {
-  border: 2px solid $main;
+.join-btn {
+  width: 100%;
+  padding: 1.2rem 2rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, $main 0%, #10a876 100%);
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(18, 184, 134, 0.3);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(18, 184, 134, 0.4);
+    background: linear-gradient(135deg, #10a876 0%, $main 100%);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
 }
 
 .alert-msg {
   color: $red;
   font-size: 1.3rem;
+  text-align: center;
+  margin-top: 1rem;
 }

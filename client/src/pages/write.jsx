@@ -44,6 +44,11 @@ export default function Write() {
       }
     }
   }, []);
+
+  // 페이지 이동 시 스크롤을 맨 위로 초기화
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   //const [user_id, setUserId] = useState(0);
   //const { closeModal } = useModalStore();
   const sanitizedForTemp = useRef("");

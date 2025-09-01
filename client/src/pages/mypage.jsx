@@ -3,14 +3,14 @@ import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Feed from "../components/feed";
+import IncorrectModal from "../components/incorrectModal";
+import useGetMyAllQuiz from "../service/quiz/useGetMyAllQuiz";
+import useGetMyAllQuizList from "../service/quiz/useGetMyAllQuizList";
+import useGetQuizResult from "../service/quiz/useGetQuizResult";
 import useGetMyTags from "../service/user/useGetMyTags";
 import useGetUserInfo from "../service/user/useGetUserInfo";
-import getMyPosts from "../util/user/getMyPosts";
-import useGetMyAllQuizList from "../service/quiz/useGetMyAllQuizList";
-import useGetMyAllQuiz from "../service/quiz/useGetMyAllQuiz";
 import useModalStore from "../store/useModalStore";
-import IncorrectModal from "../components/incorrectModal";
-import useGetQuizResult from "../service/quiz/useGetQuizResult";
+import getMyPosts from "../util/user/getMyPosts";
 
 export default function MyPage() {
   const { scrollYProgress } = useScroll();
@@ -68,6 +68,11 @@ export default function MyPage() {
       queryKey: ["myPosts"],
     });
   }, [queryClient]);
+
+  // 페이지 이동 시 스크롤을 맨 위로 초기화
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <>
@@ -130,7 +135,7 @@ export default function MyPage() {
             </div>
             {activeTab === "posts" ? (
               <ul className="side-menu-category">
-                <li className="side-menu-item">
+                <li className="side-menu-item active">
                   <Link>전체보기</Link>
                 </li>
                 {myTags &&
@@ -148,7 +153,7 @@ export default function MyPage() {
                   <span className="stat-number">
                     {quizStat?.totalQuizCount}
                   </span>
-                  <span className="stat-label">총 퀴즈 수</span>
+                  <span className="stat-label">총 문제 수</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-number">
@@ -205,18 +210,18 @@ export default function MyPage() {
                         <h3 className="quiz-title">{quiz.title}</h3>
                         <div className="quiz-score">
                           <span className="score-text">
-                            {quiz.correctAnswers}/{quiz.totalQuestions}
+                            2/3
                           </span>
                           <span className="score-percentage">
                             {Math.round(
-                              (quiz.correctAnswers / quiz.totalQuestions) * 100
+                              (2.0 / 3) * 100
                             )}
                             %
                           </span>
                         </div>
                       </div>
                       <div className="quiz-result-content">
-                        <p className="post-title">글: {quiz.title}</p>
+                        <p className="post-title">글 제목: {quiz.title}</p>
                         <p className="quiz-date">{quiz.createdAt}</p>
                       </div>
                       <div className="quiz-progress-bar">
@@ -224,7 +229,7 @@ export default function MyPage() {
                           className="quiz-progress-fill"
                           style={{
                             width: `${
-                              (quiz.correctAnswers / quiz.totalQuestions) * 100
+                              (2 / 3) * 100
                             }%`,
                           }}
                         ></div>

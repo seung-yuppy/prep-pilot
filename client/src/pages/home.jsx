@@ -36,6 +36,11 @@ export default function Home() {
     });
   }, [queryClient]);
 
+  // 페이지 이동 시 스크롤을 맨 위로 초기화
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <>
       <div className="home-category">

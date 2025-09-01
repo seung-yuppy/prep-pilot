@@ -1,6 +1,6 @@
 import { useState } from "react";
-import useModalStore from "../store/useModalStore";
 import useJoin from "../service/user/useJoin";
+import useModalStore from "../store/useModalStore";
 
 export default function Join() {
   const [username, setUsername] = useState("");
@@ -60,34 +60,62 @@ export default function Join() {
   };
 
   return (
-    <>
-      <div>
-        <h2 className="login-title">✨회원가입</h2>
-        <form className="login-form" onSubmit={joining}>
-          <div className="input-username">
-            <input type="text" className="log-username" name="username" placeholder="UserName" onChange={(e) => setUsername(e.target.value)} />  
-          </div>     
-          <span className="alert-msg">{errUsername}</span>
-          <div className="input-password">
-            <input type={showPw ? "text" : "password"} className="log-password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-            <button type="button" onClick={onShow} className={showPw ? "pw-show-btn":"pw-hide-btn"}></button>
-          </div>
-          <span className="alert-msg">{errPassword}</span>
-          <div className="input-username">
-            <input type="email" className="log-email" name="email" placeholder="E-Mail" onChange={(e) => setEmail(e.target.value)} />
-          </div>
-          <span className="alert-msg">{errEmail}</span>
-          <div className="input-username">
-            <input type="text" className="log-name" name="name" placeholder="Name" onChange={(e) => setName(e.target.value)} />
-          </div>
-          <span className="alert-msg">{errName}</span>
-          <div className="input-username">
-            <input type="text" className="log-nickname" name="nickname" placeholder="NickName (a.k.a)" onChange={(e) => setNickname(e.target.value)} />
-          </div>
-          <span className="alert-msg">{errNickname}</span>
-          <button type="submit" className="join-btn">회원가입</button>
-        </form>
-      </div>
-    </>
+    <div className="join-wrapper">
+      <h2 className="join-title">✨ 회원가입</h2>
+      <form className="join-form" onSubmit={joining}>
+        <div className="input-username">
+          <input 
+            type="text" 
+            className="log-username" 
+            name="username" 
+            placeholder="사용자명을 입력하세요" 
+            onChange={(e) => setUsername(e.target.value)} 
+          />  
+        </div>     
+        <span className="alert-msg">{errUsername}</span>
+        <div className="input-password">
+          <input 
+            type={showPw ? "text" : "password"} 
+            className="log-password" 
+            name="password" 
+            placeholder="비밀번호를 입력하세요" 
+            onChange={(e) => setPassword(e.target.value)} 
+          />
+          <button type="button" onClick={onShow} className={showPw ? "pw-show-btn":"pw-hide-btn"}></button>
+        </div>
+        <span className="alert-msg">{errPassword}</span>
+        <div className="input-email">
+          <input 
+            type="email" 
+            className="log-email" 
+            name="email" 
+            placeholder="이메일을 입력하세요" 
+            onChange={(e) => setEmail(e.target.value)} 
+          />
+        </div>
+        <span className="alert-msg">{errEmail}</span>
+        <div className="input-name">
+          <input 
+            type="text" 
+            className="log-name" 
+            name="name" 
+            placeholder="실명을 입력하세요" 
+            onChange={(e) => setName(e.target.value)} 
+          />
+        </div>
+        <span className="alert-msg">{errName}</span>
+        <div className="input-nickname">
+          <input 
+            type="text" 
+            className="log-nickname" 
+            name="nickname" 
+            placeholder="닉네임을 입력하세요" 
+            onChange={(e) => setNickname(e.target.value)} 
+          />
+        </div>
+        <span className="alert-msg">{errNickname}</span>
+        <button type="submit" className="join-btn">회원가입</button>
+      </form>
+    </div>
   );
 }

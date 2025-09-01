@@ -1,15 +1,151 @@
 @use "../abstracts/" as *;
+@use "../base/" as *;
+
+.join-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  min-width: 350px;
+  max-width: 400px;
+}
+
+.join-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.join-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.input-username,
+.input-email,
+.input-name,
+.input-nickname {
+  position: relative;
+  width: 100%;
+  
+  .log-username,
+  .log-email,
+  .log-name,
+  .log-nickname {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    font-size: 1.6rem;
+    border: 2px solid #e9ecef;
+    border-radius: 1rem;
+    background-color: #fafbfc;
+    color: #1a1a1a;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    
+    &::placeholder {
+      color: #6c757d;
+      font-weight: 400;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: $main;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.1);
+    }
+  }
+}
+
+.input-password {
+  position: relative;
+  width: 100%;
+  
+  .log-password {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    padding-right: 4rem;
+    font-size: 1.6rem;
+    border: 2px solid #e9ecef;
+    border-radius: 1rem;
+    background-color: #fafbfc;
+    color: #1a1a1a;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    
+    &::placeholder {
+      color: #6c757d;
+      font-weight: 400;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: $main;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.1);
+    }
+  }
+  
+  .pw-show-btn,
+  .pw-hide-btn {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: rgba(18, 184, 134, 0.1);
+    }
+  }
+}
 
 .join-btn {
-  background-color: $main;
-  border-color: $main;
+  width: 100%;
+  padding: 1.2rem 2rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, $main 0%, #10a876 100%);
+  border: none;
   border-radius: 1rem;
-  transition: background-color 0.3s;
-  padding: 1.5rem 3rem;
-  font-size: 1.7rem;
-  color: $bg-white3;
-
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(18, 184, 134, 0.3);
+  
   &:hover {
-    background-color: $green;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(18, 184, 134, 0.4);
+    background: linear-gradient(135deg, #10a876 0%, $main 100%);
   }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.alert-msg {
+  color: $red;
+  font-size: 1.3rem;
+  text-align: center;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+  min-height: 1.8rem;
 }

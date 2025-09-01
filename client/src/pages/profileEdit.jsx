@@ -1,7 +1,7 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import SERVER_URL from "../constant/url";
 import useGetUserInfo from "../service/user/useGetUserInfo";
-import { useQueryClient } from "@tanstack/react-query";
 import useThemeStore from "../store/useThemeStore";
 
 export default function ProfileEdit() {
@@ -20,6 +20,11 @@ export default function ProfileEdit() {
     setEditedBio(userInfo.bio || "");
   }
 }, [userInfo]);
+
+  // 페이지 이동 시 스크롤을 맨 위로 초기화
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleImageClick = () => {
     fileInputRef.current.click();

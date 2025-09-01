@@ -23,30 +23,30 @@ export default function IncorrectModal({ closeModal, id, isAll }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-header">
-          <h2 className="modal-title">📝 오답노트</h2>
-          <button onClick={closeModal} className="close-button">
-            &times;
-          </button>
-          {isAll && (
-            <>
+          <div className="modal-header-left">
+            <h2 className="modal-title">📝 오답노트</h2>
+            {isAll && (
               <div className="mypage-tab">
                 <div className="mypage-tab-menu">
                   <button
                     className={activeTab === "wrongs" ? "active-tab" : ""}
                     onClick={() => setActiveTab("wrongs")}
                   >
-                    틀린 문제들
+                    틀린 문제
                   </button>
                   <button
                     className={activeTab === "all" ? "active-tab" : ""}
                     onClick={() => setActiveTab("all")}
                   >
-                    전체 문제들
+                    전체 문제
                   </button>
                 </div>
               </div>
-            </>
-          )}
+            )}
+          </div>
+          <button onClick={closeModal} className="close-button">
+            &times;
+          </button>
         </div>
         {activeTab === "wrongs" && (
           <div className="modal-body">
@@ -76,7 +76,7 @@ export default function IncorrectModal({ closeModal, id, isAll }) {
                         openStates[index] ? "open" : ""
                       }`}
                     >
-                      <p>{item.explanation}</p>
+                      <p>바이트코드는 자바 소스코드를 컴파일해 생성된 중간 형태의 코드로, JVM이 이해하고 실행할 수 있는 명령어 집합이다.</p>
                     </div>
                   </div>
                 </div>

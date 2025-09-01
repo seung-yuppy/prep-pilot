@@ -75,6 +75,11 @@ export default function Post() {
     }
   }, [post?.content]); // post.content가 바뀔 때마다 이 effect를 재실행합니다.
 
+  // 페이지 이동 시 스크롤을 맨 위로 초기화
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <>
       <div className="post-content">

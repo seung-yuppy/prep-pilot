@@ -32,22 +32,50 @@
   gap: 1rem;
   background: var(--color-background);
   color: var(--color-text);
-  padding: 1rem 3rem;
-  border-radius: 2rem;
+  padding: 2rem;
+  border-radius: 1.5rem;
   animation: fadeIn 0.3s linear;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
 }
 
 .user-btn-container {
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 1rem;
 }
 
 .user-modal-close {
-  font-size: 3rem;
-  color: var(--color-text);
+  background: none;
+  border: none;
+  font-size: 2.4rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+  }
 }
 
 .user-modal-etcbtn {
-  margin-bottom: 1rem;
-  color: var(--color-text);
+  background: none;
+  border: none;
+  color: $main;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.8rem 1.5rem;
+  border-radius: 0.8rem;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  
+  &:hover {
+    background-color: rgba(18, 184, 134, 0.1);
+    transform: translateY(-1px);
+  }
 }

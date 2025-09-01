@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import onLogIn from "../../util/user/login";
 import useModalStore from "../../store/useModalStore";
 import useUserStore from "../../store/useUserStore";
+import onLogIn from "../../util/user/login";
 
 const useLogIn = () => {
   const { closeModal } = useModalStore();
@@ -12,7 +12,7 @@ const useLogIn = () => {
     // 인자를 넘길 때에는 mutate()를 호출할 때 넘긴다. 
     mutationFn: onLogIn,
     onSuccess: () => {
-      alert("로그인 하였습니다.");
+      //alert("로그인 하였습니다.");
       logIn();
       closeModal("login");
     },
